@@ -45,7 +45,9 @@ You will see short progress lines, such as "Round 1: picked a storyline" and "Ta
 
 - reads Slack, your email and your calendar for what the client asked for and who is coming,
 - reads the client's website for colours, fonts, logo and layout, and writes a design brief from them,
+- works out the data: what you gave it (masked), what it must invent, how many rows, where it lives,
 - proposes ways to use platform features (agents, evaluations, context graph) in the demo,
+- proposes one bonus step that touches an outside system, such as a ticket created in Jira or an email sent, using connections already on the tenant,
 - decides if the client wants to see the use case, how the platform is set up, or both,
 - picks one storyline and cuts anything the demo does not use,
 - builds it with Nebula,
@@ -78,8 +80,15 @@ Only for these things:
 1. Which mockup to follow (the one question you asked for; `mockups: auto` skips it).
 2. Signing in, when your login has expired.
 3. Deleting anything.
-4. A password or connection the tenant does not have.
+4. One credential, when a bonus step needs a connection the tenant does not have yet (only if your profile allows `external: sandbox` or `client`).
 5. A demo too big for the budget, when it cannot cut it down.
+
+## Giving it your data
+
+Drop files in `studio/data/` before you start, or link them in the request. It profiles
+them, masks every name, email, phone and identifier, and seeds from the masked copy. The
+original never leaves the folder. If you give nothing, it invents realistic data shaped like
+the client's system and says so in the runbook.
 
 ## Tips
 

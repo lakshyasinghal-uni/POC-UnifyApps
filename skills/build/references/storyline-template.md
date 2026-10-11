@@ -31,6 +31,7 @@ H2. open <object name> → <the fields by name, the picklist's values>
 - automation · <name> · <new or existing> · <called from, inputs, result vocabulary>
 - page · <name> at <path> · <what it shows>
 - ai-agent · <name> · <what it answers from>
+- connection · <system> · <existing | sandbox | client> · <the external beat it carries, when the storyline has one; a bonus, never on the critical path>
 
 ### Needs
 - <connection, credential or platform ability the storyline assumes; "none" when none>

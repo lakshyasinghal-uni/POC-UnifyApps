@@ -81,12 +81,31 @@ the person can drop the hood beats from the script.
 
 ## Data
 
-- Every object the storyline shows gets a `record · seed` line: 15 to 20 rows, fictional,
-  internally consistent (dates in the last 90 days, totals that add up), including the story
-  row. Nebula's cap of 20 rows per object holds; more belongs in an automation.
-- No real people, companies, addresses or identifiers. Names are invented; places are real
-  cities with invented streets.
+The Data Assumer decides it (data-plan.md) and the brief follows:
+
+- Given data is profiled and masked before a row is seeded; "their data" in a request with no
+  file behind it is assumed, shaped like their system, and the runbook says so.
+- Volume follows the intent: 15 to 20 readable rows for a `use-case` demo; enough to paginate
+  and search for a `platform` demo that claims scale; never more than a beat shows. Named
+  rows up to 20, a masked file up to 200, an automation above that, or a connection that
+  reads rows where they are.
+- Seeds are fictional and internally consistent (dates in the last 90 days, totals that add
+  up) and include the story row. No real people, companies, addresses or identifiers.
+- Where the data lives is a sentence the presenter can say: Storage objects by default, the
+  client's system of record named, an external database only through a connection.
 - Picklists carry the codes and labels the beats need, with the first value as the default.
+
+## External connections: the bonus beat
+
+The Connector proposes one to three external beats (external-connections.md): a ticket
+created, an email sent, rows read live from the client's database, a message posted. The
+Judge admits at most one unless the request asks for more, and never on the critical path:
+the lean-forward moment works with the external system down, and the script carries the
+fallback line. The profile's `external` line sets how far to go: `existing` (default) uses
+only connections already on the tenant and asks nothing; `sandbox` admits the team's demo
+systems and allows one credential stop; `client` admits the client's own test systems too;
+`off` skips it. Test records are labelled `DEMO-TEST` and listed in the runbook for cleanup.
+A client's production system is never touched.
 
 ## Pages and look
 

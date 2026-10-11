@@ -43,7 +43,11 @@ else, on purpose.
    borrowed beat raises fit without adding an entity. Say exactly what was borrowed.
 5. Cut to the budget: name each entity or beat you removed and why, in one line each. Keep the
    failure beat and the lean-forward beat; cut from the middle.
-6. Cut everything no beat uses. Go through every object, field, page, region, automation and
+6. Admit at most one external beat from `external.md`, the one that sharpens the lean-forward
+   moment, only when its connection kind is allowed by the profile's `external` line and it
+   has a fallback line; the request asking for more is the one exception. It is a bonus: it
+   never replaces a story beat and never sits on the critical path.
+7. Cut everything no beat uses. Go through every object, field, page, region, automation and
    agent of the chosen storyline and the Scout's `beat` column: what no beat of the final
    storyline names goes, however good, and is listed as a cut. Nebula's page defaults
    (states, inline errors, the toast) are not features and stay. A demo that does one thing

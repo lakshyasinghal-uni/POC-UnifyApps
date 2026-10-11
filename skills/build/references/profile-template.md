@@ -28,7 +28,9 @@ request.
 - avoid: <what must not appear or happen>
 - tenant: <host> · solution: <name> (create if missing)
 - release: <publish and deploy without asking | leave unpublished> · visibility <PRIVATE | shareable>
-- data: fictional people and places · <15 to 20> rows per object · one story row the script leans on
+- data: <given: studio/data/<file> or a link | assumed, shaped like <their system>> · <15 to 20 | enough to paginate> rows · lives in <UnifyApps Storage | their <database> through a connection> · masked · one story row the script leans on
+- external: <existing | sandbox | client | off> · <existing uses only connections already on the tenant and asks nothing; sandbox allows one credential stop for the team's demo systems; client allows the client's own test systems too>
+- sandboxes: <system: connection name on the tenant, or where its credential lives, such as "jira: Acme Jira Sandbox" or "postgres: 1Password item Demo Postgres"> · <none>
 - budget: <3> discussion rounds · <4> pages · <3> objects · <3> automations · <1> AI agent · <2> rehearsal rounds
 - voice: plain words · the client's own terms (<their word>, not <ours>)
 - brand: <logo URL, colours or fonts already known, or "scout the site">
@@ -52,7 +54,9 @@ request.
 | tenant | the host of a builder link in the request; else the folder's Nebula solution; else the most recent tenant Nebula's `state next` lists |
 | solution | `<Client> Demo` |
 | release | publish and deploy without asking · PRIVATE |
-| data | fictional · 15 to 20 rows · one story row |
+| data | assumed, fictional · 15 to 20 rows · UnifyApps Storage · one story row; files found under `studio/data/` count as given |
+| external | `existing`: only connections already on the tenant, no credential stop |
+| sandboxes | none |
 | budget | 3 rounds · 4 pages · 3 objects · 3 automations · 1 AI agent · 2 rehearsal rounds |
 | voice | plain words · the client's terms as the site uses them |
 | brand | scout the site |

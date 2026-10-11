@@ -4,7 +4,8 @@ description: >
   This skill should be used when the user asks to "build a demo", "make a demo for <client>",
   "prepare a showcase app", "demo asset", "pitch app for <client>", or types /demo-studio:build
   followed by a request. It runs a team of agents (Stand-in, Scout, Researcher, Ideator,
-  Innovator, Designer, Judge, Critic, Rehearsal, Scribe, Coder) that pulls client context from Slack, Gmail and
+  Innovator, Data Assumer, Connector, Designer, Mockups, Judge, Critic, Rehearsal, Scribe,
+  Coder) that pulls client context from Slack, Gmail and
   Calendar, decides whether the demo is about the use case, the platform's configuration or
   both, settles every open decision itself, asks Nebula rather than guessing about the
   platform, builds nothing a beat of the demo does not use, builds through the installed Nebula
@@ -124,15 +125,30 @@ When all four report, open `$STUDIO/ledger.md` from
 [references/ledger-template.md](references/ledger-template.md): one row per decision key from
 every `open rows` list, deduplicated by meaning, each with its candidates and who raised it.
 
-Unless the profile's `innovate` line is `off`, start `demo-studio:innovator` →
-`innovator-1.md`: the request, the profile, `storylines.md`, `scout.md`, `context-notes.md`,
-[references/innovation.md](references/innovation.md). It writes `$STUDIO/ideas.md`: three to
-six platform-feature ideas (agents, evaluations, context graph, search, campaigns and the
-rest), each a beat tied to a storyline, with a feasibility guess the Scout confirms in round 2.
-Merge its open rows into the ledger.
+**The second wave**, three agents in ONE message, each with the request, the profile,
+`storylines.md`, `scout.md` and `context-notes.md`:
+
+- `demo-studio:data-assumer` → `data-assumer-1.md`, with the `studio/data/` listing and
+  [references/data-plan.md](references/data-plan.md). It writes `$STUDIO/data-plan.md`: per
+  entity, given or assumed, the rows and how they get in, where the data lives today and in
+  the demo, the masking rules and the masked copies, the story row. Always runs.
+- `demo-studio:innovator` → `innovator-1.md`, with
+  [references/innovation.md](references/innovation.md), unless the profile's `innovate` line
+  is `off`. It writes `$STUDIO/ideas.md`: three to six platform-feature ideas, each a beat
+  tied to a storyline, with a feasibility guess the Scout confirms in round 2.
+- `demo-studio:connector` → `connector-1.md` with `phase: propose`, the profile's
+  `external` and `sandboxes` lines and
+  [references/external-connections.md](references/external-connections.md), unless
+  `external` is `off`. It writes `$STUDIO/external.md`: the tenant's connections, one to
+  three external beats (a ticket created, an email sent, rows read from their database)
+  with their connection kind, probed read-only where a connection exists, and the exact
+  brief lines each needs.
+
+Merge every open row of the three into the ledger.
 
 Then start `demo-studio:stand-in` → `stand-in-1.md`: the profile, the request, the ledger,
-`storylines.md`, `ideas.md`, `scout.md`, `context-notes.md`, Nebula memory (`memory get`), and the rule that
+`storylines.md`, `ideas.md`, `data-plan.md`, `external.md`, `scout.md`, `context-notes.md`,
+Nebula memory (`memory get`), and the rule that
 it settles `demo.intent` first (use case, platform configuration, or both) from the request,
 the profile and the context notes with the sentences that show it quoted, then answers every
 other row in one specific line tagged `STAND-IN` (or `SLACK` when a message settled it),
@@ -146,11 +162,13 @@ Run rounds against the ledger until the test passes or three rounds are done. Sa
 per round: `Round <n>: <what was decided>, <k> rows open.`
 
 **Round 1 ruling.** Start `demo-studio:judge` → `judge-1.md`: the ledger with the settled
-`demo.intent`, the storylines with fit and Scout's feasibility and size, `ideas.md` with the
-Stand-in's interest scores, the profile's budget and `innovate` lines. It writes
-`$STUDIO/rulings.md`: the chosen storyline (or a merge of two) that matches the intent, the
-ideas it admits (at most two, each replacing or sharpening a beat, within the budget and the
-`innovate` line) and why the rest wait for the next demo, what it cut to fit the budget and
+`demo.intent`, the storylines with fit and Scout's feasibility and size, `ideas.md` and
+`external.md` with the Stand-in's interest scores, `data-plan.md`, the profile's budget,
+`innovate` and `external` lines. It writes `$STUDIO/rulings.md`: the chosen storyline (or a
+merge of two) that matches the intent, the ideas it admits (at most two, each replacing or
+sharpening a beat, within the budget and the `innovate` line), the external beat it admits
+(at most one unless the request asks for more, never on the critical path, within the
+`external` line) and why the rest wait for the next demo, what it cut to fit the budget and
 why, in three lines, every entity, page or beat no beat of that storyline uses (cut, listed),
 and a ruling on any row both Scout and Stand-in left open. Merge into the ledger.
 
@@ -171,8 +189,10 @@ and a ruling on any row both Scout and Stand-in left open. Merge into the ledger
   `## Changes` line: the beat that uses it, the builder, the tool that makes it, the read that
   proves it, and `ok` or `no tool` with the nearest thing the platform can do. A line no beat
   uses is flagged for the Judge to cut. Each platform question is answered through
-  ask-nebula.md and logged `NEBULA`, and each admitted idea's `Built by` is confirmed or
-  corrected.
+  ask-nebula.md and logged `NEBULA`, each admitted idea's `Built by` is confirmed or
+  corrected, each seed's volume is checked against data-plan.md's limits (named rows to 20, a
+  file to 200, an automation above), and the admitted external beat's connection is confirmed
+  live with `list_connections`.
 
 New rows either exposes go to the Stand-in by SendMessage. Merge everything into the ledger.
 
@@ -203,8 +223,11 @@ every row settled, no open objection, no new open row, and the storyline chosen 
 unresolved `no tool` line.
 
 **The brief.** Fill Nebula's brief template (`NEBULA/skills/sonic-scoping/references/brief-template.md`)
-from the ledger, `design.md`, `scout.md` and demo-defaults.md: only lines a beat uses; the
-`app look` line above every `job` line; one `record · seed` line per object shown; the intent's
+from the ledger, `design.md`, `scout.md`, `data-plan.md`, `external.md` and demo-defaults.md:
+only lines a beat uses; the `app look` line above every `job` line; one `record · seed` line
+per object shown, with the rows, the masked file or the generating automation as data-plan.md
+decided; the admitted external beat's `connection` and `automation` lines as external.md
+wrote them (a new connection is a `manual` task Nebula lists); the intent's
 rules from demo-defaults.md § Demo intent under `## Rules` (for `platform` or `both`, readable
 names and descriptions on every node, field, source and block); every deploy and the publish
 under `## Ready when`; the `demo.intent` row and every `STAND-IN`, `SLACK`, `JUDGE`,
@@ -238,6 +261,14 @@ with these overrides:
   loop says, and the first time in a session add the one line about the auto-mode
   environment setting.
 - Deploys and publishes do not wait: Sonic treats `## Ready when` as the yes.
+- A `manual` task for a new connection is this skill's own job, before the automation that
+  needs it starts: load `nebula:connection-manager`, read `get_connection_schema`, and ask the
+  one credential stop (header `Connection`, naming the system and the fields the schema
+  needs, for a `sandbox` or `client` connection the tenant does not hold). Pass the values the
+  person gives straight to `create_connection`, which tests and saves them; never write them
+  to a file or repeat them. An OAuth connection answers a `redirectUrl` for the person to
+  open; read it back with `list_connections`. A declined stop skips the external beat and its
+  automation, and the storyline stands.
 - Show Nebula's own lines while it runs: the `Recorded` line per batch and the `progress`
   line, nothing between.
 
@@ -282,6 +313,11 @@ A fix is a later task: follow nebula-bridge.md § Later task, which files the sm
 runs the plan with no questions. Then run Rehearsal again with `rehearsal-2.md`, carrying the
 earlier findings. Two rounds at most; a beat still failing is reported as unverified.
 
+When the demo has an external beat, start `demo-studio:connector` → `connector-2.md` with
+`phase: verify` and the keys the automation's run returned; it reads the ticket, the message
+or the row back from the external system and writes `$STUDIO/external-verify.md`, which
+Rehearsal's verdict on that beat follows.
+
 Say one line per beat that needed a fix, and the final `Rehearsal: <n> of <n> beats pass.`
 
 ## Act 4b: The explainer
@@ -301,8 +337,10 @@ assistant, the pages, and one record's journey through the beats. Say `Explainer
 2. Write `<Client> Demo Runbook.md` in the working folder from
    [references/runbook-template.md](references/runbook-template.md): the script with a shot per
    beat, the entity table as Nebula returned it, the brand evidence, the sources read (Slack,
-   email, calendar) and the `demo.intent` decision with the sentences that settled it, links
-   to the explainer, the Text2Code prompt and the code app when there is one, the list headed
+   email, calendar) and the `demo.intent` decision with the sentences that settled it, the
+   data plan's summary (given versus assumed, where the data lives, the masking) and the
+   external systems touched with the test records to clean up, links to the explainer, the
+   Text2Code prompt and the code app when there is one, the list headed
    `Decisions taken for you` (every `STAND-IN`, `SLACK`, `JUDGE`, `DESIGNER`, `NEBULA` and
    `MODERATOR` row with the profile line that would have avoided it), and what is unverified.
 3. Say five to eight lines: what exists, what was published or deployed, what is unverified,

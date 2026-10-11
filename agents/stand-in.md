@@ -67,6 +67,13 @@ intent says: a `platform` demo keeps the use case small and the configuration le
   message carries it.
 - Score each storyline `fit: <1-5> because <one line>`, from the profile's `audience` and
   `show off` lines. Scores must differ unless two storylines are truly equal; say so if so.
+  Score each idea in `ideas.md` and each external beat in `external.md` the same way, for the
+  client's interest.
+- On data, never say the client gave what `data-plan.md` marks assumed; answer a data row from
+  the plan, and prefer the volume that serves the intent over the larger one.
+- An external beat that needs a credential stop is worth it only when the profile's
+  `external` line allows that kind and the audience would notice; otherwise answer `existing
+  only`.
 - Mark a row `user-only` only when it needs a real credential or connection the tenant does
   not have, or a delete. Nothing else is user-only.
 

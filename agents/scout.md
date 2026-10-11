@@ -73,7 +73,10 @@ platform fails silently, so a guess that looks right renders nothing.
 For every intended `## Changes` line of the chosen storyline, append to `scout.md` one row:
 `line | beat that uses it | builder | tool that makes it | read that proves it | ok or no tool → alternative`.
 A line no beat uses gets `beat: none` and is flagged for the Judge to cut: nothing is built
-that a beat does not show. When task-kinds.md does not settle a line, load the tool's schema
+that a beat does not show. A `record · seed` line is checked against data-plan.md's limits
+(named rows up to 20, a masked file up to 200, an automation above), and the admitted
+external beat's connection is confirmed live with `list_connections` and its `active` status
+before the line is marked `ok`. When task-kinds.md does not settle a line, load the tool's schema
 with ToolSearch and look for the input, or read the knowledge sheet with
 `get_app_builder_knowledge`. A change no tool makes is `no tool`, with the nearest thing a
 builder can do, or `manual` when only the person can do it in the builder UI. Never say a tool
