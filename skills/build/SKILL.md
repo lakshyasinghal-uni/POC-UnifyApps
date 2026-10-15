@@ -124,7 +124,7 @@ Slack and Orbit once.` and stop. Then check, in one pass:
 | Check | How | If it fails |
 |---|---|---|
 | Slack (**required**) | one ToolSearch `+slack` and one cheap read | stop: name it, show the connector card, suggest `/poc-studio:setup` |
-| Orbit (**required**) | `node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" check`, else a signed-in tab | stop: say how to reconnect (sign in again, set `ORBIT_COOKIE`, or open Orbit for them); warn on `userMismatch` |
+| Orbit (**required**) | `node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" check`, else `check` through `scripts/orbit-tab.mjs` in the signed-in tab (orbit-records.md § The signed-in tab) | stop: say how to reconnect (sign in again, set `ORBIT_COOKIE`, or open Orbit for them); warn on `userMismatch` |
 | Orbit schema (**required**) | `orbit-api.mjs schema-check` (orbit-records.md § Field names) | exit 5: stop before anything is written. Show the list it returns, one line per difference, and say the plugin and the Orbit objects need to be brought back in line. Never rename a field or change a value to get past it |
 | Google Calendar | one ToolSearch `+calendar` | named; the build goes on, the demo date comes from the profile |
 | Google Drive | one ToolSearch `+drive` | named; the build goes on without client files from Drive |

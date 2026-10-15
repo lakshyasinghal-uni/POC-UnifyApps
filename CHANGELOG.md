@@ -6,6 +6,22 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.10 (2026-10-15)
+
+- **Orbit through the signed-in tab, with no cookie to copy.** New `scripts/orbit-tab.mjs` runs
+  any `orbit-api.mjs` command inside the browser tab the user signed in to: `loader` (once per
+  tab), `call <command>` (prints the snippet for the browser's JavaScript tool) and `apply`
+  (writes back the files the command wrote and returns its JSON line and exit code). Same-origin
+  calls carry the session, so the cookie never leaves the browser and setup no longer stops to
+  ask for `ORBIT_COOKIE`. All commands, checks, exit codes and the write queue behave as with the
+  direct API. The bundle (`scripts/orbit-tab/bundle.js`) is built from `orbit-api.mjs` by
+  `scripts/orbit-tab/build.mjs`; `call` refuses a stale bundle.
+- `orbit-api.mjs`: in a tab it skips login, sends no Cookie header, treats a hidden redirect as
+  signed out, and uploads file parts without an extra header (no CORS preflight).
+- Setup, build and orbit-records.md use the tab transport whenever no Orbit secret is set
+  (`auth: tab`), and never start a local relay: a page cannot reach the local machine. The
+  hand-written `ps` / `psUpload` helpers are replaced by the tab transport.
+
 ## 0.4.9 (2026-10-15)
 
 - **One Orbit contract.** `skills/build/references/orbit-contract.json` holds the live field

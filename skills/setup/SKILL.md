@@ -49,19 +49,28 @@ Orbit holds every document, decision and feedback ticket
 
 1. **Direct API.** `node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" check`. It uses
    `ORBIT_COOKIE`, or `ORBIT_USERNAME` and `ORBIT_PASSWORD` for a local (non-SSO) account, from
-   environment secrets. If neither is set, tell the user how to set them as environment
-   secrets in their environment's settings (or their shell profile on their own machine), and
-   say plainly: **do not paste a cookie or password into this chat.** Never echo, log or
-   write them.
-2. **A signed-in tab.** If no secret is set, open orbit.uat.unifyapps.com in the built-in
-   browser (else Claude in Chrome), let the user sign in, and run `ps('GET',
-   '/api/user-context')` from the helpers in orbit-records.md. Record `auth: tab`.
+   environment secrets. When one is set and `check` passes, record `auth: env-cookie` or
+   `auth: env-local-account`. **Do not paste a cookie or password into this chat.** Never echo,
+   log or write them.
+2. **The signed-in Orbit tab (the usual way).** When no secret is set, or `check` fails on
+   auth, do not ask for a cookie: open orbit.uat.unifyapps.com in the built-in browser (else
+   Claude in Chrome), let the user sign in, and run every Orbit command through
+   `scripts/orbit-tab.mjs` (orbit-records.md § The signed-in tab). It runs the same
+   `orbit-api.mjs` commands inside the tab, so the browser sends the session itself and the
+   cookie never leaves the browser. Load it once (`orbit-tab.mjs loader`), then run `check`
+   through it. Record `auth: tab`. Every later step in this setup (`ensure-objects`,
+   `schema-check`, `contract-test`, the test gate's writes, the settings document) runs the
+   same way.
+
+**Never start a local server or relay for Orbit.** A page cannot reach anything on this
+machine (the browser blocks localhost), so a relay always fails. If the tab transport itself
+fails, say what failed in one line and stop.
 
 Read who is signed in. When the saved settings (Orbit, else `poc-studio.yml`) already name an
 Orbit user and this is someone else, or the user says they are someone else, warn in one line: everything will be written as
 `<signed-in user>`. Ask whether to carry on or sign in as themselves.
 
-Then `orbit-api.mjs ensure-objects` (or the same calls from the tab). It creates any of
+Then `ensure-objects` (through `orbit-tab.mjs call` when `auth: tab`). It creates any of
 `poc_studio_poc`, `poc_studio_document` and `poc_studio_feedback` that is missing, from
 `skills/build/references/orbit-objects.json`, and never alters one that exists. Report which
 existed and which were created.

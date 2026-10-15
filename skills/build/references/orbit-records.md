@@ -109,52 +109,31 @@ the POC", and 5 is "the live schema does not match" (stop and show the list).
 | `sync-counts --poc <id>` | Recompute the POC row's `documents_count` and `open_feedback_count` from the records |
 | `flush` | Replay queued writes in order. It stops at the first that cannot reach Orbit yet; one that can never succeed (its local file is gone, or Orbit rejects it) is skipped, moved to the `.dead.jsonl` file beside the queue, and raised as a feedback ticket |
 
-**2. A signed-in Orbit tab.** When no secret is set, use a browser tab already signed in to
-Orbit (the built-in browser first, then Claude in Chrome) and run the same calls same-origin
-with the browser's JavaScript tool. The cookie rides along and nothing enters the chat. Paste
-these two helpers once per tab:
+**2. The signed-in tab (`auth: tab`).** When no secret is set, every command above runs inside
+a browser tab signed in to Orbit (the built-in browser first, then Claude in Chrome), through
+`node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-tab.mjs"`. It runs the same orbit-api.mjs code in
+the tab: same-origin calls carry the session cookie, the cookie never leaves the browser, and
+the commands, checks, exit codes and queue behave exactly as with the direct API. Never start
+a local server or relay: a page cannot reach this machine.
 
-```js
-// ps: one call to Orbit from a signed-in tab. ps('GET', '/api/user-context')
-window.ps = async (method, path, body, headers = {}) => {
-  const r = await fetch(path, { method, credentials: 'include',
-    headers: { Accept: 'application/json', ...(body ? { 'Content-Type': 'application/json' } : {}), ...headers },
-    body: body ? JSON.stringify(body) : undefined });
-  const t = await r.text();
-  if (r.status === 401 || (r.headers.get('content-type') || '').includes('text/html')) throw new Error('Orbit session expired');
-  if (!r.ok) throw new Error(`${method} ${path} -> ${r.status}: ${t.slice(0, 200)}`);
-  return t ? JSON.parse(t) : null;
-};
+1. **Load once per tab.** `orbit-tab.mjs loader` writes `studio/.orbit-tab/loader.js`. Read the
+   file and run all of it with the browser's JavaScript tool in the Orbit tab; it answers
+   `POC Studio Orbit tab loader <version> ready`. Load again after the page reloads, after a
+   plugin update, or whenever a call answers `{"needLoader":true}`.
+2. **Each command.** `orbit-tab.mjs call <command and arguments, exactly as for orbit-api.mjs>`
+   prints `start`, `poll` and `wait`. Run `start` in the tab, then `poll` until it returns
+   `"done":true` (`contract-test` takes minutes: poll every 20 seconds). Where the JavaScript
+   tool awaits promises, `wait` does both.
+3. **Apply.** Save exactly what `poll` returned to a file in `studio/.orbit-tab/` and run
+   `orbit-tab.mjs apply <file>`. It writes back every file the command wrote (the queue, the
+   schema cache, reports, `fetch-doc` output), prints the command's JSON line and exits with its
+   exit code, so it reads the same as an orbit-api.mjs result.
 
-// psUpload: upload a File or Blob the way the Orbit UI does; returns the File-field value.
-window.psUpload = async (file, name = file.name, mime = file.type || 'application/octet-stream') => {
-  const { bucket, directory } = await ps('GET', '/api/file/upload-bucket'); // read from the tenant, never hardcoded
-  const h = { 'x-ua-uppy-upload': JSON.stringify({ useExternalApi: false,
-    bucketDetails: { directory, bucket }, isPublicUpload: false, isBuilderAsset: false }) };
-  const { uploadId, key } = await ps('POST', '/api/uploads/s3/multipart', { filename: name, type: mime, metadata: { name, type: mime } }, h);
-  const PART = 8 * 1024 * 1024, parts = [];
-  for (let n = 1, off = 0; off < file.size || n === 1; n++, off += PART) {
-    const { url } = await ps('GET', `/api/uploads/s3/multipart/${uploadId}/${n}?key=${encodeURIComponent(key)}`, null, h);
-    const put = await fetch(url, { method: 'PUT', body: file.slice(off, off + PART) });
-    parts.push({ PartNumber: n, ETag: put.headers.get('etag') });
-    if (off + PART >= file.size) break;
-  }
-  const done = await ps('POST', `/api/uploads/s3/multipart/${uploadId}/complete?key=${encodeURIComponent(key)}`, { parts }, h);
-  const source = done?.key || key;
-  const fileDetails = { fileType: mime, name, size: file.size, source, sourceType: 'CLOUD_STORAGE', 'ua:type': 'FILE' };
-  const { url } = await ps('POST', '/api/file/signed-url?preview=true&expiryTime=1', { fileDetails });
-  return { name, source, sourceType: 'CLOUD_STORAGE', mimeType: mime, fileType: mime, size: file.size, type: 'FILE', url };
-};
-```
-
-A document saved from a tab follows `save-doc`'s steps by hand, with the field names above: find
-the latest version for the POC (filter `properties.poc`) and the slug (read from `doc_id`),
-`psUpload` the file, `ps('POST', '/api/entity', {entityType:
-'poc_studio_document', properties})`, set the previous version's status to `superseded`
-(`ps('POST', '/api/entity/update', …)` with the full properties and its `version`), then update
-the POC row's `documents_count`. Check the values against the live schema first (`ps('GET',
-'/api/entity-type?entityType=poc_studio_document')`); stop on any difference. A file made in the workspace reaches the tab through the
-browser's file upload, never by pasting its bytes into the chat.
+Local files a command reads (`@file` JSON, `--file`, `upload <path>`, `--feedback @file`, the
+queue) are sent with the call, so pass them the usual way. An exit 3 with `reconnect: true`
+means the tab is signed out: ask the user to sign in to Orbit in the tab, then `flush` through
+`call`. After any change to `orbit-api.mjs`, rebuild the tab bundle (`scripts/orbit-tab/build.mjs`);
+`call` refuses to run on a stale bundle.
 
 ## The write-back check (before every human step)
 
@@ -172,7 +151,7 @@ Before any gate is sent, and before any other question reaches a person:
 When any step does not reach Orbit (exit 3, `reconnect: true`, a missing document, or a
 `userMismatch`), stop and set `run_state: stalled` with `stall_reason: Orbit not reachable`
 if the row can be written. Tell the user in one line what did not save and how to reconnect: sign
-in to Orbit again, set `ORBIT_COOKIE` again, or open Orbit in the browser for them to sign in.
+in to Orbit again in the tab (`auth: tab`), set `ORBIT_COOKIE` again, or open Orbit in the browser for them to sign in.
 Do not send the gate or start
 the next step until the check passes. After a gate answer, write the decision (a
 `gate_decision` document and the POC row's gate status) and run the check again before the
