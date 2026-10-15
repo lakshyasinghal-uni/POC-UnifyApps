@@ -15,16 +15,29 @@ POC's `poc_id`.
 
 ## How records reach Orbit
 
-Every write goes through the **POC Studio API**: automations hosted on Orbit and published in
-API Manager, which fill these four objects. POC Studio calls them with an API key; it never
-signs in to Orbit and never calls Orbit's own REST endpoints. The API is being built, so until
-its endpoints are listed here:
+Every write goes through the **Orbit Studio API**: automations hosted on Orbit and published in
+API Manager under the group `orbit-studio`, which fill these four objects. POC Studio calls it
+with each person's token and never signs in to Orbit:
+
+```
+node "${CLAUDE_PLUGIN_ROOT}/scripts/studio-api.mjs" call <endpoint> @<file.json> [--debug]
+```
+
+The token is set up once per computer with `/poc-studio:connect` (skills/connect/SKILL.md);
+`studio-api.mjs check` says whether it works. Exit 0 is done, 1 an error from the endpoint, 2 no
+token or rejected (run connect), 3 Orbit not reachable.
+
+| Endpoint | What it writes | Status |
+|---|---|---|
+| `log-activity` | one `orbit_studio_activity` row; returns `{ok, activity_id, poc}` | live |
+| the POC, document and feedback endpoints | everything else in the recipes below | being built |
+
+Until an endpoint is live, or when there is no working token:
 
 - Every record below is still prepared exactly as described, and kept as one JSON file per
   record under `$STUDIO/objects/<object>/<key>.json` (an update rewrites the file with the
-  merged fields). Nothing is sent to Orbit.
-- Tell the person once per session, in one line: `Orbit write-back is off until the POC Studio
-  API is live; records are kept in the working folder.`
+  merged fields).
+- Tell the person once per session, in one line, what is not being sent and why.
 - Resume reads the same files.
 
 ## The four objects

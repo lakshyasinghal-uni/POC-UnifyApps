@@ -44,10 +44,12 @@ exist, name the connector and where to add it in one line. Stop at this step onl
 
 Every POC, document, feedback ticket and event is written to four Orbit objects
 (`orbit_studio_poc`, `orbit_studio_document`, `orbit_studio_feedback`, `orbit_studio_activity`)
-through the POC Studio API hosted on Orbit ([objects.md](../build/references/objects.md)). The
-API is being built: until objects.md lists its endpoints, say in one line `Orbit write-back is
-off until the POC Studio API is live; records are kept in the working folder.` and carry on.
-Setup never signs in to Orbit and never asks for a cookie or password.
+through the Orbit Studio API hosted on Orbit ([objects.md](../build/references/objects.md)),
+with a token each person sets up once per computer. Load the `poc-studio:connect` skill with the
+Skill tool and follow it. When it ends with write-back on, carry on. When the person has no
+token yet, say in one line `Orbit write-back is off until you run /poc-studio:connect; records
+are kept in the working folder.` and carry on: write-back is not a stop. Setup never signs in to
+Orbit, never asks for a cookie or password, and never asks for the token in the chat.
 
 ## 3. Your personal Slack chat for gates
 

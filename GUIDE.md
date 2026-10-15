@@ -12,8 +12,10 @@ gates. Everything it makes is saved to the Orbit Studio objects on your tenant.
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
   and the four Orbit Studio objects; finds your Slack chat for gate messages; and runs one
   test gate.
-- Orbit write-back goes through the POC Studio API hosted on Orbit, so you never sign in to
-  Orbit from Claude. Until that API is live, records are kept in your working folder.
+- Run **`/poc-studio:connect`** once per computer to set up your Orbit token. It goes through
+  the Orbit Studio API hosted on Orbit, so you never sign in to Orbit from Claude, and you
+  store the token in your own terminal, never in the chat. Without it, records are kept in
+  your working folder.
 
 ## Step by step
 
