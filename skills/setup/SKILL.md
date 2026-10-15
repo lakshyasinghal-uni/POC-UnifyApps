@@ -5,7 +5,7 @@ description: >
   "connect POC Studio", "connect the objects", "set up the gates" or "fix the Slack connection",
   and whenever a build reports that Slack, the UnifyApps objects, Calendar or Drive is not
   connected. Run once per person, and again whenever a connection breaks. It checks the Slack,
-  Google Calendar and Google Drive connectors, notes whether the Orbit write-back API is live, finds your personal Slack chat for gate messages, runs one
+  Google Calendar and Google Drive connectors, checks that the Orbit Studio API accepts calls, finds your personal Slack chat for gate messages, runs one
   test gate end to end, and saves the settings (no secrets) in poc-studio.yml.
 metadata:
   version: "0.5.0"
@@ -45,11 +45,11 @@ exist, name the connector and where to add it in one line. Stop at this step onl
 Every POC, document, feedback ticket and event is written to four Orbit objects
 (`orbit_studio_poc`, `orbit_studio_document`, `orbit_studio_feedback`, `orbit_studio_activity`)
 through the Orbit Studio API hosted on Orbit ([objects.md](../build/references/objects.md)),
-with a token each person sets up once per computer. Load the `poc-studio:connect` skill with the
-Skill tool and follow it. When it ends with write-back on, carry on. When the person has no
-token yet, say in one line `Orbit write-back is off until you run /poc-studio:connect; records
-are kept in the working folder.` and carry on: write-back is not a stop. Setup never signs in to
-Orbit, never asks for a cookie or password, and never asks for the token in the chat.
+which needs no token. Load the `poc-studio:connect` skill with the Skill tool and follow it.
+When it ends with write-back on, carry on. When the API refuses or cannot be reached, say in one
+line `Orbit write-back is off: <why>; records are kept in the working folder.` and carry on:
+write-back is not a stop. Setup never signs in to Orbit and never asks for a cookie, password
+or token.
 
 ## 3. Your personal Slack chat for gates
 

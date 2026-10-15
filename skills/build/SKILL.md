@@ -127,7 +127,7 @@ Then check, in one pass:
 | Check | How | If it fails |
 |---|---|---|
 | Slack (**required**) | one ToolSearch `+slack` and one cheap read | stop: name it, show the connector card, suggest `/poc-studio:setup` |
-| Orbit write-back | `node "${CLAUDE_PLUGIN_ROOT}/scripts/studio-api.mjs" check` (objects.md § How records reach Orbit) | exit 2: one line, `Orbit write-back is off: run /poc-studio:connect to set your token`; exit 3: one line saying Orbit is not reachable; either way records are kept in the working folder and the build goes on |
+| Orbit write-back | `node "${CLAUDE_PLUGIN_ROOT}/scripts/studio-api.mjs" check` (objects.md § How records reach Orbit) | exit 2: one line, `Orbit write-back is off: the Orbit Studio API is refusing calls (run /poc-studio:connect)`; exit 3: one line saying Orbit is not reachable; either way records are kept in the working folder and the build goes on |
 | Google Calendar | one ToolSearch `+calendar` | named; the build goes on, the demo date comes from the profile |
 | Google Drive | one ToolSearch `+drive` | named; the build goes on without client files from Drive |
 | Nebula | step 2 | named; it is needed from phase 3 |

@@ -16,23 +16,23 @@ POC's `poc_id`.
 ## How records reach Orbit
 
 Every write goes through the **Orbit Studio API**: automations hosted on Orbit and published in
-API Manager under the group `orbit-studio`, which fill these four objects. POC Studio calls it
-with each person's token and never signs in to Orbit:
+API Manager under the group `orbit-studio` with a No Auth access profile, which fill these four
+objects. POC Studio needs no token and never signs in to Orbit:
 
 ```
 node "${CLAUDE_PLUGIN_ROOT}/scripts/studio-api.mjs" call <endpoint> @<file.json> [--debug]
 ```
 
-The token is set up once per computer with `/poc-studio:connect` (skills/connect/SKILL.md);
-`studio-api.mjs check` says whether it works. Exit 0 is done, 1 an error from the endpoint, 2 no
-token or rejected (run connect), 3 Orbit not reachable.
+`studio-api.mjs check` says whether the API accepts calls (`/poc-studio:connect` explains what
+to fix). Exit 0 is done, 1 an error from the endpoint, 2 the API refused the call, 3 Orbit not
+reachable. Every write follows the guardrails in skills/connect/SKILL.md § Guardrails.
 
 | Endpoint | What it writes | Status |
 |---|---|---|
 | `log-activity` | one `orbit_studio_activity` row; returns `{ok, activity_id, poc}` | live |
 | the POC, document and feedback endpoints | everything else in the recipes below | being built |
 
-Until an endpoint is live, or when there is no working token:
+Until an endpoint is live, or when the API refuses or cannot be reached:
 
 - Every record below is still prepared exactly as described, and kept as one JSON file per
   record under `$STUDIO/objects/<object>/<key>.json` (an update rewrites the file with the

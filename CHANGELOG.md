@@ -26,20 +26,16 @@ with it.
   rows; each note carries the run state, resume point and build mode, which a resume reads
   from the latest one. Gate decisions are `gate_decided` activities instead of documents.
 - **Write-back goes through the Orbit Studio API**: automations hosted on Orbit and published
-  in API Manager under the group `orbit-studio`, called with each person's token (header
-  `api-token`). The first endpoint, `log-activity`, is live and writes `orbit_studio_activity`
-  rows; the POC, document and feedback endpoints are being built. Until an endpoint is live, or
-  without a working token, records are kept as JSON files under `$STUDIO/objects/` and setup
-  and the build say so in one line.
-- **`/poc-studio:connect`**, a new skill that sets up a person's token once per computer: it
-  checks for one, says how to get one (an access profile on the Orbit Studio · POC Studio
-  plugin client), has the person store it in their own terminal so it never enters a chat,
-  checks it against Orbit and turns write-back on. Setup runs it.
-- **`scripts/studio-api.mjs`**: `status`, `check` (asks Orbit whether the token is accepted,
-  writing nothing), `save` (hidden prompt; checks the token, then saves it to
-  `~/.config/poc-studio/credentials.json` with mode 600; a rejected token is never saved) and
-  `call <endpoint> @file [--debug]`. `POC_STUDIO_API_TOKEN` wins over the saved file. The token
-  never appears in its output, `--debug` included.
+  in API Manager under the group `orbit-studio`, with a No Auth access profile, so no token,
+  cookie or password is needed. The first endpoint, `log-activity`, is live and writes
+  `orbit_studio_activity` rows; the POC, document and feedback endpoints are being built.
+  Until an endpoint is live, or when Orbit refuses or cannot be reached, records are kept as
+  JSON files under `$STUDIO/objects/` and setup and the build say so in one line.
+- **`/poc-studio:connect`**, a new skill: checks that the API accepts calls (writing nothing),
+  says what to fix when it does not, and sets out the guardrails every write-back follows:
+  only POC Studio's own steps write, only to the POC in hand, only listed endpoints, fields and
+  values, never a delete, tests marked `[TEST]`, no secrets in any field. Setup runs it.
+- **`scripts/studio-api.mjs`**: `status`, `check` and `call <endpoint> @file [--debug]`.
 
 ## 0.4.11 (2026-10-15)
 

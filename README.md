@@ -58,30 +58,11 @@ It checks and connects, in this order:
 2. **Orbit write-back**: every record goes to four Orbit objects (`orbit_studio_poc`,
    `orbit_studio_document`, `orbit_studio_feedback`, `orbit_studio_activity`) through the Orbit
    Studio API, automations hosted on Orbit and published in API Manager (group
-   `orbit-studio`). Setup runs `/poc-studio:connect`, which sets up your token once per
-   computer (see below). Without a token the build still runs and keeps records in the working
-   folder.
-3. **Nothing to sign in to for Orbit**: no cookie, no password, no browser tab.
-
-### Your Orbit token, once per computer
-
-```
-/poc-studio:connect
-```
-
-It checks for a token and, when there is none, tells you how to get one (from whoever runs POC
-Studio, or by creating an access profile on the **Orbit Studio · POC Studio plugin** client in
-API Manager) and how to store it. You store it yourself, in your own terminal, so it never goes
-into a chat:
-
-```
-node <plugin folder>/scripts/studio-api.mjs save
-```
-
-It asks for the token with the input hidden, checks it against Orbit, and saves it to
-`~/.config/poc-studio/credentials.json` (readable only by you). Or set `POC_STUDIO_API_TOKEN` in
-your shell profile. Every Claude session on that computer then writes to Orbit. Never commit the
-token: this repository is public.
+   `orbit-studio`, No Auth access profile). Setup runs `/poc-studio:connect`, which checks the
+   API accepts calls. If it cannot be reached, the build still runs and keeps records in the
+   working folder.
+3. **Nothing to set up for Orbit**: no token, no cookie, no password, no browser tab. The
+   guardrails every write follows are in `skills/connect/SKILL.md`.
 4. **Your personal Slack chat** for the four gate approvals (your own DM, posted as you
    through your Slack connection), where gate notifications are sent.
 5. **Nebula**: its version, and whether it can build code apps. The first build updates it
@@ -256,8 +237,8 @@ poc-studio/
   agents/                          stand-in, scout, researcher, ideator, innovator,
                                    data-assumer, connector, designer, judge, critic,
                                    rehearsal, scribe, coder, ua-scout, ua-checker
-  scripts/studio-api.mjs           calls the Orbit Studio API with your token: status, check, save, call
-  skills/connect/SKILL.md          set up your Orbit token once per computer
+  scripts/studio-api.mjs           calls the Orbit Studio API: status, check, call (--debug)
+  skills/connect/SKILL.md          checks the Orbit connection; the write-back guardrails
   scripts/nebula-root.mjs          finds Nebula, checks its version and code-builder support
   scripts/version-check.mjs        installed vs GitHub main; updates in Claude Code with --apply
   scripts/enable-autoupdate.mjs    turns on auto-update for poc-unifyapps in your Claude settings
