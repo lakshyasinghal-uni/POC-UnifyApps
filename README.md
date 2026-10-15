@@ -4,8 +4,8 @@ Runs a UnifyApps POC end to end, from the first client signal to a released demo
 owner deciding at four gates. Built on Demo Studio 0.6.0 by Gourav Mahunta and Maher's verified
 UnifyApps platform skills. Plugin maintenance notes are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Every POC, document, piece of feedback and event is saved to four **UnifyApps objects** on
-Orbit (orbit.uat.unifyapps.com) over the REST API. Gates are sent to **Slack** with links to the
+Every POC, document, piece of feedback and event is saved to four **Orbit Studio objects** on
+Orbit (orbit.uat.unifyapps.com) through the POC Studio API hosted there. Gates are sent to **Slack** with links to the
 records and shown
 in the chat at the same time. The final app is built **code-first** by the Nebula plugin with
 its code builder.
@@ -55,14 +55,12 @@ It checks and connects, in this order:
 1. **Slack** (required): gate messages, replies and feedback. **Google Calendar** and **Google
    Drive** are checked too; when either is missing you get a connector card, and the build
    goes on without it.
-2. **The UnifyApps objects** (required): the client `scripts/ua-objects.mjs` signs in over the
-   REST API with an environment secret, `UA_COOKIE`, or `UA_USERNAME` and `UA_PASSWORD` for a
-   local account (tenant `UA_BASE`, default `https://orbit.uat.unifyapps.com`). Set these as
-   environment secrets; never paste them into the chat. No browser tab is used.
-3. **The four Orbit Studio objects** POC Studio writes to: `orbit_studio_poc`,
-   `orbit_studio_document`, `orbit_studio_feedback` and `orbit_studio_activity`. Setup reads
-   each one's fields and lists any difference from what the plugin writes; it never creates or
-   changes an object.
+2. **Orbit write-back**: every record goes to four Orbit objects (`orbit_studio_poc`,
+   `orbit_studio_document`, `orbit_studio_feedback`, `orbit_studio_activity`) through the POC
+   Studio API, automations hosted on Orbit and published in API Manager. The plugin calls them
+   with an API key and never signs in to Orbit. The API is being built; until it is live,
+   setup says so and records are kept in the working folder.
+3. **Nothing to sign in to for Orbit**: no cookie, no password, no browser tab.
 4. **Your personal Slack chat** for the four gate approvals (your own DM, posted as you
    through your Slack connection), where gate notifications are sent.
 5. **Nebula**: its version, and whether it can build code apps. The first build updates it
@@ -71,21 +69,6 @@ It checks and connects, in this order:
    in your Slack, the approval in the chat, recorded and read back.
 
 It saves your settings in `poc-studio.yml`, with no secret in it.
-
-### Debugging the write-back
-
-Every read and write goes through one plain client, so you can run any step by hand:
-
-```
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" whoami
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" schema orbit_studio_poc
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" find orbit_studio_activity --where poc=<poc_id> --sort created_at:desc --limit 5
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" create orbit_studio_feedback @ticket.json --debug
-```
-
-`--debug` prints every request and response; `--log <file>` keeps them as JSON lines. What
-you pass is what is sent: there is no mapping table, no queue and no browser tab. The fields
-and values each object takes are in `skills/build/references/objects.md`.
 
 ## What you type
 
@@ -168,7 +151,7 @@ In the chat, answer with the gate's reply words.
   the next resume shows the gate again.
 - With three days or fewer to the demo date, the gates come in pairs (G1 with G2, G3 with G4).
 - Before any gate is sent, every document made so far is read back. If something did not
-  save, you see the failing request and the server's answer, and the gate waits.
+  save, you see what failed and the error, and the gate waits.
 
 ## Feedback, any time
 
@@ -252,8 +235,6 @@ poc-studio/
   agents/                          stand-in, scout, researcher, ideator, innovator,
                                    data-assumer, connector, designer, judge, critic,
                                    rehearsal, scribe, coder, ua-scout, ua-checker
-  scripts/ua-objects.mjs           plain REST client for the objects: whoami, schema, get, exists,
-                                   find, next-id, create, update, upload; --debug and --log
   scripts/nebula-root.mjs          finds Nebula, checks its version and code-builder support
   scripts/version-check.mjs        installed vs GitHub main; updates in Claude Code with --apply
   scripts/enable-autoupdate.mjs    turns on auto-update for poc-unifyapps in your Claude settings

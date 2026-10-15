@@ -17,14 +17,14 @@ description: >
   builds the app code-first with the latest code-builder Nebula in the POC's mode, rehearses and
   checks it (G3 Final review); phase 4 makes the collaterals: runbook, explainer, video, PDFs
   and field note
-  (G4 Release). Every document, decision and feedback ticket is saved to UnifyApps objects over
-  the REST API and read back before any human step. A team of agents (Stand-in, Scout, Researcher, Ideator, Innovator, Data
+  (G4 Release). Every document, decision and feedback ticket is saved to the Orbit Studio
+  objects through the POC Studio API and read back before any human step. A team of agents (Stand-in, Scout, Researcher, Ideator, Innovator, Data
   Assumer, Connector, Designer, Judge, Critic, Rehearsal, Scribe, Coder, ua-checker)
   settles what it can between gates and asks Nebula and the verified UnifyApps skills rather
   than guessing. Needs /poc-studio:setup once first.
 metadata:
   version: "0.5.0"
-  requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; UnifyApps objects (UA_COOKIE or UA_USERNAME/UA_PASSWORD)"
+  requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; the POC Studio API on Orbit for write-back"
 ---
 
 # POC Studio: build
@@ -66,13 +66,13 @@ earliest gate whose pack it changes is asked again.
 - **The owner decides at the four gates,** as gates.md says: never answered by an
   agent, never skipped, never assumed from silence or an emoji. On a short timeline the tier
   merges them in pairs; it never removes one.
-- **The objects are the record.** Every document is saved with its full file through
-  `scripts/ua-objects.mjs` ([references/objects.md](references/objects.md)), every gate answer
+- **The objects are the record.** Every document is saved with its full file through the POC
+  Studio API ([references/objects.md](references/objects.md)), every gate answer
   is a `gate_decided` activity, every piece of feedback is a ticket. Local files are working
   copies.
 - **Save before every human step.** Before a gate is sent or any question reaches a person,
-  run the save check of objects.md. If anything did not save, rerun the failing call with
-  `--debug`, show the person the request and the server's answer, and do not send the gate or
+  run the save check of objects.md. If anything did not save, show the person what failed and
+  the error, and do not send the gate or
   start the next step until it passes. After every answer, save the decision before the next
   phase starts.
 - **Feedback is welcome any time** and always becomes a ticket (§ Feedback, below).
@@ -127,12 +127,12 @@ Then check, in one pass:
 | Check | How | If it fails |
 |---|---|---|
 | Slack (**required**) | one ToolSearch `+slack` and one cheap read | stop: name it, show the connector card, suggest `/poc-studio:setup` |
-| UnifyApps objects (**required**) | `node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" whoami` (objects.md § Signing in) | exit 2: stop and say which environment secret to set or refresh (`UA_COOKIE`, or `UA_USERNAME` and `UA_PASSWORD`); warn when the user differs from `poc-studio.yml` |
+| Orbit write-back | objects.md § How records reach Orbit | while the POC Studio API is not live: one line saying records are kept in the working folder; the build goes on |
 | Google Calendar | one ToolSearch `+calendar` | named; the build goes on, the demo date comes from the profile |
 | Google Drive | one ToolSearch `+drive` | named; the build goes on without client files from Drive |
 | Nebula | step 2 | named; it is needed from phase 3 |
 
-Say one line: `Slack ok · Objects ok as <user> · Calendar <ok | missing> · Drive <ok | missing> ·
+Say one line: `Slack ok · Orbit write-back <on | off> · Calendar <ok | missing> · Drive <ok | missing> ·
 Nebula <version>.`
 
 **1b. New build or resume, and the build mode.** Decide from the person's words as
@@ -635,8 +635,8 @@ agent twice then carry on, the nearest passing value on a second brief refusal, 
 of a failed plan, one line when the tenant is down, and what to do when the code app is still
 `fix` after two Critic rounds. A build that cannot recover
 follows run-control.md § Failed build.
-A write to the objects that fails stops the step: rerun it with `--debug`, show the person the
-request and the server's answer, and wait. Nothing is queued; the next human step waits for
+A write to the objects that fails stops the step: show the person what failed and the error,
+and wait. Nothing is queued; the next human step waits for
 the save check. A Slack post that fails is
 retried once; then the gate is asked in the chat alone, the failure is a ticket, and
 `/poc-studio:setup` is suggested.

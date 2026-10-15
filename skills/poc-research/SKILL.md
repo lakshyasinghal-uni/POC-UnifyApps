@@ -71,7 +71,7 @@ does not apply, and say why.
 | **3. Rules and standards** | Regulations, compliance requirements, published standards, government data that the POC must respect or can use | Government and regulator sites, standards bodies, official registers |
 | **4. Market and alternatives** | Products that already solve this, how they position it, what they automate, typical outcomes they claim | Vendor product pages, analyst summaries, case studies (treat vendor claims as claims) |
 | **5. Demo realism** | Real entities and reference data to make the demo believable: locations, store or site types, product catalogues, public price lists, document formats, units, currencies, time zones | Official public lists, catalogues, open datasets |
-| **6. Prior work** | Similar finished POCs or reusable assets | Earlier POCs' final documents in the Orbit Studio objects (`find orbit_studio_document --where status=final` with `scripts/ua-objects.mjs`, then filter by industry or use case), and this plugin's `unifyapps-solution-playbook` (eleven past UnifyApps builds and which to start from) |
+| **6. Prior work** | Similar finished POCs or reusable assets | Earlier POCs' final documents in the Orbit Studio objects (documents with `status: final`, read through the POC Studio API once it is live, then filtered by industry or use case), and this plugin's `unifyapps-solution-playbook` (eleven past UnifyApps builds and which to start from) |
 
 When the user is present and the requirement is ambiguous in a way that changes the research (for
 example, which country the pilot runs in), ask **one** question before searching. When the loop is

@@ -10,66 +10,33 @@ Each POC's record lives in four UnifyApps objects on the tenant (by default
 | `orbit_studio_feedback` | piece of feedback | `ticket_no`: `FB-<n>` |
 | `orbit_studio_activity` | event in the POC's life | `activity_id`: `ACT-<n>` |
 
-A record's `id` is its key, so `get <object> <key>` reads it, and the `poc` field on documents,
-feedback and activity holds the POC's `poc_id`. Every read and write goes through one plain REST
-client:
+A record's `id` is its key, and the `poc` field on documents, feedback and activity holds the
+POC's `poc_id`.
 
-```
-node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" <command> … [--debug] [--log <file>]
-```
+## How records reach Orbit
 
-It runs from the shell only. It never uses a browser tab, never maps or checks values, and keeps
-no queue: what is passed is what is sent, and the server's answer comes back as one JSON line.
+Every write goes through the **POC Studio API**: automations hosted on Orbit and published in
+API Manager, which fill these four objects. POC Studio calls them with an API key; it never
+signs in to Orbit and never calls Orbit's own REST endpoints. The API is being built, so until
+its endpoints are listed here:
 
-## Signing in
-
-Set these as environment secrets. Never ask for them in the chat and never print them.
-
-| Variable | What |
-|---|---|
-| `UA_BASE` | tenant origin; default `https://orbit.uat.unifyapps.com` |
-| `UA_COOKIE` | the whole Cookie header of a signed-in session (works for SSO accounts), or |
-| `UA_USERNAME` + `UA_PASSWORD` | a local (non-SSO) account; the client logs in on each run |
-| `UA_IDP` | the tenant's local identity provider id (orbit.uat: `65d2f4cf672d16da08efc3d0`) |
-
-Exit 0 is done, 1 is an error (the server's status and message are in the JSON), 2 is not
-signed in.
-
-## Commands
-
-| Command | Use |
-|---|---|
-| `whoami` | who is signed in; the cheapest session check |
-| `schema <object>` | the object's fields, required fields and dropdown options as the tenant has them |
-| `get <object> <key>` · `exists <object> <key>` | one record; or only whether it exists |
-| `find <object> [--where field=value]… [--limit n \| --all] [--sort field:desc]` | records matching every `--where` |
-| `next-id <object> --field <key field> --prefix <text>` | the next free key, e.g. `--field ticket_no --prefix FB-` gives `FB-1017` |
-| `create <object> @file` | a new record from a JSON file of properties, key included |
-| `update <object> <key> @file` | read the record, merge these properties, write it back with its version |
-| `upload <path>` | upload a file; prints the value for the `file` field |
-
-Pass properties as `@file` (a JSON file under `$STUDIO/objects/`), so a person's words never sit
-in a shell command. Dates and times are epoch milliseconds (`date +%s000`); `demo_date` too.
-There is no delete command.
-
-## Debugging
-
-Add `--debug` to any command to print every request and response (method, path, status, time,
-bodies cut at 2,000 characters) to the terminal, or `--log $STUDIO/objects/requests.jsonl` to
-keep them. The password and cookie are never printed. When a write fails, run the same command
-again with `--debug` and show the person the failing request and the server's answer.
+- Every record below is still prepared exactly as described, and kept as one JSON file per
+  record under `$STUDIO/objects/<object>/<key>.json` (an update rewrites the file with the
+  merged fields). Nothing is sent to Orbit.
+- Tell the person once per session, in one line: `Orbit write-back is off until the POC Studio
+  API is live; records are kept in the working folder.`
+- Resume reads the same files.
 
 ## The four objects
 
 Write each value exactly as below; these are the tenant's own options as read on 2026-10-15.
-When `schema` shows something different, the tenant wins: use its value and tell the person in
-one line. **Bold** fields are required.
+When the tenant changes, this table is updated to match. **Bold** fields are required.
 
 ### `orbit_studio_poc`
 
 | Field | Value |
 |---|---|
-| **`poc_id`** | `POC-<client-slug>-<YYYYMMDD>` (the start date). When `exists` says it is taken, add the start time: `POC-<client-slug>-<YYYYMMDD>-<HHMM>` |
+| **`poc_id`** | `POC-<client-slug>-<YYYYMMDD>` (the start date). When that key is taken, add the start time: `POC-<client-slug>-<YYYYMMDD>-<HHMM>` |
 | **`client_name`**, **`client_slug`**, **`use_case`** | text |
 | `brief` | the person's request, as typed |
 | **`tier`** | `express`, `standard`, `full` |
@@ -101,7 +68,7 @@ one line. **Bold** fields are required.
 | **`status`** | `draft`, `in_review`, `approved`, `final`, `superseded` |
 | `summary` | one line |
 | `content` | the text itself, for text files under ~1 MB |
-| `file` | the value `upload` printed |
+| `file` | the uploaded file |
 | `file_link` | a link to the thing itself when it lives elsewhere (the app's URL) |
 | `path_in_build_session` | the local path it came from |
 | `size_bytes` | number |
@@ -111,7 +78,7 @@ one line. **Bold** fields are required.
 
 | Field | Value |
 |---|---|
-| **`ticket_no`** | `next-id orbit_studio_feedback --field ticket_no --prefix FB-` |
+| **`ticket_no`** | `FB-<n>`: the highest existing number + 1 |
 | **`poc`** | the `poc_id` |
 | **`title`**, **`feedback`** | a short title; the exact words |
 | `quote` | the passage the feedback is about, when there is one |
@@ -134,7 +101,7 @@ one line. **Bold** fields are required.
 
 | Field | Value |
 |---|---|
-| **`activity_id`** | `next-id orbit_studio_activity --field activity_id --prefix ACT-` |
+| **`activity_id`** | `ACT-<n>`: the highest existing number + 1 |
 | **`poc`** | the `poc_id` |
 | **`type`** | `poc_started`, `stage_started`, `stage_completed`, `document_saved`, `gate_posted`, `gate_decided`, `feedback_created`, `feedback_reviewed`, `input_added`, `nudge_sent`, `poc_stopped`, `poc_restarted` |
 | `stage` | the POC's stage |
@@ -183,43 +150,42 @@ build_mode: sonic | zen
 session: <this session's link>
 ```
 
-The latest activity for the POC (`find orbit_studio_activity --where poc=<poc_id> --sort
-created_at:desc --limit 1`) is the POC's current run state.
+The POC's latest activity (by `created_at`) is its current run state.
 
 ## Recipes
 
-**Create the POC row.** Build the `poc_id`, check it with `exists`, then `create
-orbit_studio_poc @$STUDIO/objects/poc.json` with the fields run-control.md § Creating the row
+**Create the POC row.** Build the `poc_id` (adding the time when a row with that key exists),
+then create the `orbit_studio_poc` record with the fields run-control.md § Creating the row
 lists. Write the `poc_id` to `$STUDIO/objects/poc.ref`. Then record a `poc_started` activity.
 
-**Update the POC row.** `update orbit_studio_poc <poc_id> @file` with only the fields that
-change, and always `last_activity` (one line) and `last_activity_at` (now).
+**Update the POC row.** Change only the fields that change, and always `last_activity` (one
+line) and `last_activity_at` (now).
 
-**Record an activity.** `next-id` for the key, then `create orbit_studio_activity @file` with
+**Record an activity.** Take the next free `ACT-<n>`, then create the activity with
 the fields above, the run state block in `note`, and `created_at` now. Record one at the start
 and end of every stage (`stage_started`, `stage_completed`), for every document saved, every
 gate posted and decided, every ticket raised and closed, and when the POC stops or restarts.
 
 **Save a document.**
-1. `find orbit_studio_document --where poc=<poc_id> --all` and take the rows whose
-   `document_id` has this stage and slug; the next version is the highest `version` + 1.
-2. `upload <path>` (skip for a link-only record such as the app).
-3. `create orbit_studio_document @file` with `document_id`, `poc`, `name`, `type`, `stage`,
+1. Find this POC's documents whose `document_id` has this stage and slug; the next version is
+   the highest `version` + 1.
+2. Attach the file (skip for a link-only record such as the app).
+3. Create the document with `document_id`, `poc`, `name`, `type`, `stage`,
    `gate_pack`, `version`, `status`, `summary`, `content` (text files), `file`,
    `path_in_build_session`, `size_bytes`, `created_by`, `saved_at`.
-4. `update` the previous version to `status: superseded`.
-5. `update` the POC row's `documents_count` and `last_activity`, and record a
+4. Set the previous version to `status: superseded`.
+5. Update the POC row's `documents_count` and `last_activity`, and record a
    `document_saved` activity with `related_document`.
 
 **Fetch a document back** (resume, `edited` at a gate). Find the highest version of the slug as
 above and write its `content` to the local file. When it has no `content`, tell the person the
 file is on the record and ask them to attach it.
 
-**Raise a feedback ticket.** `next-id` for the `ticket_no`, then `create orbit_studio_feedback
-@file` (`status: open`, `created_at` now). Then `update` the POC row's `open_feedback_count` and
+**Raise a feedback ticket.** Take the next free `FB-<n>`, then create the ticket (`status:
+open`, `created_at` now). Then update the POC row's `open_feedback_count` and
 record a `feedback_created` activity with `related_ticket`.
 
-**Close a ticket.** `update orbit_studio_feedback <ticket_no> @file` with `status: resolved`
+**Close a ticket.** Update the ticket with `status: resolved`
 (or `not_incorporated`), `action_taken` (one line), `reviewed_by` and `resolved_at`; lower the
 POC row's `open_feedback_count`; record a `feedback_reviewed` activity.
 
@@ -229,13 +195,10 @@ Before a gate is sent, and before any other question reaches the person:
 
 1. Save every document made or changed since the last check, and every working document that
    changed.
-2. `find orbit_studio_document --where poc=<poc_id> --all` and confirm the latest version of
-   each document is there.
+2. Confirm the latest version of each document is there.
 3. Update the POC row (`stage`, `status`, `current_gate`, gate statuses, `blocked_on`, the
    counts, `last_activity`, `last_activity_at`) and record an activity whose note carries the
    run state.
 
-When any step fails, stop. Run the failing command again with `--debug`, show the person the
-request and the server's answer in a few lines, and say what did not save. Exit 2 means the
-session is not signed in: ask them to refresh `UA_COOKIE` (or check `UA_USERNAME` and
-`UA_PASSWORD`). Do not send the gate or start the next step until the check passes.
+When any step fails, stop, show the person what failed and the error in a few lines, and say
+what did not save. Do not send the gate or start the next step until the check passes.

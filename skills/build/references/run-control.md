@@ -3,8 +3,8 @@
 One POC is one row in `orbit_studio_poc`, however many sessions work on it, with its history in
 `orbit_studio_activity`. This file says how a
 session starts or picks up that row, keeps it current, and leaves it in a state the next
-session can carry on from. Every read and write below is `node
-"${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs"` with the recipes in [objects.md](objects.md).
+session can carry on from. Every read and write below follows the recipes in
+[objects.md](objects.md).
 
 ## New build or resume
 
@@ -49,18 +49,17 @@ AskUserQuestion call, up to four.
 
 ## Creating the row (new builds)
 
-Build the `poc_id` as `POC-<client-slug>-<YYYYMMDD>` (today), check it with `exists
-orbit_studio_poc <poc_id>`, and add `-<HHMM>` (now) when it is taken. Then `create
-orbit_studio_poc @$STUDIO/objects/poc.json` (objects.md § Recipes) with: `poc_id`,
+Build the `poc_id` as `POC-<client-slug>-<YYYYMMDD>` (today), and add `-<HHMM>` (now) when a
+POC with that key exists. Then create the `orbit_studio_poc` record (objects.md § Recipes)
+with: `poc_id`,
 `client_name`, `client_slug`, `use_case`, `brief` (the person's request as typed), `tier`,
-`owner_name`, `owner_email` and `approvers` (the person running this session; name and email
-default to the signed-in user from `whoami`), `started_by` (the same person), `started_at`
+`owner_name`, `owner_email` and `approvers` (the person running this session), `started_by` (the same person), `started_at`
 (now), `demo_date` when known, `slack_channel` (their personal Slack chat, from
 `poc-studio.yml`), `tenant_host` when the profile names it, `stage: 0_kickoff`,
 `current_gate: none`, all four gate statuses `pending`, `status: running`, `last_activity`
 and `last_activity_at`. Use the `poc_id` everywhere, including every document key
 `<poc_id>__<stage>__<slug>__v<n>`. If the create fails after the row may have been written,
-check with `exists` before trying again; never create a second row.
+check whether it exists before trying again; never create a second row.
 
 Then record a `poc_started` activity: actor the person, message `<name> started the POC for
 <client> (<tier>)`, and the run state block with `run_state: running`, `resume_from:
@@ -68,9 +67,8 @@ Then record a `poc_started` activity: actor the person, message `<name> started 
 
 ## Resume
 
-1. Find the row from what the person gave: `get orbit_studio_poc <poc_id>`, or `find
-   orbit_studio_poc --where client_slug=<slug> --sort last_activity_at:desc --limit 5` (or by
-   `client_name`).
+1. Find the row from what the person gave: its `poc_id`, or its `client_slug` or
+   `client_name` (newest `last_activity_at` first, at most five).
 2. For each match, read its latest activity (objects.md § Run state). Show the matches in the
    chat, at most five: POC ID, client and use case, stage, status, run state, build mode,
    resume point and last activity. Ask one question to confirm which (even when only one
