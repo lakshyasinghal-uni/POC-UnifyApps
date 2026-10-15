@@ -6,8 +6,8 @@ gates. Everything it makes is saved to Orbit.
 
 ## Before you start
 
-- The **POC Studio** plugin, version 0.4.5 or later (each run checks for a newer one and
-  updates itself in Claude Code), and the **Nebula** plugin (the first build updates
+- The **POC Studio** plugin, version 0.4.6 or later (auto-update keeps it current;
+  `/poc-studio:update` checks by hand), and the **Nebula** plugin (the first build updates
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
   and Orbit; asks who approves gates and where gate messages go; and runs one test gate.
