@@ -10,7 +10,7 @@ description: >
   gate end to end, and saves the settings (no secrets) in Orbit with a local copy in
   poc-studio.yml, so a new chat does not need setup again.
 metadata:
-  version: "0.4.6"
+  version: "0.4.7"
 ---
 
 # POC Studio: setup
@@ -66,6 +66,12 @@ Then `orbit-api.mjs ensure-objects` (or the same calls from the tab). It creates
 `skills/build/references/orbit-objects.json`, and never alters one that exists. Report which
 existed and which were created.
 
+Then `orbit-api.mjs schema-check`. It compares the three live schemas with the field names and
+single-select values the plugin writes (orbit-records.md § Field names). Exit 5 means they
+differ: show the list it returns, one line per difference, say that the plugin and the Orbit
+objects need to be brought back in line, and stop setup there. Never change an object and
+never rename a field to make it pass.
+
 ## 3. Your personal Slack chat for gates
 
 Slack is used for one thing: when a gate is ready, a notification goes to **your personal
@@ -89,11 +95,12 @@ not need it, the build does.
 ## 5. One test gate, end to end
 
 1. **Reuse this person's setup row.** `find-poc setup-test` and keep the row whose
-   `client_slug` is `setup-test` and whose `started_by` is the signed-in Orbit user (for
-   Harshal, the existing `POC-setup-test-20261015`). Only when there is none, create one with
-   `new-poc` (client `Setup test`, `client_slug: setup-test`, `poc_name: Setup test · <user>`,
-   use case `Connection test`, `started_by` the Orbit user, owner the user, stage
-   `0_kickoff`, status `running`, `build_mode: sonic`); Orbit generates its ID. Never create a
+   `client_slug` is `setup-test` and whose `owner_email` (or `owner_name`) is the signed-in
+   Orbit user (for Harshal, the existing `POC-setup-test-20261015`). Only when there is none,
+   create one with `new-poc` (`client_name: Setup test`, `client_slug: setup-test`,
+   `poc_name: Setup test · <user>`, `use_case: Connection test`, `owner_name` and
+   `owner_email` the Orbit user, `owner_slack_id`, `slack_destination`, `stage: 0_kickoff`,
+   `status: running`, `build_mode: sonic`); Orbit generates its ID. Never create a
    second setup row for the same person.
 2. Save a one-line test document with `save-doc` (stage `0_kickoff`, slug `setup-test`, type
    `gate_pack`).
@@ -104,7 +111,7 @@ not need it, the build does.
    gate chat, and ask you to confirm the notification arrived.
 5. Take the answer from the Claude chat, save the decision as a
    `gate_decision` document (a new version on each run), set the row's status to `stopped`,
-   `run_state: done`, use case `Connection test passed <date>`, and run the write-back check
+   `run_state: done`, `last_activity: Connection test passed <date>`, and run the write-back check
    again.
 
 The setup row stays in Orbit as the record that setup passed, and as the home of the person's
@@ -120,7 +127,7 @@ working folder as a local cache; Orbit's version wins when they differ. **No sec
 either.**
 
 ```yaml
-version: 0.4.1
+version: 0.4.7
 checked: <ISO date and time>
 setup_row: <poc_id of the person's setup row>
 orbit:

@@ -22,7 +22,7 @@ description: >
   settles what it can between gates and asks Nebula and the verified UnifyApps skills rather
   than guessing. Needs /poc-studio:setup once first.
 metadata:
-  version: "0.4.6"
+  version: "0.4.7"
   requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; Orbit"
 ---
 
@@ -125,6 +125,7 @@ Slack and Orbit once.` and stop. Then check, in one pass:
 |---|---|---|
 | Slack (**required**) | one ToolSearch `+slack` and one cheap read | stop: name it, show the connector card, suggest `/poc-studio:setup` |
 | Orbit (**required**) | `node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" check`, else a signed-in tab | stop: say how to reconnect (sign in again, set `ORBIT_COOKIE`, or open Orbit for them); warn on `userMismatch` |
+| Orbit schema (**required**) | `orbit-api.mjs schema-check` (orbit-records.md § Field names) | exit 5: stop before anything is written. Show the list it returns, one line per difference, and say the plugin and the Orbit objects need to be brought back in line. Never rename a field or change a value to get past it |
 | Google Calendar | one ToolSearch `+calendar` | named; the build goes on, the demo date comes from the profile |
 | Google Drive | one ToolSearch `+drive` | named; the build goes on without client files from Drive |
 | Nebula | step 2 | named; it is needed from phase 3 |
@@ -599,20 +600,20 @@ the profile asks for them, and the field note.
 
 ## Feedback, any time
 
-Anything said about the POC's content, in the chat or in a gate thread, at any point, is
+Anything said about the POC's content in the chat, at any point, is
 feedback, not just answers at gates.
 
-1. Create a `poc_studio_feedback` row: the exact words, who gave it and their role, where
-   (`chat` or `slack_thread`), the stage, the gate if any, the document it is about, a
-   category and a severity.
+1. Create a ticket with `orbit-api.mjs new-ticket` (orbit-records.md § Feedback tickets): the
+   exact words as `--feedback @file`, a short title, who gave it, the stage, the gate if any,
+   the document it is about, a category and a severity. Orbit returns its `ticket_no`.
 2. Acknowledge it where it was given, with its ticket number: `Logged as FB-_1012. <what will
    happen>.`
 3. Route it. From the owner it is an `OWNER` ledger row: it overrules any team decision, and
    the Stand-in may not reopen it. What the owner passes on from someone else (a client, a
    colleague) is a `COMMENT` row unless the owner says to act on it: the Stand-in weighs it,
    and the owner sees it at the next gate.
-4. Close it when it is done or decided against: `status: done` or `wont_do`, and one line in
-   `resolution` saying what was done. Then `sync-counts`.
+4. Close it when it is done or decided against with `close-ticket`: `status: done` or
+   `wont_do`, and one line in `action_taken` saying what was done. Then `sync-counts`.
 
 Every gate message lists the tickets raised since the last gate, with their status.
 

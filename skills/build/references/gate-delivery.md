@@ -21,8 +21,8 @@ The person running POC Studio is the gate owner: theirs is the only answer that 
 ## The Slack notification
 
 Post one message in the person's personal chat (the self-DM ID setup saved, kept on the row as
-`slack_channel`), in the POC's thread there (`slack_thread_ts`; the first gate posts the root
-message and saves its `ts`). Plain words, no tool or file names:
+`slack_destination`), in the POC's thread there (`last_gate_thread`; the first gate posts the
+root message and saves its `ts` there). Plain words, no tool or file names:
 
 ```
 POC Studio · <Client> · <Gate name> (<G1|G2|G3|G4>) is ready for your approval
