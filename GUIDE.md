@@ -6,7 +6,7 @@ gates. Everything it makes is saved to Orbit.
 
 ## Before you start
 
-- The **POC Studio** plugin, version 0.4.4 or later (each run checks for a newer one and
+- The **POC Studio** plugin, version 0.4.5 or later (each run checks for a newer one and
   updates itself in Claude Code), and the **Nebula** plugin (the first build updates
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
@@ -43,9 +43,9 @@ with a suggested answer you can take with `use suggestion`.
 If your login has expired it asks you to sign in to the tenant. Pick "Open browser" and sign in.
 
 **6. Answer the gates.**
-At the end of each phase it posts a gate in your personal Slack chat and shows it here. Open the Orbit links,
-then reply with the gate's words (for example `approve`, or `changes: drop the SMS step`). The
-first answer from either place counts.
+At the end of each phase you get a notification in your personal Slack chat, and the gate
+appears here. Open the Orbit links, then answer here in the chat with the gate's words (for
+example `approve`, or `changes: drop the SMS step`). Replies in Slack are not read.
 
 **7. Wait.**
 You will see short progress lines, such as "Round 1: picked a storyline" and "Task 3 of 14 done". Behind the scenes it:
@@ -92,8 +92,8 @@ new POC.
 
 ## When it will stop and ask you
 
-At four gates. Each is posted in your personal Slack chat with links to the Orbit records and
-shown in the Claude chat at the same time; answer in either place:
+At four gates. Each sends a notification to your personal Slack chat with the Orbit links, and
+you approve it here in the Claude chat:
 
 1. **G1 · Path** (`approve`, `partial`, `edited`, `block`): the research document, with what
    the client said and the readiness verdict.
@@ -103,8 +103,8 @@ shown in the Claude chat at the same time; answer in either place:
    changes; each becomes a ticket and the checks run again.
 4. **G4 · Release** (`approve`, `changes: …`, `hold`): the runbook, video and field note.
 
-With three days or fewer to the demo, they come in pairs (G1+G2, G3+G4). Only these four go to
-Slack. Anything else it needs (a sign-in, a delete, a credential, a budget it cannot meet, a
+With three days or fewer to the demo, they come in pairs (G1+G2, G3+G4). Only their notifications go
+to Slack. Anything else it needs (a sign-in, a delete, a credential, a budget it cannot meet, a
 risky fix, a failed build, the design system's two stops, a Nebula restart, narration approval
 before a video, and Zen questions) is asked here in the Claude chat only. Feedback is welcome
 any time and gets a ticket number.

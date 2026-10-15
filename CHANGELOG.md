@@ -6,6 +6,15 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.5 (2026-10-15)
+
+- **Gates are approved in the Claude chat.** Slack only notifies: when a gate is ready, a
+  message goes to the person's personal Slack chat with the Orbit links, asking them to approve
+  in the Claude chat. Replies in Slack are not read.
+- Removed what depended on reading Slack: the scheduled thread checks, the reminder, the gate
+  expiry and setup's expiry question. A gate waits in the chat; a resume shows it again. Live
+  approval from Slack is left for later.
+
 ## 0.4.4 (2026-10-15)
 
 - **Only the four gate approvals go to Slack,** and they go to the person's own personal Slack

@@ -8,7 +8,8 @@ description: >
   whether to run in Sonic (no questions between gates) or Zen (clarifying questions at any step);
   a resume finds the row, confirms it, reads the working documents back from Orbit and carries
   on from its resume point. It runs a POC end to end in four phases, each closed
-  by an owner gate delivered in Slack and in the chat: phase 1 captures signals from Slack,
+  by an owner gate approved in the Claude chat, with a Slack notification: phase 1 captures
+  signals from Slack,
   Gmail, Calendar and Drive and researches the web into one research document (G1 Path); phase
   2 writes a BRD sized to the tier, then the client's design system from it (G2 Scope and BRD);
   phase 3
@@ -21,7 +22,7 @@ description: >
   settles what it can between gates and asks Nebula and the verified UnifyApps skills rather
   than guessing. Needs /poc-studio:setup once first.
 metadata:
-  version: "0.4.4"
+  version: "0.4.5"
   requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; Orbit"
 ---
 
@@ -82,10 +83,10 @@ earliest gate whose pack it changes is asked again.
   build, the design system's own two stops (a brand hue two credible sources disagree on by
   more than ~30°, and a logo that cannot be fetched as a real file), a Nebula update that needs
   a fresh session to load, and the narration approval before a demo video is recorded.
-- **Only the four gates go to Slack,** to the owner's personal Slack chat and the Claude chat
-  at once (gate-delivery.md). Every other question, Zen questions and every stop above, is
-  asked in the Claude chat only, after the write-back check (gate-delivery.md § Questions in
-  the Claude chat).
+- **Gates are approved in the Claude chat.** Each of the four gates sends a notification to the
+  owner's personal Slack chat with the Orbit links and asks them to approve in the Claude chat;
+  Slack replies are not read (gate-delivery.md). Every other question, Zen questions and every
+  stop above, is asked in the Claude chat only, after the write-back check.
 - **One row per POC, kept current.** A new build always creates a new row; a resume is asked
   for by name and confirmed. `run_state`, `resume_from`, `stall_reason`, `active_session` and
   `last_heartbeat_at` are kept current at every write-back check, and every working file is
@@ -139,7 +140,7 @@ Nebula <version>.`
 
 **1b. New build or resume, and the build mode.** Decide from the person's words as
 run-control.md § New build or resume says. **A resume** follows run-control.md § Resume: find,
-confirm, claim, read the working documents back, check the open gate's Slack thread, then go to
+confirm, claim, read the working documents back, show any open gate again, then go to
 the step in `resume_from` with the row's build mode; steps 2 to 11 below run only as far as
 that step needs (Nebula found, safety loaded, `STUDIO` set, profile read from its working
 document). **A new build** asks the build mode once, in the chat (run-control.md § Build
@@ -624,7 +625,7 @@ Every gate message lists the tickets raised since the last gate, with their stat
 ## What the person sees
 
 One line at kickoff, one per phase step and round, each gate with its pack and reply words
-(in Slack and the chat), Nebula's own build lines, one per fixed beat, one per ticket
+(approved in the chat, with a Slack notification), Nebula's own build lines, one per fixed beat, one per ticket
 acknowledged, then the handoff. Plain words; entity names, ticket numbers and Orbit links are
 fine, tool names and file paths are not. Errors are what happened and what happens next, one
 line each.

@@ -70,8 +70,7 @@ ID, find the row with `find-poc` before trying again; never create a second one.
    `fetch-doc` each latest version), and the approved research, assessment, BRD and design
    system into the working folder. A working document Orbit does not have is rebuilt from the
    approved documents, and a ticket says so.
-5. **Check the open gate's Slack thread** (`slack_thread_ts` on the row) for an answer given
-   while no session was running, and take the owner's reply as gate-delivery.md says.
+5. **Show the open gate or question again** in the Claude chat, if one was waiting.
 6. Use the row's `build_mode`. Carry on from `resume_from`. Say one line: `Resuming
    <poc_id> (<name>) in <Sonic | Zen> from <resume_from>.`
 
@@ -83,7 +82,7 @@ Kept current at every write-back check with `heartbeat`, and whenever it changes
 |---|---|---|---|
 | `running` | a session is working on the POC | the step just started, e.g. `1_signal_capture · discovery wave` | cleared |
 | `waiting_gate` | a gate or Zen question is sent and the turn ends waiting | `G2 · round 1`, or `Zen question · 3_scope · <key>` | cleared |
-| `stalled` | the session stops before the phase is done: the person stops it, a required connection is lost, a gate expires, a Nebula update needs a fresh session | the exact step to redo, e.g. `5_build · plan task t7` | one line: what stopped it |
+| `stalled` | the session stops before the phase is done: the person stops it, a required connection is lost, a Nebula update needs a fresh session | the exact step to redo, e.g. `5_build · plan task t7` | one line: what stopped it |
 | `failed` | a Nebula plan or the code app build fails and cannot be fixed in the run (§ Failed build) | `5_build · <plan id> · task <id>` | the failure, one line |
 | `done` | G4 approved (released) | `G4 · released` | cleared |
 | `abandoned` | the owner chooses stop at a gate or a failure | where it stopped | the owner's reason |
