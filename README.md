@@ -101,6 +101,7 @@ poc-studio/
   scripts/explainer-html.mjs       turns the explainer's Markdown into one HTML page
   scripts/nebula-root.mjs          finds the installed Nebula, checks its version and whether
                                    it can build code-first apps
+  skills/poc-research/             Stages 1–2: cited web research, approved at the research gate
   skills/design-system/            Stage 4: the client's measured design system (DL v3.4)
   skills/unifyapps-*/              verified UnifyApps platform skills (builder, apps, config
                                    apps, connectors, context graph, governance, backup and

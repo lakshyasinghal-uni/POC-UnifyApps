@@ -8,6 +8,11 @@ Every change that is merged into `main` gets an entry here, and the version in
 
 ## 0.2.0 (2026-10-15)
 
+- Stage 1–2: added the `poc-research` skill (six-lens, cited web research into
+  `research/<client>-research.md`). The Researcher runs it in discovery; the new research gate
+  (G1, profile `research gate: review`) has the PM approve the draft before scoping, and its
+  open questions become ledger rows. Its prior-work lens reads the solution playbook.
+
 - Stage 4: added the `design-system` skill (Design Language v3.4 skinned onto the client's
   brand, luminance preserved, audited in light and dark; ships a style guide, token block,
   logo kit and type note). The build reuses `studio/design-systems/<client>/` or generates

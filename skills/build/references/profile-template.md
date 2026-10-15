@@ -23,6 +23,7 @@ request.
 - sources: <slack gmail calendar, any subset, or none> · <what to look for, when known>
 - slack: <channels to read, such as #acme-deal #sales-emea, or "find them">
 - nebula: <latest-code | keep> · <latest-code updates Nebula to the code-builder beta at the start of a build when it is older; keep never updates>
+- research gate: <review | skip> · <review shows the cited research document and waits for the PM's approval before scoping; skip carries on and lists its open questions>
 - design system: <reuse | generate> · <reuse takes studio/design-systems/<client-slug>/ when it exists; generate runs the design-system skill>
 - video: <on | off> · <on renders a narrated demo video with its script, runbook and presenter manual at handoff>
 - frontend: <nebula | code | both> · <nebula builds the Config app; code builds it in the Code Builder from the Text2Code prompt; both does both>
@@ -51,6 +52,7 @@ request.
 | sources | `slack gmail calendar`: whichever is connected is read; a missing one is noted and skipped |
 | slack | `find them`: the Researcher searches channels by the client's name, domain and the demo words |
 | nebula | `latest-code`: updated to the code-builder beta when older |
+| research gate | `review` |
 | design system | `reuse` when the client's folder exists, else `generate` |
 | video | `off` |
 | frontend | `nebula`; the Text2Code prompt is written in every case |
