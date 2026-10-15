@@ -10,12 +10,12 @@ it delivers, then what the solution does to get there. No screen tours, no featu
 rhetorical phrasing. Every requirement traces to a source: the client's words (context notes),
 a research finding, or a ledger decision with its tag.
 
-Save it to Orbit as `save-doc --stage 3_scope --slug brd --type brd --status in_review`. A
+Save it as a document ([objects.md](objects.md) § Recipes): stage `3_scope`, slug `brd`, type `brd`, gate pack `g2`, status `in_review`. A
 change to a requirement after G2 is a new version, never an edit in place.
 
 ## Size by tier
 
-| Section | sprint | standard | full |
+| Section | express | standard | full |
 |---|---|---|---|
 | 1 Summary | ✓ | ✓ | ✓ |
 | 2 Goals and success measures | 3 goals | ✓ | ✓ |

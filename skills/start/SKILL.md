@@ -5,10 +5,10 @@ description: >
   or asks to "start POC Studio", "start a POC", "start the journey" or "kick off a POC build".
   It is the one front door: it checks GitHub for a newer POC Studio (5 seconds at most) and
   installs it in Claude Code, runs setup when this person has never run it, then hands over to
-  the build, which checks the connectors, Orbit and the schema and starts the POC. It also takes
+  the build, which checks the connectors and the UnifyApps objects and starts the POC. It also takes
   "resume <POC ID or name>" to carry on an existing POC.
 metadata:
-  version: "0.4.9"
+  version: "0.5.0"
 ---
 
 # POC Studio: start
@@ -34,16 +34,14 @@ Run `node "${CLAUDE_PLUGIN_ROOT}/scripts/version-check.mjs" --timeout 5`.
 
 ## 2. Setup, only when it has never run
 
-Run `node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" check`, then look for this person's
-setup row and its `settings` document (`find-poc setup-test`, the row whose `owner_email` or
-`owner_name` is the signed-in user; then `fetch-doc --poc <row> --slug settings --out
-poc-studio.yml`).
+Look for `poc-studio.yml` in the working folder and its `setup_row`, then run
+`node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" whoami`.
 
 - **Settings found:** one line, `Setup found (<date it was saved>).` Go to step 3.
-- **No settings, or Orbit not reachable without them:** say `Running setup first; it connects
-  Slack and Orbit once.` and load the `poc-studio:setup` skill with the Skill tool. Follow it to
+- **No settings, or `whoami` fails:** say `Running setup first; it connects Slack and the
+  UnifyApps objects once.` and load the `poc-studio:setup` skill with the Skill tool. Follow it to
   the end. When setup passes, go to step 3. When setup stops (a required connection missing,
-  or the schema check lists differences), stop here too; setup has already said why.
+  or an object is missing), stop here too; setup has already said why.
 
 Do not run setup again when settings exist; a broken connection is caught in step 3.
 
@@ -55,8 +53,8 @@ and the demo date.` Take the answer as the request. When they typed `resume …`
 request.
 
 Then load the `poc-studio:build` skill with the Skill tool, passing the request as its
-arguments, and follow it from Phase 0. Its first step checks the connectors (Slack, Orbit,
-Calendar, Drive, Nebula) and the Orbit schema and prints one status line; a required one
+arguments, and follow it from Phase 0. Its first step checks the connectors (Slack, the
+UnifyApps objects, Calendar, Drive, Nebula) and prints one status line; a required one
 failing stops the build there. Then it asks Sonic or Zen (new builds) or finds the POC
 (resume), and the journey runs from there.
 

@@ -27,7 +27,7 @@ Built <date> on <host> · solution <name> · Nebula <version> · POC Studio <ver
 <The entityTable exactly as plan finish returned it.>
 
 ## The look
-<The design system: its swatch, shipped font and Orbit link; then two lines from brand.md on what came from the client's site and what was approximated (font, greys).>
+<The design system: its swatch, shipped font and record link; then two lines from brand.md on what came from the client's site and what was approximated (font, greys).>
 
 ## The data
 <Three lines from the data plan: what was given and masked, what is assumed and shaped like which system, where the demo's data lives. Then the sentence to say if asked "is this our data?">
@@ -46,16 +46,16 @@ Unverified: <what could not be proven, and the one check that would settle it.>
 
 ## Gates
 
-| Gate | Round | Asked | Answered by | Where | Answer | Their words | Orbit record |
-(from the POC's `gate_decision` documents; status line at the top of the runbook: `Demo-ready · released by <name> on <date>`, `held`, or `stopped at <gate>`)
+| Gate | Round | Asked | Answered by | Where | Answer | Their words | Record |
+(from the POC's `gate_decided` activities; status line at the top of the runbook: `Demo-ready · released by <name> on <date>`, `held`, or `stopped at <gate>`)
 
 ## Feedback
 
 | Ticket | From | Words | Status | What was done |
-(every `poc_studio_feedback` row for this POC)
+(every `orbit_studio_feedback` row for this POC)
 
-## In Orbit
-POC <poc_id> · <Orbit link> · <n> documents (latest versions listed with links)
+## Records
+POC <poc_id> · <record link> · <n> documents (latest versions listed with links)
 
 ## Decisions taken for you
 <One line per STAND-IN, JUDGE, DESIGNER and MODERATOR ledger row:>

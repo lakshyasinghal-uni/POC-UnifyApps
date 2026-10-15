@@ -4,8 +4,9 @@ Runs a UnifyApps POC end to end, from the first client signal to a released demo
 owner deciding at four gates. Built on Demo Studio 0.6.0 by Gourav Mahunta and Maher's verified
 UnifyApps platform skills. Plugin maintenance notes are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Every document, gate decision and piece of feedback is saved to **Orbit**
-(orbit.uat.unifyapps.com). Gates are sent to **Slack** with links to the Orbit records and shown
+Every POC, document, piece of feedback and event is saved to four **UnifyApps objects** on
+Orbit (orbit.uat.unifyapps.com) over the REST API. Gates are sent to **Slack** with links to the
+records and shown
 in the chat at the same time. The final app is built **code-first** by the Nebula plugin with
 its code builder.
 
@@ -54,51 +55,37 @@ It checks and connects, in this order:
 1. **Slack** (required): gate messages, replies and feedback. **Google Calendar** and **Google
    Drive** are checked too; when either is missing you get a connector card, and the build
    goes on without it.
-2. **Orbit** (required), by direct API with an environment secret: `ORBIT_COOKIE`, or
-   `ORBIT_USERNAME` and `ORBIT_PASSWORD` for a local account. Set these as environment
-   secrets; never paste them into the chat. Without them, it uses an Orbit tab you are signed
-   in to. It warns you if Orbit is signed in as someone else.
-3. **The three Orbit objects** POC Studio writes to: `poc_studio_poc`, `poc_studio_document`
-   and `poc_studio_feedback`. Any that is missing is created; none is ever changed or deleted.
+2. **The UnifyApps objects** (required): the client `scripts/ua-objects.mjs` signs in over the
+   REST API with an environment secret, `UA_COOKIE`, or `UA_USERNAME` and `UA_PASSWORD` for a
+   local account (tenant `UA_BASE`, default `https://orbit.uat.unifyapps.com`). Set these as
+   environment secrets; never paste them into the chat. No browser tab is used.
+3. **The four Orbit Studio objects** POC Studio writes to: `orbit_studio_poc`,
+   `orbit_studio_document`, `orbit_studio_feedback` and `orbit_studio_activity`. Setup reads
+   each one's fields and lists any difference from what the plugin writes; it never creates or
+   changes an object.
 4. **Your personal Slack chat** for the four gate approvals (your own DM, posted as you
    through your Slack connection), where gate notifications are sent.
 5. **Nebula**: its version, and whether it can build code apps. The first build updates it
    to the code-builder version if needed.
-6. **One test gate**, end to end: a test POC row and document in Orbit, a test notification in
-   your Slack, the approval in the chat, recorded and read back.
+6. **One test gate**, end to end: a test POC row, document and activities, a test notification
+   in your Slack, the approval in the chat, recorded and read back.
 
-Setup also runs a **schema check**: it reads the three objects' live schemas and compares them
-with every field name and single-select value POC Studio writes. If anything differs, setup
-(and every build, which runs the same check first) stops with the exact list and writes
-nothing. POC Studio never changes the Orbit objects.
+It saves your settings in `poc-studio.yml`, with no secret in it.
 
-Every value POC Studio writes to an Orbit dropdown goes through one mapping table,
-`skills/build/references/orbit-contract.json` (for example the internal stage
-`1_signal_capture` is written as `1_signal`). Before any create or update the whole record is
-checked against the live schema; anything wrong stops the write with a list.
+### Debugging the write-back
 
-To prove the whole contract on the real tenant (setup runs this once per version):
+Every read and write goes through one plain client, so you can run any step by hand:
 
 ```
-node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" contract-test
+node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" whoami
+node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" schema orbit_studio_poc
+node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" find orbit_studio_activity --where poc=<poc_id> --sort created_at:desc --limit 5
+node "${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs" create orbit_studio_feedback @ticket.json --debug
 ```
 
-It writes every value the plugin can produce to `[TEST]` rows, reads each back, and prints a
-pass list; nothing is deleted.
-
-For a quicker end-to-end check:
-
-```
-node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" selftest
-```
-
-It runs the schema check, writes and reads back one record on each object (on a single
-`POC Studio · self-test` row it reuses), uploads and downloads one file, and prints a results
-table.
-
-It saves your settings in Orbit (with a copy in `poc-studio.yml`), with no secret in either,
-so a new chat finds them without running setup again. It also asks how long a gate may wait
-before the POC is put on hold.
+`--debug` prints every request and response; `--log <file>` keeps them as JSON lines. What
+you pass is what is sent: there is no mapping table, no queue and no browser tab. The fields
+and values each object takes are in `skills/build/references/objects.md`.
 
 ## What you type
 
@@ -111,9 +98,9 @@ approvals and an AI assistant, demo to their COO on Friday.
 
 It checks GitHub for a newer POC Studio (5 seconds at most; when GitHub is slow it carries on),
 runs setup if you have never run it, then starts the build, which checks your connectors,
-Orbit and the schema first. When it installs an update it asks you to type `/reload-plugins`
+and the objects first. When it installs an update it asks you to type `/reload-plugins`
 and run the same command again, because Claude Code loads a new version only then. Without a
-request it asks what the POC is. `/poc-studio:start resume POC-_1007` carries on an existing
+request it asks what the POC is. `/poc-studio:start resume POC-acme-logistics-20261015` carries on an existing
 POC.
 
 The steps also work on their own:
@@ -125,17 +112,17 @@ approvals and an AI assistant, demo to their COO on Friday.
 
 It asks one thing first: **Sonic** (no questions during the build; only the four gates reach
 you) or **Zen** (it may ask clarifying questions at any step, each with a suggested answer).
-Every new build gets a new POC in Orbit with an ID Orbit generates (`POC-_1001`, …).
+Every new build gets a new POC row with the ID `POC-<client-slug>-<YYYYMMDD>`.
 
 To carry on with an existing POC, in this chat or a new one, name it:
 
 ```
-/poc-studio:build resume POC-_1007
+/poc-studio:build resume POC-acme-logistics-20261015
 /poc-studio:build continue the Acme fleet approvals POC
 ```
 
 It finds the matches, shows each one's stage, run state, mode and last activity, asks which,
-reads its working files back from Orbit, shows any gate that was waiting, and carries on from
+reads its working files back, shows any gate that was waiting, and carries on from
 where it stopped. If another session worked on it in the last two hours, it
 asks before taking over.
 
@@ -148,9 +135,9 @@ Optional, once per client, so later runs need fewer decisions:
 
 ## What happens
 
-| Phase | Produces, saved to Orbit | Ends with |
+| Phase | Produces, saved to the objects | Ends with |
 |---|---|---|
-| **0 · Kickoff** | prerequisites checked (Slack and Orbit before anything else), the profile, the POC row in Orbit with owner and tier | — |
+| **0 · Kickoff** | prerequisites checked (Slack and the objects before anything else), the profile, the POC row with owner and tier | — |
 | **1 · Signals and research** | **the research document**: cited web research on the client, the process, the rules, the market and realistic data, plus what the client and team said in Slack, Gmail, Calendar and Drive, and a readiness verdict | **G1 · Path** |
 | **2 · Scope, BRD and design** | **the BRD**, sized to the tier, then **the design system** made from it | **G2 · Scope and BRD** |
 | **3 · Build** | **the app**, built code-first by the code-builder Nebula (in Sonic or Zen, as chosen) from the approved BRD and design system, then rehearsed in a browser and checked | **G3 · Final review** |
@@ -158,14 +145,14 @@ Optional, once per client, so later runs need fewer decisions:
 
 Those five are the only documents a POC produces for review, in that order: research
 document, BRD, design system, app, collaterals. The team's own notes along the way (the
-decision ledger, storylines, data plan, design notes, check results and so on) are saved to
-Orbit as working documents so any chat can resume the POC; they are never sent at a gate.
+decision ledger, storylines, data plan, design notes, check results and so on) are saved
+as working documents so any chat can resume the POC; they are never sent at a gate.
 
 ## The four gates
 
 **You approve gates in the Claude chat.** When a gate is ready, a notification goes to **your
-personal Slack chat** (your own DM, posted as you through your Slack connection) with the Orbit
-links and the feedback raised since the last gate, asking you to approve in the Claude chat.
+personal Slack chat** (your own DM, posted as you through your Slack connection) with links to the
+records and the feedback raised since the last gate, asking you to approve in the Claude chat.
 That notification is the only thing POC Studio sends to Slack, and replies there are not read.
 In the chat, answer with the gate's reply words.
 
@@ -180,13 +167,13 @@ In the chat, answer with the gate's reply words.
 - A gate waits in the chat until you answer; it is never passed. If you close the session,
   the next resume shows the gate again.
 - With three days or fewer to the demo date, the gates come in pairs (G1 with G2, G3 with G4).
-- Before any gate is sent, every document made so far is read back from Orbit. If something
-  did not save, you are asked to reconnect, and the gate waits.
+- Before any gate is sent, every document made so far is read back. If something did not
+  save, you see the failing request and the server's answer, and the gate waits.
 
 ## Feedback, any time
 
-Say it in the chat or in a gate thread, whenever. Each piece of feedback becomes a ticket in
-Orbit (`FB-_1001`, `FB-_1002`, …) with your exact words, is acknowledged with its number, and is
+Say it in the chat or in a gate thread, whenever. Each piece of feedback becomes a ticket
+(`FB-1001`, `FB-1002`, …) with your exact words, is acknowledged with its number, and is
 closed with what was done. Your feedback overrules any decision the team made; something you
 pass on from someone else is weighed and shown at the next gate, unless you say to act on it.
 
@@ -198,9 +185,10 @@ in Zen, clarifying questions too.
 
 ## If a build stops or fails
 
-The POC row always says where it stands: `run_state` (running, waiting on a gate, stalled,
-failed, done, abandoned), the exact step to resume from, and why it stopped. Every working
-file (the decision ledger, designs, brief, entity table) is saved to Orbit as it changes, so
+The POC row always says where it stands (stage, status, gates, and why it is blocked), and its
+latest activity holds the run state (running, waiting on a gate, stalled, failed, done,
+abandoned), the exact step to resume from and the build mode. Every working file (the decision
+ledger, designs, brief, entity table) is saved as it changes, so
 any new chat can pick it up. If Nebula cannot finish the build, a failure document lists what
 was built with links, and you are asked: `retry`, `back to G2` (smaller scope), or `stop`.
 Nothing on the tenant is deleted.
@@ -211,8 +199,8 @@ Nothing on the tenant is deleted.
   answered from Nebula, then from the verified UnifyApps skills shipped here
   (`skills/build/references/ask-nebula.md`). The platform fails silently, so a guess is worse
   than no answer.
-- **Orbit is the record.** The full file of every document is uploaded, versioned (a new
-  version supersedes the old one; nothing is deleted) and its text kept alongside.
+- **The objects are the record.** The full file of every document is uploaded, versioned (a
+  new version supersedes the old one; nothing is deleted) and its text kept alongside.
 - **It builds only what the approved BRD and the demo's beats use.** Everything else is cut,
   however good.
 
@@ -231,9 +219,9 @@ that reaches you.
 
 - The app on your tenant, code-first, in the client's colours and fonts, with its data,
   automations and assistant.
-- In Orbit, under the POC: the research document, the BRD, the design system, the
-  collaterals (runbook, explainer, video and PDFs, field note), every gate decision and every
-  feedback ticket, plus the working documents that let any chat resume it.
+- In the Orbit Studio objects, under the POC: the research document, the BRD, the design
+  system, the collaterals (runbook, explainer, video and PDFs, field note), every gate decision
+  in the activity log and every feedback ticket, plus the working documents that let any chat resume it.
 - The same documents in your working folder as working copies, and the client profile in
   `studio/profiles/<client>.md`.
 
@@ -243,10 +231,10 @@ that reaches you.
 poc-studio/
   .claude-plugin/plugin.json
   skills/start/SKILL.md            the front door: update check, setup if needed, then the build
-  skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, Orbit, your Slack chat, a test gate
+  skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, the objects, your Slack chat, a test gate
   skills/update/SKILL.md           check for and install the latest version; auto-update on
   skills/build/SKILL.md            the four phases and their gates
-  skills/build/references/         gates, gate-delivery, run-control, orbit-records, orbit-objects.json,
+  skills/build/references/         gates, gate-delivery, run-control, objects (the four objects and recipes),
                                    brd-template, nebula-bridge, ask-nebula, context-research,
                                    data-plan, external-connections, innovation,
                                    explainer, text2code, code-design-brief, brand-to-look,
@@ -264,9 +252,8 @@ poc-studio/
   agents/                          stand-in, scout, researcher, ideator, innovator,
                                    data-assumer, connector, designer, judge, critic,
                                    rehearsal, scribe, coder, ua-scout, ua-checker
-  scripts/orbit-api.mjs            Orbit without a browser: check, schema-check, selftest, new-poc,
-                                   find-poc, claim, heartbeat, records, upload, save-doc, fetch-doc,
-                                   readback, new-ticket, close-ticket, flush
+  scripts/ua-objects.mjs           plain REST client for the objects: whoami, schema, get, exists,
+                                   find, next-id, create, update, upload; --debug and --log
   scripts/nebula-root.mjs          finds Nebula, checks its version and code-builder support
   scripts/version-check.mjs        installed vs GitHub main; updates in Claude Code with --apply
   scripts/enable-autoupdate.mjs    turns on auto-update for poc-unifyapps in your Claude settings

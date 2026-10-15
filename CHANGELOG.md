@@ -6,6 +6,33 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.5.0 (2026-10-15)
+
+- **The Orbit write-back starts afresh.** The old path is removed: `scripts/orbit-api.mjs`, the
+  signed-in tab transport (`scripts/orbit-tab.mjs` and its bundle), the mapping contract
+  (`orbit-contract.json`), `orbit-objects.json`, `orbit-records.md`, the schema check, the
+  contract test, the self-test, the write queue and `flush`, session claims and heartbeats, and
+  the settings document on the setup row.
+- **New targets: the four Orbit Studio objects** on orbit.uat: `orbit_studio_poc`,
+  `orbit_studio_document`, `orbit_studio_feedback` and `orbit_studio_activity`, with their live
+  fields and options recorded in `skills/build/references/objects.md`. Skills write the
+  objects' own values (stages `1_signal_capture` … `8_demo_ready`, gates `g1` … `g4`, tier
+  `express` in place of `sprint`, POC status `running | waiting | blocked | stopped |
+  demo_ready`). The plugin builds every key: `POC-<client-slug>-<YYYYMMDD>`,
+  `<poc_id>__<stage>__<slug>__v<n>`, `FB-<n>`, `ACT-<n>`.
+- **The activity log carries the run.** Gate posts and decisions, documents saved, tickets
+  raised and closed, stage starts and ends, stops and restarts are `orbit_studio_activity`
+  rows; each note carries the run state, resume point and build mode, which a resume reads
+  from the latest one. Gate decisions are `gate_decided` activities instead of documents.
+- **`scripts/ua-objects.mjs`**, one plain REST client from the shell (no browser tab):
+  `whoami`, `schema`, `get`, `exists`, `find` (`--all` pages by offset), `next-id`, `create`,
+  `update`, `upload`. Auth from `UA_COOKIE`, or `UA_USERNAME` and `UA_PASSWORD`; tenant
+  `UA_BASE`. `--debug` prints every request and response; `--log <file>` keeps them. What is
+  passed is what is sent. A failed write stops the step and shows the request and the
+  server's answer.
+- Setup checks the sign-in and reads the four objects' fields, never creates or changes an
+  object, and keeps the settings in `poc-studio.yml` only.
+
 ## 0.4.11 (2026-10-15)
 
 - **The plugin's home is now `lakshyasinghal-uni/POC-UnifyApps`.** The install commands

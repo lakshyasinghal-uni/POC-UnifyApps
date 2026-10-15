@@ -1,18 +1,19 @@
 # Run control: build mode, new or resume, run state, working documents, failures
 
-One POC is one row in `poc_studio_poc`, however many sessions work on it. This file says how a
+One POC is one row in `orbit_studio_poc`, however many sessions work on it, with its history in
+`orbit_studio_activity`. This file says how a
 session starts or picks up that row, keeps it current, and leaves it in a state the next
-session can carry on from. Every command below is `node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs"`
-(or the same calls from a signed-in tab, orbit-records.md).
+session can carry on from. Every read and write below is `node
+"${CLAUDE_PLUGIN_ROOT}/scripts/ua-objects.mjs"` with the recipes in [objects.md](objects.md).
 
 ## New build or resume
 
-Decide from the person's words, never from what Orbit holds:
+Decide from the person's words, never from what the objects hold:
 
 - **A new build** ("build a POC for…", "start a demo for…", `/poc-studio:build <request>`):
   always a new POC row, even when the same client or use case already has one. Never resume
   automatically.
-- **A resume** ("pick up", "continue", "resume", a POC ID such as `POC-_1007`, or "the Acme
+- **A resume** ("pick up", "continue", "resume", a POC ID such as `POC-acme-logistics-20261015`, or "the Acme
   build"): find the row, confirm it, carry on (§ Resume).
 
 When the words could be either, ask one question: `Start a new POC, or continue an existing
@@ -28,8 +29,9 @@ two options:
 | **Sonic** | No questions during the build; only the four gates reach the person (and the stops the build skill lists). Nebula runs in Sonic mode. The Stand-in answers open points for the person and logs them. |
 | **Zen** | The build may ask clarifying questions at any step. Nebula runs in Zen mode with its Zen skills and questionnaires. The Stand-in only drafts a suggested answer for each question; the person answers. |
 
-Store it on the row as `build_mode` (`sonic` or `zen`). A resume uses the stored mode and
-never asks again. Gates, the write-back check and feedback tickets work the same in both.
+Record it in the run state block of every activity as `build_mode: sonic` or `zen`
+(objects.md § Run state); the `poc_started` activity carries it first. A resume uses the stored
+mode and never asks again. Gates, the save check and feedback tickets work the same in both.
 
 ### What changes in Zen
 
@@ -47,63 +49,69 @@ AskUserQuestion call, up to four.
 
 ## Creating the row (new builds)
 
-`new-poc @<file>` with the live field names (orbit-records.md § Field names): `client_name`,
-`client_slug`, `use_case`, `use_case_slug`, `poc_name` (`<Client> · <use case in a few
-words>`), `request` (the person's request as typed), `owner_name`, `owner_email` and
-`owner_slack_id` (the person running this session; the name and email default to the signed-in
-Orbit user), `slack_destination` (their personal Slack chat, from their settings), `tier`,
-`demo_date`, `tenant_host` and `solution_name` when the profile names them, `build_mode`,
-`stage: 0_kickoff`, `status: running`, `run_state: running`, `current_gate: none`, all four gate
-statuses `not_started`, and `active_session` (this session's link). `started_at`,
-`last_activity` and `last_activity_at` are filled by the command. **Never pass `poc_id`**: Orbit generates it
-(`POC-_1001`, `POC-_1002`, …). Read it from the command's output and use it everywhere,
-including every document key `<poc_id>__<stage>__<file-slug>__v<n>`. If the output carries no
-ID, find the row with `find-poc` before trying again; never create a second one.
+Build the `poc_id` as `POC-<client-slug>-<YYYYMMDD>` (today), check it with `exists
+orbit_studio_poc <poc_id>`, and add `-<HHMM>` (now) when it is taken. Then `create
+orbit_studio_poc @$STUDIO/objects/poc.json` (objects.md § Recipes) with: `poc_id`,
+`client_name`, `client_slug`, `use_case`, `brief` (the person's request as typed), `tier`,
+`owner_name`, `owner_email` and `approvers` (the person running this session; name and email
+default to the signed-in user from `whoami`), `started_by` (the same person), `started_at`
+(now), `demo_date` when known, `slack_channel` (their personal Slack chat, from
+`poc-studio.yml`), `tenant_host` when the profile names it, `stage: 0_kickoff`,
+`current_gate: none`, all four gate statuses `pending`, `status: running`, `last_activity`
+and `last_activity_at`. Use the `poc_id` everywhere, including every document key
+`<poc_id>__<stage>__<slug>__v<n>`. If the create fails after the row may have been written,
+check with `exists` before trying again; never create a second row.
+
+Then record a `poc_started` activity: actor the person, message `<name> started the POC for
+<client> (<tier>)`, and the run state block with `run_state: running`, `resume_from:
+0_kickoff`, the `build_mode` and this session's link.
 
 ## Resume
 
-1. `find-poc <what the person gave>`: a POC ID, a name, a client or a use case.
-2. Show the matches in the chat, at most five: POC ID, name, stage, run state, build mode,
+1. Find the row from what the person gave: `get orbit_studio_poc <poc_id>`, or `find
+   orbit_studio_poc --where client_slug=<slug> --sort last_activity_at:desc --limit 5` (or by
+   `client_name`).
+2. For each match, read its latest activity (objects.md § Run state). Show the matches in the
+   chat, at most five: POC ID, client and use case, stage, status, run state, build mode,
    resume point and last activity. Ask one question to confirm which (even when only one
    matches).
-3. `claim --poc <id> --session <this session's link>`. Exit 4 means another session's heartbeat
-   is younger than 2 hours: say whose and how long ago, and ask `Take over from that session?`
-   (`Take over`, `Leave it`). Take over only on a yes (`--force`).
-4. **Read the working documents back** from Orbit into `$STUDIO` (§ Working documents,
-   `fetch-doc` each latest version), and the approved research, assessment, BRD and design
-   system into the working folder. A working document Orbit does not have is rebuilt from the
-   approved documents, and a ticket says so.
-5. **Show the open gate or question again** in the Claude chat, if one was waiting.
-6. Use the row's `build_mode`. Carry on from `resume_from`. Say one line: `Resuming
-   <poc_id> (<name>) in <Sonic | Zen> from <resume_from>.`
+3. When the latest run state is `running`, under 2 hours old and from a different session, say
+   whose session and how long ago, and ask `Take over from that session?` (`Take over`,
+   `Leave it`). Carry on only on a yes.
+4. Record a `poc_restarted` activity with this session's link in its run state block.
+5. **Read the working documents back** into `$STUDIO` (§ Working documents; objects.md § Fetch
+   a document back), and the approved research, BRD and design system into the working
+   folder. A working document the objects do not have is rebuilt from the approved documents,
+   and a ticket says so.
+6. **Show the open gate or question again** in the Claude chat, if one was waiting.
+7. Use the stored `build_mode`. Carry on from `resume_from`. Say one line: `Resuming
+   <poc_id> (<client> · <use case>) in <Sonic | Zen> from <resume_from>.`
 
 ## Run state
 
-Kept current at every write-back check with `heartbeat`, and whenever it changes:
+Written in the note of an activity (objects.md § Run state) at every save check, and whenever
+it changes:
 
-| `run_state` | Set when | `resume_from` | `stall_reason` |
+| `run_state` | Set when | `resume_from` | The POC row |
 |---|---|---|---|
-| `running` | a session is working on the POC | the step just started, e.g. `1_signal_capture · discovery wave` | cleared |
-| `waiting_gate` | a gate or Zen question is sent and the turn ends waiting | `G2 · round 1`, or `Zen question · 3_scope · <key>` | cleared |
-| `stalled` | the session stops before the phase is done: the person stops it, a required connection is lost, a Nebula update needs a fresh session | the exact step to redo, e.g. `5_build · plan task t7` | one line: what stopped it |
-| `failed` | a Nebula plan or the code app build fails and cannot be fixed in the run (§ Failed build) | `5_build · <plan id> · task <id>` | the failure, one line |
-| `done` | G4 approved (released) | `G4 · released` | cleared |
-| `abandoned` | the owner chooses stop at a gate or a failure | where it stopped | the owner's reason |
+| `running` | a session is working on the POC | the step just started, e.g. `1_signal_capture · discovery wave` | `status: running`, `blocked_on` cleared |
+| `waiting_gate` | a gate or Zen question is sent and the turn ends waiting | `G2 · round 1`, or `Zen question · 3_scope · <key>` | `status: waiting` |
+| `stalled` | the session stops before the phase is done: the person stops it, a required connection is lost, a Nebula update needs a fresh session | the exact step to redo, e.g. `5_build · plan task t7` | `status: blocked`, `blocked_on`: what stopped it |
+| `failed` | a Nebula plan or the code app build fails and cannot be fixed in the run (§ Failed build) | `5_build · <plan id> · task <id>` | `status: blocked`, `blocked_on`: the failure |
+| `done` | G4 approved (released) | `G4 · released` | `status: demo_ready`, `stage: 8_demo_ready` |
+| `abandoned` | the owner chooses stop at a gate or a failure | where it stopped | `status: stopped`, `blocked_on`: the owner's reason |
 
-`active_session` and `last_heartbeat_at` are set by every `claim` and `heartbeat`. Before a
-turn ends without a gate open (an error, the person leaving, a stop), set `stalled` with the
-exact `resume_from`. A row left `running` whose heartbeat is older than 2 hours is treated as
-stalled by the next `claim`.
-
-`status` stays the POC's outcome (`running`, `waiting_on_gate`, `blocked`, `stopped`, `held`,
-`released`); `run_state` is what a session is doing with it.
+Before a turn ends without a gate open (an error, the person leaving, a stop), record
+`stalled` with the exact `resume_from`. A POC whose latest activity says `running` and is
+older than 2 hours is treated as stalled by the next resume.
 
 ## Working documents
 
 The only documents sent for review are the research document, the BRD, the design system and
 the collaterals (and the app itself). Everything the team writes along the way lives in
-`$STUDIO` while a session works and is saved to Orbit as a working document
-(type `other`, status `draft`) at every write-back check when they changed, so a resume in a
+`$STUDIO` while a session works and is saved as a working document (objects.md § Recipes,
+status `draft`, the type of their stage as objects.md § Document types says) at every save
+check when they changed, so a resume in a
 new chat can carry on:
 
 | Slug | File | From |
@@ -118,10 +126,9 @@ new chat can carry on:
 | `working-code-design` | `code-design.md` | round 2 on |
 | `working-profile` | the client profile | phase 0 on |
 | `working-brief` | the Nebula brief | phase 3 on |
-| `entity-table` | the entity table with builder links (Markdown) | after every `plan finish`, and on a failure |
+| `working-entity-table` | the entity table with builder links (Markdown) | after every `plan finish`, and on a failure |
 | `working-rehearsal`, `working-checks`, `working-unverified` | rehearsal (with shots), check results, the unverified list | phase 3 on |
 | `working-demo-script`, `working-text2code` | the demo script and the Text2Code prompt | phase 3 on |
-| `run-log` | this session: link, start, steps done, how it ended | at every write-back check |
 
 ## Failed build
 
@@ -130,13 +137,13 @@ it (when-something-fails.md):
 
 1. `plan finish` (or `plan get`) for whatever was built; write `entity-table.md` with every
    entity that exists, its builder link and whether the beats need it.
-2. Save a failure document (`save-doc --slug failure --type other --stage 5_build`): what was
+2. Save a failure document (slug `failure`, type `build_report`, stage `5_build`): what was
    being built, the exact task and error, what was tried, the partial entity table, and what
    each option below would do. Nothing on the tenant is deleted; partial entities are kept for
    reuse or listed for the owner to remove by hand.
-3. `heartbeat --run-state failed --resume-from "<step>" --stall-reason "<one line>"`, run the
-   write-back check, then ask in the Claude chat (gate-delivery.md § Questions in the Claude
+3. Record the run state `failed` with `resume_from: <step>`, set the POC row's `status:
+   blocked` and `blocked_on: <one line>`, run the save check, then ask in the Claude chat (gate-delivery.md § Questions in the Claude
    chat), header
    `Build failed`: `retry` (run the failed task again, once), `back to G2` (reopen G2 with
-   a smaller scope; the BRD gets a new version), `stop` (`run_state: abandoned`, `status:
-   stopped`). Wait for the owner.
+   a smaller scope; the BRD gets a new version), `stop` (run state `abandoned`, `status:
+   stopped`, and a `poc_stopped` activity). Wait for the owner.

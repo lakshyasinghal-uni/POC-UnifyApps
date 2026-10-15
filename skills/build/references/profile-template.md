@@ -18,7 +18,7 @@ request.
 - client: <name> · site <https://…> · industry <one line>
 - audience: <who watches> · <n> minutes · <in person | call | recorded> · <projector | laptop | phone>
 - owner: <who owns the POC: the person who runs POC Studio for it and answers the four gates>
-- demo date: <YYYY-MM-DD> · <sets the tier: 3 days or fewer sprint (gates merged in pairs), 4 to 10 standard, more full>
+- demo date: <YYYY-MM-DD> · <sets the tier: 3 days or fewer express (gates merged in pairs), 4 to 10 standard, more full>
 - gates: <by tier | full | merged> · <full asks all four separately; merged asks G1 with G2 and G3 with G4; never fewer>
 - presenter: <who> · tells the story from <whose seat>
 - show off: <the two or three things the demo must make obvious>
