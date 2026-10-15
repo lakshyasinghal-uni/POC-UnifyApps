@@ -1,0 +1,25 @@
+[
+  {
+    "id": "a1",
+    "segment": "A",
+    "persona": "app",
+    "caption": "One board for every open item",
+    "key": "Everything in one place. <strong>No spreadsheets.</strong>",
+    "narration": "REPLACE ME. Write this the way you would say it out loud: short sentences, concrete nouns, no feature list. Twenty to thirty seconds is one scene.",
+    "action": { "type": "goto", "url": "/", "settle": 7000 }
+  },
+  {
+    "id": "a2",
+    "segment": "A",
+    "persona": "app",
+    "caption": "The detail behind a single row",
+    "key": "The concern is named in plain language before anyone opens a record.",
+    "narration": "REPLACE ME. Each step is one idea. If you need two ideas, you need two steps.",
+    "action": { "type": "scrollTo", "text": "REPLACE ME — text that is visible on the page", "settle": 2200 },
+    "manual": {
+      "do": ["Scroll down slowly, about three notches of the wheel.", "Stop as soon as the cards are in view."],
+      "expect": "REPLACE ME — how the presenter knows it worked.",
+      "recover": "Scrolled too far? Scroll back up. Nothing here needs to be clicked."
+    }
+  }
+]

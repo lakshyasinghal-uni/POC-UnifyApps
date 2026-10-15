@@ -1,0 +1,432 @@
+{
+ "description": "CGB Pulse control room: apply a scenario (deltas to cgbp_entity / cgbp_region) or reset to baseline_json.",
+ "edges": [
+  {
+   "fromNodeId": "n_in",
+   "id": "next@n_in@n_scn",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_scn",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_scn",
+   "id": "next@n_scn@n_all",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_all",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_all",
+   "id": "next@n_all@n_ent",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_ent",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_ent",
+   "id": "next@n_ent@n_reg",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_reg",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_reg",
+   "id": "next@n_reg@n_calc",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_calc",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_calc",
+   "id": "next@n_calc@n_ue",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_ue",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_ue",
+   "id": "next@n_ue@n_ur",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_ur",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_ur",
+   "id": "next@n_ur@n_mark",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_mark",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_mark",
+   "id": "next@n_mark@n_out",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_out",
+   "type": "next"
+  }
+ ],
+ "name": "cgbp_apply_scenario",
+ "nodes": [
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3109,
+    "resourceName": "callables_from_automation"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_in",
+   "index": 0,
+   "inputs": {
+    "setup": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "scenario_code"
+     ],
+     "properties": {
+      "scenario_code": {
+       "type": "string",
+       "title": "scenario_code",
+       "description": "cgbp_scenario record id, e.g. SC-RAYYAN-ESC. SC-BASELINE resets."
+      }
+     }
+    }
+   },
+   "skip": false,
+   "title": "Input",
+   "trigger": {
+    "type": "CALLABLE"
+   },
+   "type": "START"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16417,
+    "resourceName": "storage_by_unifyapps_fetch_records",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_scn",
+   "index": 1,
+   "inputs": {
+    "triggerInputCondition": {
+     "operator": "AND",
+     "filters": [
+      {
+       "property": "id",
+       "filter": {
+        "operator": "EQUAL",
+        "value": "{{ n_in.outputs.scenario_code }}"
+       }
+      }
+     ]
+    },
+    "shouldSearchInAnalyticsStore": false,
+    "object_type": "cgbp_scenario",
+    "includeRoleMappings": false,
+    "includeCurrentUserPermissions": false,
+    "translationsOption": "DEFAULT",
+    "sortBy": [],
+    "page": {
+     "paginateBy": "OFFSET",
+     "limit": 1,
+     "offset": 0
+    },
+    "numberOfRecordsToFetch": "MULTIPLE",
+    "readThroughSessionVariables": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Read the scenario",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16417,
+    "resourceName": "storage_by_unifyapps_fetch_records",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_all",
+   "index": 2,
+   "inputs": {
+    "triggerInputCondition": {},
+    "shouldSearchInAnalyticsStore": false,
+    "object_type": "cgbp_scenario",
+    "includeRoleMappings": false,
+    "includeCurrentUserPermissions": false,
+    "translationsOption": "DEFAULT",
+    "sortBy": [],
+    "page": {
+     "paginateBy": "OFFSET",
+     "limit": 50,
+     "offset": 0
+    },
+    "numberOfRecordsToFetch": "MULTIPLE",
+    "readThroughSessionVariables": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Read all scenarios",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16417,
+    "resourceName": "storage_by_unifyapps_fetch_records",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_ent",
+   "index": 3,
+   "inputs": {
+    "triggerInputCondition": {},
+    "shouldSearchInAnalyticsStore": false,
+    "object_type": "cgbp_entity",
+    "includeRoleMappings": false,
+    "includeCurrentUserPermissions": false,
+    "translationsOption": "DEFAULT",
+    "sortBy": [],
+    "page": {
+     "paginateBy": "OFFSET",
+     "limit": 100,
+     "offset": 0
+    },
+    "numberOfRecordsToFetch": "MULTIPLE",
+    "readThroughSessionVariables": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Read entities",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16417,
+    "resourceName": "storage_by_unifyapps_fetch_records",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_reg",
+   "index": 4,
+   "inputs": {
+    "triggerInputCondition": {},
+    "shouldSearchInAnalyticsStore": false,
+    "object_type": "cgbp_region",
+    "includeRoleMappings": false,
+    "includeCurrentUserPermissions": false,
+    "translationsOption": "DEFAULT",
+    "sortBy": [],
+    "page": {
+     "paginateBy": "OFFSET",
+     "limit": 100,
+     "offset": 0
+    },
+    "numberOfRecordsToFetch": "MULTIPLE",
+    "readThroughSessionVariables": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Read regions",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "code_by_unifyapps",
+    "resourceVersion": 2609,
+    "resourceName": "code_by_unifyapps_groovy",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_calc",
+   "index": 5,
+   "inputs": {
+    "output": {
+     "type": "object",
+     "required": [],
+     "properties": {}
+    },
+    "input": {
+     "type": "object",
+     "required": [],
+     "properties": {
+      "scenario": {
+       "type": "string",
+       "title": "scenario"
+      },
+      "allScenarios": {
+       "type": "string",
+       "title": "allScenarios"
+      },
+      "entities": {
+       "type": "string",
+       "title": "entities"
+      },
+      "regions": {
+       "type": "string",
+       "title": "regions"
+      }
+     }
+    },
+    "code": "def p = { String k -> binding.hasVariable(k) ? binding.getVariable(k) : null }\ndef slurp = { s -> if (s == null || s == '') { return null }; if (s instanceof Map || s instanceof List) { return s }; try { return new groovy.json.JsonSlurper().parseText(s.toString()) } catch (e) { return null } }\ndef rows = { r -> if (r instanceof Map) { r = r.objects }; def out = []; if (r) { r.each { x -> def m = [:]; if (x.properties instanceof Map) { m.putAll(x.properties) }; m.id = x.id; out << m } }; return out }\ndef num = { v -> if (v == null) { return null }; try { return Double.parseDouble(v.toString()) } catch (e) { return null } }\ndef r1 = { double d -> Math.round(d * 10.0d) / 10.0d }\ndef PERCENT = ['satisfaction','health_score','completion','resolution','digital_adoption','risk_score','accessibility'] as Set\ndef SIGNED = ['sentiment'] as Set\ndef clampM = { String k, double v -> PERCENT.contains(k) ? Math.max(0.0d, Math.min(100.0d, v)) : (SIGNED.contains(k) ? Math.max(-100.0d, Math.min(100.0d, v)) : v) }\ndef band = { double h -> h >= 80 ? 'LOW' : (h >= 70 ? 'MEDIUM' : 'HIGH') }\ndef mk = { String id, Map f -> [id: id, updateFields: f.collect { k, v -> [fieldName: k, actionType: 'SET', setValue: v] }] }\ndef scn = rows(p('scenario'))\nif (!scn) { return [error: 'scenario not found', scenario: '', name: '', reset: false, entityUpdates: [], regionUpdates: [], scenarioUpdates: [], changed: 0] }\ndef s = scn[0]\ndef payload = slurp(s.payload_json) ?: [:]\ndef isReset = (payload.reset == true)\ndef apply = { List current, List deltas ->\n  def updates = []\n  if (isReset) {\n    current.each { r -> def base = slurp(r.baseline_json); if (base instanceof Map && base) { updates << mk(r.id.toString(), base) } }\n    return updates\n  }\n  def byId = [:]\n  current.each { r -> byId[r.id.toString()] = r }\n  (deltas ?: []).each { d ->\n    def r = byId[d.code?.toString()]\n    if (r != null) {\n      def f = [:]\n      d.each { k, v ->\n        if (k != 'code') {\n          if (v instanceof Number) { def cur = num(r[k]) ?: 0.0d; f[k] = r1(clampM(k.toString(), cur + (v as double))) } else { f[k] = v }\n        }\n      }\n      if (f.containsKey('health_score')) { f['risk_band'] = band(f['health_score'] as double) }\n      if (f) { updates << mk(r.id.toString(), f) }\n    }\n  }\n  return updates\n}\ndef eu = apply(rows(p('entities')), payload.entity as List)\ndef ru = apply(rows(p('regions')), payload.region as List)\ndef now = new java.sql.Timestamp(System.currentTimeMillis()).toString()\ndef su = rows(p('allScenarios')).collect { x -> def on = (!isReset && x.id == s.id); mk(x.id.toString(), [is_active: on, applied_at: (on ? now : '')]) }\nreturn [scenario: s.id, name: s.name_en, reset: isReset, entityUpdates: eu, regionUpdates: ru, scenarioUpdates: su, changed: eu.size() + ru.size()]",
+    "compile_static": false,
+    "captureStdOutput": false,
+    "parameters": {
+     "scenario": "{{ n_scn.outputs.objects }}",
+     "allScenarios": "{{ n_all.outputs.objects }}",
+     "entities": "{{ n_ent.outputs.objects }}",
+     "regions": "{{ n_reg.outputs.objects }}"
+    }
+   },
+   "skip": false,
+   "subTitle": "Groovy",
+   "title": "Compute every update",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16331,
+    "resourceName": "storage_by_unifyapps_bulk_upsert_records_by_id",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_ue",
+   "index": 6,
+   "inputs": {
+    "skipIfBlank": false,
+    "object_type": "cgbp_entity",
+    "skipSchemaValidation": false,
+    "updates": "{{ n_calc.outputs.result.entityUpdates }}",
+    "unsetIfNull": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Write entities",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16331,
+    "resourceName": "storage_by_unifyapps_bulk_upsert_records_by_id",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_ur",
+   "index": 7,
+   "inputs": {
+    "skipIfBlank": false,
+    "object_type": "cgbp_region",
+    "skipSchemaValidation": false,
+    "updates": "{{ n_calc.outputs.result.regionUpdates }}",
+    "unsetIfNull": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Write regions",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16331,
+    "resourceName": "storage_by_unifyapps_bulk_upsert_records_by_id",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_mark",
+   "index": 8,
+   "inputs": {
+    "skipIfBlank": false,
+    "object_type": "cgbp_scenario",
+    "skipSchemaValidation": false,
+    "updates": "{{ n_calc.outputs.result.scenarioUpdates }}",
+    "unsetIfNull": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Flag the active scenario",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3111,
+    "resourceName": "callables_return_to_automation",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_out",
+   "index": 9,
+   "inputs": {
+    "result": {
+     "applied": "{{ n_calc.outputs.result.scenario }}",
+     "name": "{{ n_calc.outputs.result.name }}",
+     "reset": "{{ n_calc.outputs.result.reset }}",
+     "changed": "{{ n_calc.outputs.result.changed }}"
+    }
+   },
+   "skip": false,
+   "title": "Response",
+   "type": "STOP"
+  }
+ ],
+ "schemaReferences": [],
+ "settings": {
+  "enableNodeLevelLogging": true,
+  "enableRunLogging": true,
+  "enableVariableLogging": true,
+  "route": {
+   "default": false,
+   "tierName": "global"
+  }
+ },
+ "standard": false,
+ "tags": [
+  "CGB_PULSE"
+ ]
+}

@@ -1,0 +1,260 @@
+{
+ "description": "CGB Pulse: generic read over any cgbp_* object (object_type, filter_field/value, limit, sort). Used by the agent.",
+ "edges": [
+  {
+   "fromNodeId": "n_in",
+   "id": "next@n_in@n_prep",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_prep",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_prep",
+   "id": "next@n_prep@n_fetch",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_fetch",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_fetch",
+   "id": "next@n_fetch@n_shape",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_shape",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_shape",
+   "id": "next@n_shape@n_out",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_out",
+   "type": "next"
+  }
+ ],
+ "name": "cgbp_query",
+ "nodes": [
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3109,
+    "resourceName": "callables_from_automation"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_in",
+   "index": 0,
+   "inputs": {
+    "setup": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "object_type"
+     ],
+     "properties": {
+      "object_type": {
+       "type": "string",
+       "title": "object_type"
+      },
+      "filter_field": {
+       "type": "string",
+       "title": "filter_field"
+      },
+      "filter_value": {
+       "type": "string",
+       "title": "filter_value"
+      },
+      "limit": {
+       "type": "string",
+       "title": "limit"
+      },
+      "sort_field": {
+       "type": "string",
+       "title": "sort_field"
+      },
+      "sort_order": {
+       "type": "string",
+       "title": "sort_order"
+      }
+     }
+    }
+   },
+   "skip": false,
+   "title": "Input",
+   "trigger": {
+    "type": "CALLABLE"
+   },
+   "type": "START"
+  },
+  {
+   "context": {
+    "appName": "code_by_unifyapps",
+    "resourceVersion": 2609,
+    "resourceName": "code_by_unifyapps_groovy",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_prep",
+   "index": 1,
+   "inputs": {
+    "output": {
+     "type": "object",
+     "required": [],
+     "properties": {}
+    },
+    "input": {
+     "type": "object",
+     "required": [],
+     "properties": {
+      "filter_field": {
+       "type": "string",
+       "title": "filter_field"
+      },
+      "filter_value": {
+       "type": "string",
+       "title": "filter_value"
+      },
+      "limit": {
+       "type": "string",
+       "title": "limit"
+      },
+      "sort_field": {
+       "type": "string",
+       "title": "sort_field"
+      },
+      "sort_order": {
+       "type": "string",
+       "title": "sort_order"
+      }
+     }
+    },
+    "code": "def p = { String k -> binding.hasVariable(k) ? binding.getVariable(k) : null }\ndef cond = [:]\ndef ff = p('filter_field')?.toString()?.trim()\ndef fv = p('filter_value')?.toString()?.trim()\nif (ff && fv) { cond = [operator:'AND', filters:[[property:'properties.' + ff, filter:[operator:'EQUAL', value: fv]]]] }\ndef lim = 60\ntry { def l = p('limit')?.toString()?.trim(); if (l) { lim = Integer.parseInt(l) } } catch (e) { lim = 60 }\nif (lim > 300) { lim = 300 }\nif (lim < 1) { lim = 1 }\ndef sorts = []\ndef sf = p('sort_field')?.toString()?.trim()\nif (sf) { sorts << [field:'properties.' + sf, order: (p('sort_order')?.toString()?.toUpperCase() == 'ASC' ? 'ASC' : 'DESC')] }\nreturn [cond: cond, page: [paginateBy:'OFFSET', limit: lim, offset: 0], sorts: sorts]",
+    "compile_static": false,
+    "captureStdOutput": false,
+    "parameters": {
+     "filter_field": "{{ n_in.outputs.filter_field }}",
+     "filter_value": "{{ n_in.outputs.filter_value }}",
+     "limit": "{{ n_in.outputs.limit }}",
+     "sort_field": "{{ n_in.outputs.sort_field }}",
+     "sort_order": "{{ n_in.outputs.sort_order }}"
+    }
+   },
+   "skip": false,
+   "subTitle": "Groovy",
+   "title": "Build the query",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16417,
+    "resourceName": "storage_by_unifyapps_fetch_records",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_fetch",
+   "index": 2,
+   "inputs": {
+    "triggerInputCondition": "{{ n_prep.outputs.result.cond }}",
+    "shouldSearchInAnalyticsStore": false,
+    "object_type": "{{ n_in.outputs.object_type }}",
+    "includeRoleMappings": false,
+    "includeCurrentUserPermissions": false,
+    "translationsOption": "DEFAULT",
+    "sortBy": "{{ n_prep.outputs.result.sorts }}",
+    "page": "{{ n_prep.outputs.result.page }}",
+    "numberOfRecordsToFetch": "MULTIPLE",
+    "readThroughSessionVariables": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Read the object",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "code_by_unifyapps",
+    "resourceVersion": 2609,
+    "resourceName": "code_by_unifyapps_groovy",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_shape",
+   "index": 3,
+   "inputs": {
+    "output": {
+     "type": "object",
+     "required": [],
+     "properties": {}
+    },
+    "input": {
+     "type": "object",
+     "required": [],
+     "properties": {
+      "rows": {
+       "type": "string",
+       "title": "rows"
+      }
+     }
+    },
+    "code": "def p = { String k -> binding.hasVariable(k) ? binding.getVariable(k) : null }\ndef out = []\ndef list = p('rows')\nif (list instanceof Map) { list = list.objects }\nif (list) { list.each { r ->\n  def m = [:]\n  if (r.properties instanceof Map) { m.putAll(r.properties) } else if (r instanceof Map) { m.putAll(r) }\n  m.id = r.id\n  out << m\n} }\nreturn [count: out.size(), rows: out]",
+    "compile_static": false,
+    "captureStdOutput": false,
+    "parameters": {
+     "rows": "{{ n_fetch.outputs.objects }}"
+    }
+   },
+   "skip": false,
+   "subTitle": "Groovy",
+   "title": "Flatten the rows",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3111,
+    "resourceName": "callables_return_to_automation",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_out",
+   "index": 4,
+   "inputs": {
+    "result": "{{ n_shape.outputs.result }}"
+   },
+   "skip": false,
+   "title": "Response",
+   "type": "STOP"
+  }
+ ],
+ "schemaReferences": [],
+ "settings": {
+  "enableNodeLevelLogging": true,
+  "enableRunLogging": true,
+  "enableVariableLogging": true,
+  "route": {
+   "default": false,
+   "tierName": "global"
+  }
+ },
+ "standard": false,
+ "tags": [
+  "sharek"
+ ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "demo-studio-project",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "auth": "node scripts/auth.mjs",
+    "narrate": "python scripts/narrate.py",
+    "capture": "node scripts/capture.mjs",
+    "record": "node scripts/recorder.mjs",
+    "build": "python scripts/build.py",
+    "manual": "node manual/build-manual.mjs",
+    "runbook": "node manual/build-runbook.mjs",
+    "script": "node manual/build-script.mjs",
+    "docs": "node manual/build-script.mjs && node manual/build-runbook.mjs && node manual/build-manual.mjs",
+    "shots": "node scripts/export-shots.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

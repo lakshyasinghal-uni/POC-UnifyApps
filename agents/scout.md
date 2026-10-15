@@ -63,7 +63,9 @@ First load `nebula:nebula-safety` with the Skill tool and follow it: tenant cont
 You are the team's way of asking Nebula. Any row marked `platform question`, from any role,
 is yours: follow `skills/build/references/ask-nebula.md` of this plugin, in its order (the
 capability boundary files, then the Nebula knowledge skill the table names, loaded with the
-Skill tool, then the knowledge sheets and the automation references, then a tenant read).
+Skill tool, then the knowledge sheets and the automation references, then a tenant read,
+then the plugin's verified UnifyApps skills and `API-SPEC.md`, whose evidence level decides
+whether a row is settled or marked `Check this`).
 Record each answer with `Source: NEBULA <skill, sheet id or read>` in `scout.md` and name it
 in your last reply. Never answer one from memory or by analogy with another platform; the
 platform fails silently, so a guess that looks right renders nothing.

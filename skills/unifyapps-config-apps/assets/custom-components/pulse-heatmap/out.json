@@ -1,0 +1,8 @@
+{
+  "name": "Pulse Heatmap",
+  "type": "PulseHeatmap",
+  "main": "pulse-heatmap.es.js",
+  "style": "pulse-heatmap.css",
+  "icon": "https://assets.unifyapps.com/user-uploads/theme/unify.svg",
+  "keywords": "heatmap grid matrix entity month trend satisfaction interactive"
+}

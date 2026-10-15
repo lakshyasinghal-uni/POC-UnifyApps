@@ -1,0 +1,985 @@
+# UnifyApps application connectors - https://orbit.uat.unifyapps.com, 2026-09-23
+# appName	displayName
+15five	15five
+6sense	6sense
+a2a_servers	A2A Servers
+act!	Act!
+active_campaign	Active Campaign
+adafruit	Adafruit IO
+adobe	Adobe
+adobe_acrobat	Adobe Acrobat (PDF services)
+adobe_express	Adobe Express
+adobe_learning_manager	Adobe Learning Manager
+adobe_photoshop	Adobe Photoshop
+adobe_sign	Adobe Sign
+adp_rm	ADP Recruiting Management
+adp_workforce_now	ADP Workforce Now
+adroll	AdRoll
+adyen	Adyen
+affinity_crm	Affinity CRM
+agendor	Agendor
+agent_ql	AgentQL
+agilecrm	Agilecrm
+aha	Aha
+aircall	Aircall
+airmeet	Airmeet
+airparser	Airparser
+airtable	Airtable
+airtop	Airtop
+aitable_ai	AITable.ai
+alchemer	Alchemer
+algodocs	AlgoDocs
+allocadia	Allocadia
+alphasense	AlphaSense
+alttext_ai	AltText AI
+amazing_marvin	Amazing Marvin
+amazon_athena	Amazon athena
+amazon_bedrock	Amazon Bedrock
+amazon_cloudwatch	Amazon CloudWatch
+amazon_cognito	Amazon Cognito
+amazon_comprehend	Amazon Comprehend
+amazon_connect	Amazon Connect
+amazon_cost_explorer	Amazon Cost Explorer
+amazon_dynamodb	Amazon DynamoDB
+amazon_ec2	Amazon EC2
+amazon_kms	Amazon KMS
+amazon_lambda	Amazon lambda
+amazon_lex	Amazon Lex
+amazon_partner_central	Amazon Partner Central
+amazon_payment_services	Amazon Payment Services
+amazon_polly	Amazon Polly
+amazon_q	Amazon Q
+amazon_quicksight	Amazon QuickSight
+amazon_rekognition	Amazon Rekognition
+amazon_s3	Amazon S3
+amazon_s3_tables	Amazon S3 Tables
+amazon_sagemaker	Amazon sagemaker
+amazon_secrets_manager	Amazon Secrets Manager
+amazon_ses	Amazon SES
+amazon_sns	Amazon SNS
+amazon_sqs	Amazon SQS
+amazon_system_manager	Amazon System Manager
+amazon_textract	Amazon textract
+ambee	Ambee
+amplitude	Amplitude
+anthropic	Anthropic
+anthropic_enterprise	Anthropic Enterprise
+apache_druid	Apache Druid
+api_video	api.video
+apify	Apify
+apitemplate_io	APITemplate.io
+apollo_io	Apollo
+appbot	Appbot
+appfollow	AppFollow
+apple_app_store	Apple App Store
+appsflyer	AppsFlyer
+archive_api	Archive API
+arize	Arize
+as2	AS2
+asana	Asana
+aspose	Aspose
+assembly_ai	AssemblyAI
+attio	Attio
+audienceful	Audienceful
+automation_anywhere	Automation Anywhere
+avaza	Avaza
+aweber	Aweber
+awork	Awork
+azure_blob	Azure Blob
+azure_bot	Azure Bot
+azure_cosmos_db	Azure CosmosDB
+azure_datalake_storage	Azure Data Lake Storage
+azure_devops	Azure Devops
+azure_document_intelligence	Azure Document Intelligence
+azure_key_vault	Azure Key Vault
+azure_openai	Azure OpenAI
+azure_service_bus	Azure Service Bus
+azure_synapse	Azure Synapse
+backlog	Backlog
+bamboohr	BambooHR
+barcode_lookup	Barcode Lookup
+base_ai	Base
+basecamp	Basecamp 3
+baserow	Baserow
+bearbanner	BearBanner
+benchmark_email	Benchmark Email
+better_proposals	Better Proposals
+better_stack	Better Stack
+bettercontact	Better Contact
+bettermode	Bettermode
+bigcommerce	BigCommerce
+bigml	BigML
+bill	Bill
+billetto	Billetto
+billsby	Billsby
+bing_search	Bing Search
+bitbucket	Bitbucket
+bitbucket_server	Bitbucket - Private Cloud
+bitly	Bitly
+bitrix24	Bitrix24
+blackboard	Blackboard
+bloomgrowth	Bloom Growth
+bluedart	Blue Dart
+bmc	BMC
+bold_sign	BoldSign
+box	Box
+breakcold	Breakcold
+brevo	Brevo
+brivo	Brivo
+browse_ai	Browse AI
+browserless_io	Browserless
+buddy_Works	Buddy Works
+builtwith_domain_api	BuiltWith API
+bullhorn	bullhorn
+byteplant_phone_validator	Byteplant Phone Validator
+cakemail	Cakemail
+cal	Cal
+calendly	Calendly
+callexa	Callexa
+callhub	CallHub
+callingly	Callingly
+callpage	Callpage
+campaign_cleaner	Campaign Cleaner
+campaign_monitor	Campaign Monitor
+canny_io	Canny.io
+canva	Canva
+canvas_lms	Canvas LMS
+capsule_crm	Capsule CRM
+captions_ai	Captions AI
+caspio	Caspio
+centralstationcrm	CentralStationCRM
+certifier	Certifier
+chargebee	Chargebee
+chartmogul	ChartMogul
+chatwork	Chatwork
+chili_piper	Chili Piper
+churnzero	ChurnZero
+claid_ai	Claid AI
+clari	Clari
+claris_filemaker	Claris FileMaker
+clarity	Clarity
+clevertap	CleverTap
+click2mail	Click2Mail
+clickhouse	ClickHouse
+clicksend	ClickSend
+clickup	ClickUp
+clientify	Clientify
+clio	Clio
+clockify	Clockify
+clockodo	Clockodo
+closecrm	Close CRM
+cloud_convert	Cloud convert
+cms	Config management system
+cockroachdb	CockroachDB
+coda	Coda
+cognito_forms	Cognito Forms
+coldreach	Coldreach
+commerce_layer	Commerce Layer
+configcat	Configcat
+confluence	Confluence
+constant_contact	Constant Contact
+contactsplus	Contacts+
+contentful	Contentful
+convertapi	ConvertAPI
+copper	Copper
+core42	Core42 AI
+cornerstone	Cornerstone
+couchbase	Couchbase
+coupa	Coupa
+coveo	Coveo
+craftmypdf	CraftMyPDF
+crawlbase	Crawlbase
+credly	Credly
+crossmint	Crossmint
+crowdin	Crowdin
+crowdstrike	Crowdstrike
+cultureamp	Culture Amp
+custom_db	Custom database
+custom_http_application	Custom HTTP Application
+customjs	CustomJS
+cutt_ly	Cutt.ly
+cvent	Cvent
+d2l	D2L
+dachser	Dachser
+daily	Daily.co
+dappier	Dappier
+darwinbox	Darwinbox
+dataaccess	Data Access Public APIs
+databox	Databox
+databricks	Databricks
+databricks_rest	Databricks (REST APIs)
+datadog	Datadog
+datalake	Datalake
+datastax	Datastax
+deel	Deel
+deepgram	Deepgram
+deepl	DeepL
+deepseek	DeepSeek
+delhivery	Delhivery
+delighted	Delighted
+demio	Demio
+deputy	Deputy
+devcycle	DevCycle
+dhl	DHL
+dialpad	Dialpad
+dify	Dify
+digi_parser	DigiParser
+digilocker	DigiLocker
+digistore24	Digistore24
+discord	Discord
+discourse	Discourse
+docebo	Docebo
+docparser	Docparser
+docugenerate	DocuGenerate
+documenso	Documenso
+docupilot	Docupilot
+docusign	Docusign
+domo	Domo
+dovetail	Dovetail
+drivetrain	Drivetrain
+dropbox	Dropbox
+duckduckgo	DuckDuckGo
+dynatrace	Dynatrace
+easyship	Easyship
+ebay	eBay
+edination	EdiNation
+egain	eGain
+elasticsearch	Elasticsearch
+elevenlabs	ElevenLabs
+emailjs	EmailJS
+emailoctopus	EmailOctopus
+employment_hero	Employment Hero
+encharge	Encharge
+enigma	Enigma
+enrich	Enrich
+esignatures	eSignatures
+espocrm	EspoCRM
+eventbrite	Eventbrite
+everbridge	Everbridge
+everhour	Everhour
+ews	Exchange Web Services
+exa	Exa
+exceed_lms	Exceed LMS
+exchangerateapi	ExchangeRate-API
+expensify	Expensify
+extensiv	Extensiv
+facebook_ads	Facebook Ads
+facebook_groups	Facebook groups
+facebook_messenger	Facebook Messenger
+facebook_pages	Facebook Pages
+factors_ai	Factors AI
+faraday	Faraday
+favro	Favro
+fedex	FedEx
+figma	Figma
+filestage	Filestage
+fillout	Fillout
+finastra	Finastra
+finastra_core_banking	Finastra Core Banking
+firebase	Firebase
+firecrawl	Firecrawl
+fivetran	Fivetran
+fleetio	Fleetio
+float	Float
+flowise_ai	Flowise AI
+formbricks	Formbricks
+formbuilder_123	123FormBuilder
+formstack	Formstack
+foxit	Foxit
+fraudlogix	FraudLogix
+freedcamp	Freedcamp
+freshbooks	FreshBooks
+freshchat	Freshchat
+freshdesk	Freshdesk
+freshsales	freshsales
+freshservice	Freshservice
+front	Front
+ftp	FTP/FTPS
+g2	G2 Crowd
+gai	Google AI
+gainsight	Gainsight
+gainsight_cc	Gainsight CC
+ganalytics	Google Analytics
+gappify	Gappify
+gatherup	Gatherup
+gcalendar	Google Calendar
+gchat	Google Chat
+gcloud_run	Google Cloud Run
+gcloud_run_functions	Google Cloud Run Functions
+gcloud_storage	Google Cloud Storage
+gdocs	Google Docs
+gdrive	Google Drive
+geckoboard	Geckoboard
+gender_api	Gender API
+genesys	Genesys
+getResponse	GetResponse
+getaccept	GetAccept
+getemail	GatEmail
+getform	Getform
+getgist	GetGist
+getgrist	Getgrist
+gforms	Google Forms
+giftbit	Giftbit
+giftup	GiftUp
+giphy	Giphy
+github	Github
+gitlab	GitLab
+gladia	Gladia
+glaucusmaven	Maven by Glaucus
+glean	Glean
+gmail	Gmail
+gmaps	Google Maps
+gmeet	Google Meet
+gokwik	GoKwik
+gong	Gong
+google_admin_reports	Google Admin Reports
+google_admob	Google AdMob
+google_ads	Google Ads
+google_apps_script	Google Apps Script
+google_big_query	Google Big Query
+google_classroom	Google Classroom
+google_data_lineage	Google Data Lineage
+google_dataplex	Google Dataplex
+google_gemini	Google Gemini
+google_gemini_discovery	Google discovery engine
+google_kms	Google KMS
+google_lakehouse	Google Lakehouse
+google_natural_language	Google Natural Language
+google_play	Google Play
+google_pubsub	Google Pubsub
+google_secret_manager	Google Secret Manager
+google_speech_to_text	Google speech to text
+google_task	Google Task
+google_vertex_ai	Google vertex AI
+google_vision	Google vision
+google_workspace	Google Workspace
+goto	GoTo
+gpagespeed	Google PageSpeed Insights
+gpeople	Google People and Sharing
+gpt_trainer	GPT Trainer
+grafana	Grafana
+grafana_loki	Grafana Loki
+grafana_tempo	Grafana Tempo
+granola	Granola
+graylog	Graylog
+greenhouse	Greenhouse
+greenplum	Greenplum
+grok	Grok
+groove_hq	Groove HQ
+groq	Groq
+growsurf	GrowSurf
+gsheets	Google Sheets
+gsites	Google Sites
+gslides	Google Slide
+guidewire	Guidewire
+gumlet	Gumlet
+gupshup	Gupshup
+guru	Guru
+gusto	Gusto
+gw_world	GW World
+hadoop	Hadoop
+hamsa	Hamsa
+happay	Happay
+harvest	Harvest
+hasdata	HasData
+headout	Headout
+heartbeat	Heartbeat
+helpwise	Helpwise
+hey_market	HeyMarket
+hibob	HiBob
+higher_logic	Higher Logic
+hilos_io	Hilos
+hive	Hive
+hootsuite	Hootsuite
+hotjar	Hotjar
+hotmart	Hotmart
+hrflow	HrFlow.ai
+htmlcsstoimage	HTML/CSS to Image
+hubspot	HubSpot
+hubstaff	Hubstaff
+hugging_face	Hugging face
+hume	Hume AI
+hunter	Hunter
+hyperbrowser	Hyperbrowser
+ibm_db2	IBM DB2
+ibm_maximo	IBM Maximo
+ibm_mq	IBM MQ
+icontact	icontact
+iform_builder	IFormBuilder
+ilert	iLert
+ilove_pdf	ILove PDF
+imap	IMAP
+indeed	Indeed
+indiapost	India Post
+inflection	Inflection
+inflow_inventory	InFlow Inventory
+infor	Infor
+informatica	Informatica
+infusion_soft	Infusionsoft
+inoreader	Inoreader
+insided	inSided
+insider	Insider
+insightly	Insightly
+inspectlet	Inspectlet
+instagram	Instagram
+instamojo	Instamojo
+intercom	Intercom
+invoiceberry	InvoiceBerry
+ip2location	IP2Location
+ipgeolocation	IPGeolocation
+ipregistry	Ipregistry
+isa	ISA
+ivanti_itsm	Ivanti ITSM
+ixigo	ixigo
+jamf_pro	Jamf Pro
+jasper_ai	Jasper Ai
+jenkins	Jenkins
+jibble	Jibble
+jigsawstack	JigsawStack
+jira	Jira
+jira_service_management	Jira Service Management
+jms	JMS
+jobdiva	JobDiva
+jobnimbus	JobNimbus
+jotform	Jotform
+jumpcloud	JumpCloud
+jumpseller	Jumpseller
+kafka	Kafka
+kanban_tool	Kanban Tool
+kantata	Kantata
+keenio	Keen.io
+keka	Keka
+keycloak	Keycloak
+keygen	Keygen
+khoros	Khoros
+khoros_communities	Khoros Communities
+kickbox	Kickbox
+kintone	Kintone
+klaviyo	Klaviyo
+klenty	Klenty
+klog	KLog
+klue	Klue
+knack	Knack
+knowlarity	Knowlarity
+kommo	Kommo
+kubernetes	Kubernetes
+landbot	Landbot
+langflow	Langflow
+langfuse	Langfuse
+lark	Lark
+launch_darkly	LaunchDarkly
+lccx	LC.CX
+ldap	LDAP
+leadboxer	LeadBoxer
+leaddyno	LeadDyno
+leadsquared	LeadSquared
+lemlist	Lemlist
+less_annoying_crm	Less Annoying CRM
+letta	Letta
+lever	Lever
+librato	Librato
+lightspeed_commerce	Lightspeed Commerce
+linear	Linear
+linguin_ai	Linguin AI
+linkedin	Linkedin
+linkedin_marketing	LinkedIn Marketing
+linkedin_sales_navigator	Linkedin Sales Navigator
+linkly	Linkly
+linksquares	LinkSquares
+litellm	LiteLLM
+livekit	LiveKit
+liveramp	LiveRamp
+livesession	LiveSession
+livestorm	Livestorm
+llama	Llama
+llama_index	Llama Index
+llamaparse	LlamaParse
+lob	Lob
+lodgify	Lodgify
+logik	Logik
+lokalise	Lokalise
+looker	Looker
+looker_studio	Looker Studio
+loops	Loops
+loyverse	Loyverse
+lulu_api	Lulu api
+lumapps	LumApps
+lusha	Lusha
+lyearn	Lyearn
+maersk_iam	Maersk IAM
+magento	Magento
+mailchimp	Mailchimp
+mailerlite	Mailer Lite
+maileroo	Maileroo
+mailgun	Mailgun
+mailmodo	Mailmodo
+mailtrap	Mailtrap
+maintainx	MaintainX
+mariadb	MariaDB
+marketo	Marketo
+mavi	Mavi
+maxio	Maxio
+mcp_servers	MCP Servers
+meisterplan	Meisterplan
+meistertask	MeisterTask
+microsoft_approvals	Microsoft Approvals
+microsoft_azure_ai	Microsoft Azure AI
+microsoft_azure_api_management_service	Microsoft Azure API Management Service
+microsoft_azure_database	Microsoft Azure SQL Database
+microsoft_azure_search	Microsoft Azure AI search
+microsoft_business_central	Microsoft Business Central
+microsoft_calendar	Microsoft Calendar
+microsoft_copilot_studio	Microsoft Copilot Studio
+microsoft_dynamics365	Microsoft Dynamics 365 CRM
+microsoft_entra_id	Microsoft Entra ID
+microsoft_excel	Microsoft Excel
+microsoft_fabric	Fabric Data Warehouse
+microsoft_fabric_data_lakehouse	Microsoft Fabric Data Lakehouse
+microsoft_graph_api	Microsoft Graph API
+microsoft_onedrive	Microsoft OneDrive
+microsoft_onenote	Microsoft OneNote
+microsoft_outlook	Microsoft Outlook
+microsoft_places	Microsoft Places
+microsoft_planner	Microsoft Planner
+microsoft_purview	Microsoft Purview
+microsoft_sentinel	Microsoft Sentinel
+microsoft_sharepoint	Microsoft SharePoint
+microsoft_sharepoint_graph	Microsoft Sharepoint Graph
+microsoft_teams	Microsoft Teams
+microsoft_todo	Microsoft To Do
+microsoft_work_iq	Microsoft Work IQ
+mileiq	MileIQ
+milvus	Milvus
+mimepost	MimePost
+mindee	Mindee
+mindstone	Mindstone
+mindtickle	Mindtickle
+mindtickle_odata	Mindtickle OData
+minelead	MineLead
+miro	Miro
+missive	Missive
+mistralai	Mistral AI
+mixpanel	Mixpanel
+mollie	Mollie
+monday	Monday
+mongo	MongoDB
+moreapp	MoreApp
+morgen	Morgen
+motion	Motion
+mqtt	MQTT
+ms_dynamics_finance_operations	Microsoft Dynamics 365 Finance & Operations
+msg91	MSG91
+mshastra	Mshastra
+mulesoft	MuleSoft
+murf	Murf
+mysql	MySQL
+n8n	n8n
+nanonets	Nanonets
+neeto_kb	NeetoKB
+neetoinvoice	NeetoInvoice
+nethunt	Nethunt
+netlify	Netlify
+netsuite	Netsuite
+netsuite_soap	Netsuite SOAP
+never_bounce	NeverBounce
+new_relic	New Relic
+nexus	Nexus
+ngenius	N-Genius
+nicereply	Nicereply
+nicportal	NIC Portal
+nimble	Nimble
+ninox	Ninox
+nitro	Nitro
+nocrm	NoCrm
+nooks	Nooks
+notion	Notion
+nozbe	Nozbe
+nudgify	Nudgify
+nutcache	Nutcache
+nutshell	Nutshell
+odoo_crm	Odoo CRM
+okta	Okta
+olostep	Olostep
+ometria	Ometria
+omnisend	Omnisend
+oncehub	Oncehub
+oneall	OneAll
+onelogin	Onelogin
+onetrust	OneTrust
+onit	Onit
+openai	OpenAI
+opengraphio	OpenGraph.io
+openrouter	OpenRouter
+opensearch	OpenSearch
+opentext	Opentext
+opnform	OpnForm
+opsgenie	OpsGenie
+optimizely	Optimizely
+oracle	Oracle
+oracle_aq	Oracle AQ
+oracle_ebusiness_suite	Oracle E-Business Suite
+oracle_eloqua	Oracle Eloqua
+oracle_epm	Oracle Fusion Cloud EPM
+oracle_fusion	Oracle Fusion
+oracle_fusion_cloud	Oracle Fusion Cloud
+oracle_health	Oracle Health
+oracle_health_insurance	Oracle Health Insurance
+oracle_jde	Oracle JD Edwards
+oracle_nosql	Oracle NoSQL
+oracle_opera_pms	Oracle OPERA PMS
+oracle_siebel	Oracle Siebel
+oracle_utilities_customer_cloud_service	Oracle Utilities Customer Cloud Service
+oracledb	Oracle DB
+order_desk	Order Desk
+osticket	osTicket
+outreach	Outreach
+ozonetel	Ozonetel
+pagepixels_screenshot	PagePixels Screenshot
+pager_duty	PagerDuty
+pandadoc	Pandadoc
+paperform	Paperform
+parallel	Parallel
+parsio	Parsio
+patreon	Patreon
+paycor	Paycor
+paylocity	Paylocity
+paypal	PayPal
+pcr	PCR
+pdf_co	PDF.co
+pdfmonkey	PDFMonkey
+pendo	Pendo
+people_ai	People AI
+peoplesoft	PeopleSoft
+perplexity	Perplexity
+phantombuster	Phantombuster
+phonevalidator	Phone Validator
+phrase_strings	Phrase Strings
+picsart	Picsart
+pim	Pim
+pinata	Pinata
+pincode	Pincode
+pinecone	Pinecone
+pingboard	Pingboard
+pingdom	Pingdom
+pinterest	Pinterest
+pipedream	Pipedream
+pipedrive	Pipedrive
+pipefy	Pipefy
+pipeless	Pipeless
+pipeline_crm	Pipeline CRM
+placid	Placid
+planyo	Planyo
+playvox	Playvox
+podio	Podio
+pop3	Post Office Protocol V3
+postcodes_io	Postcodes.io
+postgres	PostgreSQL
+postgrid	PostGrid
+posthog	PostHog
+postman	Postman
+power_bi	Power BI
+practice_fusion	Practice Fusion
+pricefx	Pricefx
+printnode	PrintNode
+process_street	Process Street
+product_hunt	Product Hunt
+productboard	Productboard
+profit_co	Profit.co
+prometheus	Prometheus
+prompt_hub	PromptHub
+proof	Proof
+pulsetic	Pulsetic
+pumble	Pumble
+push_alert	PushAlert
+push_by_techulus	Push by Techulus
+pushbullet	Pushbullet
+pushover	Pushover
+qdrant	Qdrant
+qradar	IBM QRadar
+quaderno	Quaderno
+qualtrics	Qualtrics
+quentn	Quentn
+question_pro	QuestionPro
+quickbase	Quickbase
+quickbooks	QuickBooks
+quilr_ai	Quilr AI
+quiltt	Quiltt
+quire	Quire
+quora_ads_conversion	Quora Ads Conversion
+quora_ads_reporting_metrics	Quora Ads Reporting Metrics
+quota_path	Quotapath
+ragic	Ragic
+ramp	Ramp
+razorpay	Razorpay
+reamaze	Reamaze
+rebrandly	Rebrandly
+recharge	Recharge
+recruitee	Recruitee
+reddit	Reddit
+redis	Redis
+redshift	Redshift
+referral_rock	Referral Rock
+reflect	Reflect
+relevance_ai	Relevance Ai
+removebg	RemoveBG
+reply_io	Reply.io
+repsly	Repsly
+resend	Resend
+resource_guru	Resource Guru
+respond_io	Respond.io
+retently	Retently
+rev	Rev
+reverse_contact	ReverseContact
+revolut	Revolut
+revolut_people	Revolut People
+ringcentral	RingCentral
+ripplehire	RippleHire
+rippling	Rippling
+rocketlane	Rocketlane
+rollbar	Rollbar
+rootly	Rootly
+routific	Routific
+rowshare	RowShare
+runway	Runway
+safety_culture	Safety Culture
+sailpoint	SailPoint
+sakari_sms	Sakari SMS
+salesblink	SalesBlink
+salesforce	Salesforce
+salesforce_communications_cloud	Salesforce Communications Cloud
+salesforce_cpq	Salesforce CPQ
+salesforce_marketing_cloud	Salesforce Marketing Cloud
+salesforce_soap	Salesforce SOAP
+salesloft	Salesloft
+sap_ariba	SAP Ariba
+sap_ariba_soap	SAP Ariba SOAP
+sap_business_one	SAP Business One
+sap_concur	SAP Concur
+sap_hana	SAP HANA
+sap_lms	SAP LMS
+sap_odata	SAP OData
+sap_rfc	SAP RFC
+sap_successfactors	SAP SuccessFactors
+sapling	Sapling
+scrapegraphai	ScrapeGraphAI
+scraperapi	ScrapeAPI
+scrapfly	Scrapfly
+scraping_ant	ScrapingAnt
+screenshot_fyi	Screenshot.fyi
+screenshot_one	ScreenshotOne
+seafile	Seafile
+seatable	SeaTable
+seismic	Seismic
+selzy	Selzy
+semrush	SEMrush
+sendbird	Sendbird
+sendgrid	SendGrid
+sendspark	Sendspark
+senja	Senja
+serper	Serper
+sertifier	Sertifier
+servemanager	ServeManager
+servicedesk_plus	ServiceDesk Plus
+servicem8	ServiceM8
+servicenow	ServiceNow
+sevdesk	SevDesk
+sftp	SFTP
+sharetribe	Sharetribe
+shipbob	ShipBob
+shippo	Shippo
+shiprocket	Shiprocket
+shopify	Shopify
+shortcut	Shortcut
+shotstack	Shotstack
+signalwire	Signalwire
+signaturit	Signaturit
+signit	Signit
+signnow	SignNow
+silverlake	SilverLake
+simplelocalize	SimpleLocalize
+simplesat	Simplesat
+sisense	Sisense
+sitecore	Sitecore
+skilljar	Skilljar
+skuvault	SkuVault
+skyvern	Skyvern
+slack	Slack
+sleekplan	Sleekplan
+sleuth	Sleuth
+smartlead	SmartLead
+smartsheet	Smartsheet
+smartsuite	SmartSuite
+smbj	Server Message Block - Java (SMBJ)
+smtp	SMTP
+snapmint	Snapmint
+snov_io	Snov.io
+snowflake	Snowflake
+softr	Softr
+sparkpost	SparkPost
+spike	Spike
+splitwise	Splitwise
+spotify	Spotify
+spring_config_server	Spring config server
+sprinklr	Sprinklr
+sprout_social	Sprout Social
+sqlserver	Microsoft SQL Server
+squadcast	SquadCast
+square	Square
+stability_ai	Stability AI
+stackby	Stackby
+stannp	Stannp
+starrocks	StarRocks
+starshipit	Starshipit
+statuscake	StatusCake
+steady	Steady
+stedi	Stedi
+stibo	Stibo
+strava	Strava
+streamline_ai	Streamline AI
+stripe	Stripe
+sugarcrm	SugarCRM
+suitedash	SuiteDash
+sumoquote	SumoQuote
+supadata	Supadata
+superglue	Superglue
+surecart	SureCart
+surveymonkey	SurveyMonkey
+switchboard_canvas	Switchboard Canvas
+synchroteam	Synchroteam
+synthesia	Synthesia
+systeme	Systeme
+tableau	Tableau
+tadabase	Tadabase
+talenox	Talenox
+talentlms	TalentLMS
+talkdesk	Talkdesk
+taskworld	TaskWorld
+tavily	Tavily
+tax_jar	TaxJar
+tealium_cdp	Tealium CDP
+teamwork	Teamwork
+telegram	Telegram
+temi	Temi
+templated	Templated
+teradata	Teradata
+termii	Termii
+textit	TextIt
+thoughtly	Thoughtly
+ticket_tailor	Ticket Tailor
+ticktick	TickTick
+timelines_ai	Timelines AI
+timely	Timely
+tly_shortener	TLY Link Shortener
+todoist	Todoist
+toggl	Toggl
+tomba	Tomba
+toodledo	Toodledo
+total_expert	Total Expert
+totango	Totango
+touchsms	touchSMS
+trackdesk	Trackdesk
+tracking_time	TrackingTime
+trackvia	Trackvia
+transifex	Transifex
+transistor	Transistor
+treasure_data	Treasure Data
+trello	Trello
+tremendous	Tremendous
+trinet	TriNet
+trino	Trino
+trint	Trint
+tripadvisor	Trip advisor
+trolley	Trolley
+trustmary	Trustmary
+trustradius	TrustRadius
+twilio	Twilio
+typebot	Typebot
+typeform	Typeform
+uaepass	UAE Pass
+ubidots	Ubidots
+ucp_platform	UCP Platform
+ukg_pro	UKG Pro
+unicommerce	Unicommerce
+unione	UniOne
+unstructured	Unstructured
+upkeep	UpKeep
+uplead	UpLead
+uploadcare	UploadCare
+ups	UPS
+urlbox	Urlbox
+usebasin	Basin
+user	User.com
+usercheck	UserCheck
+userflow	Userflow
+usergems	UserGems
+v_connect	V-Connect
+vapi	VAPI
+vendr	Vendr
+veryfi	Veryfi
+vespa	Vespa
+vimeo	Vimeo
+vinculum	Vinculum
+voiceflow	Voiceflow
+vonage_sms	Vonage SMS
+vonage_voice	Vonage Voice
+voucherify	Voucherify
+voyageai	Voyage AI
+walgreens	Walgreens
+ware2go	Ware2Go
+warmy	Warmy
+watsonx_ai	Watsonx AI
+watsonxdata	Watsonx Data
+weaviate	Weaviate
+webcrm	Web CRM
+webex_meeting	Webex Meeting
+webex_teams	Webex Teams
+webflow	Webflow
+webpushr	Webpushr
+webscraping_ai	WebScraping AI
+websocket	Websocket
+weekdone	Weekdone
+whatsapp	WhatsApp
+wisepops	Wisepops
+wistia	Wistia
+wit_ai	WitAI
+withmoxie	Withmoxie
+woocommerce	WooCommerce
+woodpecker	Woodpecker
+wordpress	Wordpress
+workable	Workable
+workato	Workato
+workday	Workday
+workday_soap	Workday SOAP
+workfront	Adobe Workfront
+workiva	Workiva
+worksuite	Worksuite
+wrike	Wrike
+wufoo	Wufoo
+x	X
+xero	Xero
+xodosign	Xodosign
+xpand	Xpand
+xpressbees	XpressBees
+you	You
+yousign	Yousign
+youtrack	Youtrack
+youtube	YouTube
+zadarma	Zadarma
+zendesk	Zendesk
+zigpoll	Zigpoll
+zinc	Zinc
+zip	Zip
+zipbooks	ZipBooks
+zoho	Zoho CRM
+zoho_books	Zoho Books
+zoho_catalyst	Zoho Catalyst
+zoho_desk	Zoho Desk
+zoho_inventory	Zoho Inventory
+zoho_invoice	Zoho Invoice
+zoho_mail	Zoho Mail
+zoho_people	Zoho People
+zonka_feedback	Zonka Feedback
+zoom	Zoom
+zoominfo	ZoomInfo
+zulip	Zulip
+zylo	Zylo

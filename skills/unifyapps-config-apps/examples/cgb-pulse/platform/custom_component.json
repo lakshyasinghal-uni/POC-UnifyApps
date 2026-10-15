@@ -1,0 +1,11 @@
+{
+ "manifest": {
+  "name": "Pulse Map",
+  "icon": "https://assets.unifyapps.com/user-uploads/theme/unify.svg",
+  "main": "https://uat-uploads.unifyapps.com/147/workflow_uploads/c2fc8b4a-1cea-4d7a-a54a-9a277cd6ad25/pulse-map.es.js",
+  "style": "https://uat-uploads.unifyapps.com/147/workflow_uploads/c2fc8b4a-1cea-4d7a-a54a-9a277cd6ad25/pulse-map.css",
+  "type": "PulseMap",
+  "keywords": "map qatar municipality region bubble satisfaction pulse"
+ },
+ "name": "CGB Pulse Map"
+}

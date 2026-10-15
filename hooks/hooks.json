@@ -1,0 +1,16 @@
+{
+  "description": "no-delete-guard: blocks delete calls (UnifyApps delete endpoints, HTTP DELETE, SQL DELETE/DROP/TRUNCATE, git branch or repo deletion) made from a shell or browser script. Nebula's own writes go through its MCP tools and are not affected.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell|mcp__.*javascript_tool|mcp__.*browser_batch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/no-delete-guard.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

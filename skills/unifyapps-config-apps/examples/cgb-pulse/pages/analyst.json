@@ -1,0 +1,1207 @@
+{
+ "componentType": "PAGE",
+ "metadata": {
+  "_version": 2,
+  "_blockCounter": {
+   "CopilotInput": 1,
+   "Copilot": 1,
+   "Button": 5,
+   "Stack": 10,
+   "Typography": 6,
+   "Card": 3
+  }
+ },
+ "inputSchema": {
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [],
+   "properties": {
+    "question": {
+     "type": "string",
+     "title": "question"
+    },
+    "entity_code": {
+     "type": "string",
+     "title": "entity_code"
+    }
+   }
+  },
+  "layout": {
+   "ui:order": [
+    "question",
+    "entity_code"
+   ]
+  },
+  "dynamic": false,
+  "type": "SCHEMA_AND_LAYOUT"
+ },
+ "publicAccess": false,
+ "blocks": {
+  "b_d3xuB": {
+   "id": "b_d3xuB",
+   "displayName": "d3xuB",
+   "parentId": "b_3YB3L",
+   "component": {
+    "componentType": "Card",
+    "content": {
+     "collapsible": {
+      "enabled": false,
+      "isInitiallyExpanded": true
+     }
+    },
+    "appearance": {
+     "showDivider": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "padding": {
+       "all": "p-lg"
+      },
+      "borderRadius": {
+       "all": "rounded-xl"
+      }
+     }
+    },
+    "slots": {
+     "body": {
+      "blockId": "b_Xdeem",
+      "wrappedInLayout": true
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "additional": {
+    "customCSS": "[data-block-id='b_d3xuB'] { border: 1px solid var(--border-secondary); box-shadow: 0 1px 2px rgba(16,24,40,.05); }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "header_id": {
+   "id": "header_id",
+   "displayName": "header",
+   "dataSourceIds": [],
+   "dpOn": [],
+   "additional": {
+    "isRootBlock": true
+   },
+   "visibility": {
+    "value": false
+   },
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "row",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "flexWrap": "flex-nowrap",
+      "gap": {
+       "all": "gap-md"
+      },
+      "padding": {
+       "all": "p-xl"
+      }
+     }
+    }
+   }
+  },
+  "b_zYq6M": {
+   "id": "b_zYq6M",
+   "displayName": "zYq6M",
+   "parentId": "b_n7abA",
+   "component": {
+    "componentType": "Typography",
+    "content": {
+     "type": "PLAIN_TEXT",
+     "value": "Your question"
+    },
+    "appearance": {
+     "variant": "text-lg",
+     "weight": "semi-bold",
+     "color": "text-primary",
+     "align": "left"
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_TVQXp": {
+   "id": "b_TVQXp",
+   "displayName": "TVQXp",
+   "parentId": "b_Xdeem",
+   "component": {
+    "componentType": "Button",
+    "content": {
+     "contentMode": "text",
+     "value": "Is Al Rayyan getting better or worse — and why?",
+     "type": "default"
+    },
+    "appearance": {
+     "variant": "ghost",
+     "color": "neutral",
+     "size": "sm",
+     "styles": {}
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "events": [
+    {
+     "id": "evt_g83mf",
+     "eventType": "onClick",
+     "action": {
+      "id": "act_CPyJE",
+      "actionType": "controlBlockMethod",
+      "executionType": "delay",
+      "payload": {
+       "blockId": "b_copilot",
+       "methodName": "submitMessage",
+       "methodPayload": {
+        "message": "Is Al Rayyan getting better or worse — and why?"
+       }
+      }
+     }
+    }
+   ],
+   "additional": {
+    "customCSS": "[data-block-id='b_TVQXp'] { justify-content: flex-start; text-align: left; white-space: normal; height: auto; }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "footer_id": {
+   "id": "footer_id",
+   "displayName": "footer",
+   "dataSourceIds": [],
+   "dpOn": [],
+   "additional": {
+    "isRootBlock": true
+   },
+   "visibility": {
+    "value": false
+   },
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "row",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "flexWrap": "flex-nowrap",
+      "gap": {
+       "all": "gap-md"
+      },
+      "padding": {
+       "all": "p-xl"
+      }
+     }
+    }
+   }
+  },
+  "b_DEAcR": {
+   "id": "b_DEAcR",
+   "displayName": "DEAcR",
+   "parentId": "b_Ka4E2",
+   "component": {
+    "componentType": "Card",
+    "content": {
+     "collapsible": {
+      "enabled": false,
+      "isInitiallyExpanded": true
+     }
+    },
+    "appearance": {
+     "showDivider": false,
+     "theme": "inherit",
+     "styles": {
+      "width": {
+       "custom": "68%"
+      },
+      "padding": {
+       "all": "p-sm"
+      },
+      "borderRadius": {
+       "all": "rounded-xl"
+      }
+     }
+    },
+    "slots": {
+     "body": {
+      "blockId": "b_j9ngA",
+      "wrappedInLayout": true
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "additional": {
+    "customCSS": "[data-block-id='b_DEAcR'] { border: 1px solid var(--border-secondary); box-shadow: 0 1px 2px rgba(16,24,40,.05); }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_Vfvup": {
+   "id": "b_Vfvup",
+   "displayName": "Vfvup",
+   "parentId": "b_Xdeem",
+   "component": {
+    "componentType": "Button",
+    "content": {
+     "contentMode": "text",
+     "value": "Which scenario is active right now, and what did it change?",
+     "type": "default"
+    },
+    "appearance": {
+     "variant": "ghost",
+     "color": "neutral",
+     "size": "sm",
+     "styles": {}
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "events": [
+    {
+     "id": "evt_2JEXS",
+     "eventType": "onClick",
+     "action": {
+      "id": "act_3PU7d",
+      "actionType": "controlBlockMethod",
+      "executionType": "delay",
+      "payload": {
+       "blockId": "b_copilot",
+       "methodName": "submitMessage",
+       "methodPayload": {
+        "message": "Which scenario is active right now, and what did it change?"
+       }
+      }
+     }
+    }
+   ],
+   "additional": {
+    "customCSS": "[data-block-id='b_Vfvup'] { justify-content: flex-start; text-align: left; white-space: normal; height: auto; }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_X7vE6": {
+   "id": "b_X7vE6",
+   "displayName": "X7vE6",
+   "parentId": "b_Xdeem",
+   "component": {
+    "componentType": "Button",
+    "content": {
+     "contentMode": "text",
+     "value": "What are citizens complaining about most for Labour Services?",
+     "type": "default"
+    },
+    "appearance": {
+     "variant": "ghost",
+     "color": "neutral",
+     "size": "sm",
+     "styles": {}
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "events": [
+    {
+     "id": "evt_2MEDm",
+     "eventType": "onClick",
+     "action": {
+      "id": "act_5fgDb",
+      "actionType": "controlBlockMethod",
+      "executionType": "delay",
+      "payload": {
+       "blockId": "b_copilot",
+       "methodName": "submitMessage",
+       "methodPayload": {
+        "message": "What are citizens complaining about most for Labour Services?"
+       }
+      }
+     }
+    }
+   ],
+   "additional": {
+    "customCSS": "[data-block-id='b_X7vE6'] { justify-content: flex-start; text-align: left; white-space: normal; height: auto; }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "root_id": {
+   "id": "root_id",
+   "displayName": "body",
+   "dataSourceIds": [],
+   "dpOn": [],
+   "additional": {
+    "isRootBlock": true
+   },
+   "visibility": {
+    "value": true
+   },
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_dpQ6x",
+      "b_Ka4E2",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "column",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "flexWrap": "flex-nowrap",
+      "gap": {
+       "all": "gap-md"
+      },
+      "padding": {
+       "all": "p-xl"
+      },
+      "height": "h-full",
+      "backgroundColor": "bg-workspace"
+     }
+    }
+   }
+  },
+  "b_n7abA": {
+   "id": "b_n7abA",
+   "displayName": "n7abA",
+   "parentId": "b_gXzCm",
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_zYq6M",
+      "b_Gtmzx",
+      "b_xTbKa",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "column",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "gap": {
+       "all": "gap-md"
+      }
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_dpQ6x": {
+   "id": "b_dpQ6x",
+   "displayName": "dpQ6x",
+   "parentId": "root_id",
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_YZRve",
+      "b_UcJkz",
+      "b_pWiZ5",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "column",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "dark",
+     "styles": {
+      "width": "w-full",
+      "gap": {
+       "all": "gap-sm"
+      },
+      "padding": {
+       "all": "p-2xl"
+      }
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "additional": {
+    "customCSS": "[data-block-id='b_dpQ6x'] { background: linear-gradient(115deg, #3a0c1b 0%, #1a0a0f 70%); border-radius: 18px; }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_xTbKa": {
+   "id": "b_xTbKa",
+   "displayName": "xTbKa",
+   "parentId": "b_n7abA",
+   "component": {
+    "componentType": "Button",
+    "content": {
+     "contentMode": "text",
+     "value": "Ask it again",
+     "type": "default"
+    },
+    "appearance": {
+     "variant": "soft",
+     "color": "brand",
+     "size": "sm",
+     "startDecorator": "Stars02",
+     "styles": {}
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "events": [
+    {
+     "id": "evt_oPjQr",
+     "eventType": "onClick",
+     "action": {
+      "id": "act_UU7Nj",
+      "actionType": "controlBlockMethod",
+      "executionType": "delay",
+      "payload": {
+       "blockId": "b_copilot",
+       "methodName": "submitMessage",
+       "methodPayload": {
+        "message": "{{ pageInputs['question'] }}"
+       }
+      }
+     }
+    }
+   ],
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_Ka4E2": {
+   "id": "b_Ka4E2",
+   "displayName": "Ka4E2",
+   "parentId": "root_id",
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_DEAcR",
+      "b_3YB3L",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "row",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "gap": {
+       "all": "gap-lg"
+      }
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_gXzCm": {
+   "id": "b_gXzCm",
+   "displayName": "gXzCm",
+   "parentId": "b_3YB3L",
+   "component": {
+    "componentType": "Card",
+    "content": {
+     "collapsible": {
+      "enabled": false,
+      "isInitiallyExpanded": true
+     }
+    },
+    "appearance": {
+     "showDivider": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "padding": {
+       "all": "p-lg"
+      },
+      "borderRadius": {
+       "all": "rounded-xl"
+      }
+     }
+    },
+    "slots": {
+     "body": {
+      "blockId": "b_n7abA",
+      "wrappedInLayout": true
+     }
+    }
+   },
+   "visibility": {
+    "value": "conditions",
+    "conditions": {
+     "type": "filter",
+     "payload": {
+      "operator": "AND",
+      "filters": [
+       {
+        "property": "{{ !!pageInputs['question'] }}",
+        "filter": {
+         "operator": "EQUAL",
+         "value": "true"
+        }
+       }
+      ]
+     }
+    }
+   },
+   "v": 0,
+   "additional": {
+    "customCSS": "[data-block-id='b_gXzCm'] { border: 1px solid var(--border-secondary); box-shadow: 0 1px 2px rgba(16,24,40,.05); }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": [
+    {
+     "id": "pageInputs",
+     "p": [
+      "pageInputs['question']"
+     ]
+    }
+   ],
+   "dP": [
+    {
+     "p": "visibility.conditions.payload.filters[0].property"
+    }
+   ],
+   "cP": [
+    {
+     "p": "visibility.conditions"
+    }
+   ]
+  },
+  "b_Xdeem": {
+   "id": "b_Xdeem",
+   "displayName": "Xdeem",
+   "parentId": "b_d3xuB",
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_UUEjC",
+      "b_NEApg",
+      "b_TVQXp",
+      "b_X7vE6",
+      "b_Vfvup",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "column",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "gap": {
+       "all": "gap-md"
+      }
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_YZRve": {
+   "id": "b_YZRve",
+   "displayName": "YZRve",
+   "parentId": "b_dpQ6x",
+   "component": {
+    "componentType": "Typography",
+    "content": {
+     "type": "PLAIN_TEXT",
+     "value": "CGB PULSE"
+    },
+    "appearance": {
+     "variant": "text-xs",
+     "weight": "semi-bold",
+     "color": "text-tertiary",
+     "align": "left"
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "additional": {
+    "customCSS": "[data-block-id='b_YZRve'] { letter-spacing: .14em; text-transform: uppercase; }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_j9ngA": {
+   "id": "b_j9ngA",
+   "displayName": "j9ngA",
+   "parentId": "b_DEAcR",
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_copilot",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "column",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "gap": {
+       "all": "gap-md"
+      }
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_NEApg": {
+   "id": "b_NEApg",
+   "displayName": "NEApg",
+   "parentId": "b_Xdeem",
+   "component": {
+    "componentType": "Button",
+    "content": {
+     "contentMode": "text",
+     "value": "Which three entities are furthest below target, and what is driving each?",
+     "type": "default"
+    },
+    "appearance": {
+     "variant": "ghost",
+     "color": "neutral",
+     "size": "sm",
+     "styles": {}
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "events": [
+    {
+     "id": "evt_iozsz",
+     "eventType": "onClick",
+     "action": {
+      "id": "act_oBy9A",
+      "actionType": "controlBlockMethod",
+      "executionType": "delay",
+      "payload": {
+       "blockId": "b_copilot",
+       "methodName": "submitMessage",
+       "methodPayload": {
+        "message": "Which three entities are furthest below target, and what is driving each?"
+       }
+      }
+     }
+    }
+   ],
+   "additional": {
+    "customCSS": "[data-block-id='b_NEApg'] { justify-content: flex-start; text-align: left; white-space: normal; height: auto; }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_3YB3L": {
+   "id": "b_3YB3L",
+   "displayName": "3YB3L",
+   "parentId": "b_Ka4E2",
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_gXzCm",
+      "b_d3xuB",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "column",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": {
+       "custom": "32%"
+      },
+      "gap": {
+       "all": "gap-md"
+      }
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_pWiZ5": {
+   "id": "b_pWiZ5",
+   "displayName": "pWiZ5",
+   "parentId": "b_dpQ6x",
+   "component": {
+    "componentType": "Typography",
+    "content": {
+     "type": "PLAIN_TEXT",
+     "value": "An AI agent that reads the same cgbp_* objects as every screen, through one QueryData tool."
+    },
+    "appearance": {
+     "variant": "text-md",
+     "weight": "regular",
+     "color": "text-secondary",
+     "align": "left"
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_UcJkz": {
+   "id": "b_UcJkz",
+   "displayName": "UcJkz",
+   "parentId": "b_dpQ6x",
+   "component": {
+    "componentType": "Typography",
+    "content": {
+     "type": "PLAIN_TEXT",
+     "value": "Ask the analyst"
+    },
+    "appearance": {
+     "variant": "display-sm",
+     "weight": "semi-bold",
+     "color": "text-primary",
+     "align": "left"
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "additional": {
+    "customCSS": "[data-block-id='b_UcJkz'] { font-family: Spectral, Georgia, serif; letter-spacing: -.01em; }",
+    "isCustomCSSValid": true
+   },
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_UUEjC": {
+   "id": "b_UUEjC",
+   "displayName": "UUEjC",
+   "parentId": "b_Xdeem",
+   "component": {
+    "componentType": "Typography",
+    "content": {
+     "type": "PLAIN_TEXT",
+     "value": "Try asking"
+    },
+    "appearance": {
+     "variant": "text-lg",
+     "weight": "semi-bold",
+     "color": "text-primary",
+     "align": "left"
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_copilot_in": {
+   "id": "b_copilot_in",
+   "displayName": "copilot_in",
+   "parentId": "b_5S7Zm",
+   "component": {
+    "componentType": "CopilotInput",
+    "content": {
+     "placeholder": "Ask anything…",
+     "mode": "comfortable",
+     "enterKeyBehavior": "SEND_MESSAGE",
+     "linkedBlockId": "b_copilot",
+     "autoFocus": false,
+     "autocomplete": false,
+     "actions": [
+      {
+       "id": "messageInputAct_send",
+       "label": "Send message",
+       "icon": "ArrowUp",
+       "variant": "icon",
+       "alignment": "end",
+       "type": "STANDARD",
+       "action": "sendMessage"
+      }
+     ]
+    },
+    "appearance": {
+     "attachmentListAlignment": "top",
+     "minNumberOfLines": 1,
+     "styles": {
+      "width": "w-full"
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "events": [
+    {
+     "id": "evt_aSBSW",
+     "eventType": "onClick",
+     "targetId": "messageInputAct_send",
+     "hidden": true,
+     "action": {
+      "id": "act_GXrAF",
+      "actionType": "controlBlockMethod",
+      "executionType": "delay",
+      "payload": {
+       "blockId": "b_copilot",
+       "methodName": "stopResponseGeneration",
+       "methodPayload": {}
+      },
+      "runCondition": {
+       "type": "filter",
+       "payload": {
+        "operator": "AND",
+        "filters": [
+         {
+          "property": "{{ Boolean(b_copilot['isGeneratingResponse']) }}",
+          "filter": {
+           "operator": "EQUAL",
+           "value": "true"
+          }
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "id": "evt_EZJCS",
+     "eventType": "onClick",
+     "targetId": "messageInputAct_send",
+     "action": {
+      "id": "act_mZMXs",
+      "actionType": "controlBlockMethod",
+      "executionType": "delay",
+      "payload": {
+       "blockId": "b_copilot",
+       "methodName": "submitMessage",
+       "methodPayload": {
+        "message": "{{ b_copilot_in['value'] }}"
+       }
+      },
+      "runCondition": {
+       "type": "filter",
+       "payload": {
+        "operator": "AND",
+        "filters": [
+         {
+          "property": "{{ b_copilot['isGeneratingResponse'] }}",
+          "filter": {
+           "operator": "NOT_EQUAL",
+           "value": "true"
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "dataSourceIds": [],
+   "dpOn": []
+  },
+  "b_Gtmzx": {
+   "id": "b_Gtmzx",
+   "displayName": "Gtmzx",
+   "parentId": "b_n7abA",
+   "component": {
+    "componentType": "Typography",
+    "content": {
+     "type": "PLAIN_TEXT",
+     "value": "{{ pageInputs['question'] }}"
+    },
+    "appearance": {
+     "variant": "text-md",
+     "weight": "regular",
+     "color": "text-primary",
+     "align": "left"
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": [
+    {
+     "id": "pageInputs",
+     "p": [
+      "pageInputs['question']"
+     ]
+    }
+   ],
+   "dP": [
+    {
+     "p": "content.value"
+    }
+   ]
+  },
+  "b_copilot": {
+   "id": "b_copilot",
+   "displayName": "copilot",
+   "parentId": "b_j9ngA",
+   "component": {
+    "componentType": "Copilot",
+    "content": {
+     "variant": "AI_AGENT",
+     "aiAgentId": "e_6ab37d3ec9518d7218a84fc1",
+     "welcomeText": "Hello {{ userContext['name'] }} — ask me anything about entities, municipalities, citizen voices or the scenarios in play.",
+     "shouldPollInfinitely": true,
+     "maxPollDuration": 1800000,
+     "enableCycleThinkingWords": true,
+     "showJumpToLatest": true,
+     "runtimeContext": "{{ 'The user opened the analyst from CGB Pulse. ' + (pageInputs['entity_code'] ? 'They were looking at entity ' + pageInputs['entity_code'] + '. ' : '') + (pageInputs['question'] ? 'Their question: ' + pageInputs['question'] : '') }}",
+     "allowedSpaceRoleIds": [],
+     "voiceModeParams": {
+      "separateVoiceMode": true,
+      "fetchInitialMessagesOnConnect": false,
+      "enableVideo": false,
+      "enableScreenshare": false,
+      "separateVoiceModeControls": false
+     }
+    },
+    "appearance": {
+     "size": "sm",
+     "styles": {
+      "width": "w-full",
+      "height": {
+       "custom": "640px"
+      },
+      "position": "relative",
+      "backgroundColor": "bg-inherit"
+     }
+    },
+    "slots": {
+     "messageInputPanel": {
+      "blockId": "b_5S7Zm",
+      "wrappedInLayout": true
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": [
+    {
+     "id": "userContext",
+     "p": [
+      "userContext['name']"
+     ]
+    },
+    {
+     "id": "pageInputs",
+     "p": [
+      "pageInputs['entity_code']",
+      "pageInputs['question']"
+     ]
+    }
+   ],
+   "dP": [
+    {
+     "p": "content.welcomeText"
+    },
+    {
+     "p": "content.runtimeContext"
+    }
+   ]
+  },
+  "b_5S7Zm": {
+   "id": "b_5S7Zm",
+   "displayName": "5S7Zm",
+   "parentId": "b_copilot",
+   "component": {
+    "componentType": "Stack",
+    "content": {
+     "blockIds": [
+      "b_copilot_in",
+      "__PLACEHOLDER__"
+     ]
+    },
+    "appearance": {
+     "direction": "column",
+     "alignItems": "stretch",
+     "justifyContent": "flex-start",
+     "wrapContent": false,
+     "reverseOrder": false,
+     "theme": "inherit",
+     "styles": {
+      "width": "w-full",
+      "gap": {
+       "all": "gap-md"
+      },
+      "padding": {
+       "all": "p-sm"
+      }
+     }
+    }
+   },
+   "visibility": {
+    "value": true
+   },
+   "v": 0,
+   "dataSourceIds": [],
+   "dpOn": []
+  }
+ },
+ "flags": {
+  "shouldUseBuiltDependencies": true
+ },
+ "pageVariables": {},
+ "interactions": {
+  "events": [
+   {
+    "action": {
+     "actionType": "controlBlockMethod",
+     "id": "act_7j9Q4",
+     "runCondition": {
+      "type": "filter",
+      "payload": {
+       "operator": "AND",
+       "filters": [
+        {
+         "property": "{{ !!pageInputs['question'] }}",
+         "filter": {
+          "operator": "EQUAL",
+          "value": "true"
+         }
+        }
+       ]
+      }
+     },
+     "delayDuration": 2000,
+     "payload": {
+      "blockId": "b_copilot",
+      "methodName": "submitMessage",
+      "methodPayload": {
+       "message": "{{ pageInputs['question'] }}"
+      }
+     },
+     "executionType": "delay"
+    },
+    "id": "evt_fNtPU",
+    "eventType": "onPageLoad"
+   }
+  ]
+ },
+ "layout": {
+  "body": "root_id",
+  "header": "header_id",
+  "footer": "footer_id"
+ },
+ "interfaceType": "application",
+ "name": "Analyst",
+ "interfaceId": "cgb-pulse",
+ "documentTitle": "Analyst",
+ "pageFunctions": {},
+ "dataSources": {},
+ "slug": "analyst"
+}

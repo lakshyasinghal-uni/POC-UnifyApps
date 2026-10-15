@@ -1,0 +1,8 @@
+{
+  "name": "Pulse Map",
+  "type": "PulseMap",
+  "main": "pulse-map.es.js",
+  "style": "pulse-map.css",
+  "icon": "https://assets.unifyapps.com/user-uploads/theme/unify.svg",
+  "keywords": "map qatar municipality region bubble satisfaction pulse"
+}

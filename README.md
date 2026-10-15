@@ -99,7 +99,19 @@ poc-studio/
                                    data-assumer, connector, designer, mockups, judge, critic,
                                    rehearsal, scribe, coder
   scripts/explainer-html.mjs       turns the explainer's Markdown into one HTML page
-  scripts/nebula-root.mjs          finds the installed Nebula and checks its version
+  scripts/nebula-root.mjs          finds the installed Nebula, checks its version and whether
+                                   it can build code-first apps
+  skills/poc-research/             Stages 1–2: cited web research, approved at the research gate
+  skills/design-system/            Stage 4: the client's measured design system (DL v3.4)
+  skills/unifyapps-*/              verified UnifyApps platform skills (builder, apps, config
+                                   apps, connectors, context graph, governance, backup and
+                                   restore, solution playbook), from Maher's unifyapps-helper
+  skills/atomic-agent-architecture/, skills/oracle-ebs-apis/
+  skills/demo-studio/              narrated demo video and presenter companions
+  skills/<design and a11y skills>  the design-quality pipeline (see THIRD_PARTY.md)
+  agents/ua-scout.md, ua-checker.md  read-only lookups and mechanical pass/fail checks
+  hooks/                           no-delete-guard
+  API-SPEC.md                      the verified record of UnifyApps endpoints
 ```
 
 Working files go under `.sessions/<sessionId>/drafts/studio/`; profiles under

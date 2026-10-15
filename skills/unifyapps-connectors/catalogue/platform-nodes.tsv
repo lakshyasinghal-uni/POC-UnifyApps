@@ -1,0 +1,93 @@
+# UnifyApps built-in platform nodes - https://orbit.uat.unifyapps.com, 2026-09-23
+# appName	displayName
+ai_agents_by_unifyapps	AI Agents
+ai_evaluator_by_unifyapps	AI Evaluator
+analytics_by_unifyapps	Analytics
+audit_by_unifyapps	Audit
+auth_by_unifyapps	Auth
+branch	Branch
+branch_condition	Branch Condition
+break	Break
+browser_use_by_unifyapps	Browser Use
+caches_by_unifyapps	Caches
+calendar_by_unifyapps	Calendar
+callables	Callable
+chat_by_unifyapps	Chat
+code_by_unifyapps	Code
+comments_by_unifyapps	Comments
+commonroom	CommonRoom
+continue	Continue
+conv_ai_by_unifyapps	AgentKit
+csv_by_unifyapps	CSV
+custom_application	Custom Application
+custom_http_endpoint	Custom HTTP Endpoint
+data_catalog_by_unifyapps	Data Catalog
+data_quality_by_unifyapps	Data Quality
+decision_table_by_unifyapps	Decision Table
+default_tools_by_ai_agent	Default Tools by AI Agent
+delay	Delay
+delta_sharing_by_unifyapps	Delta Sharing
+dt_custom_integrations	DT Custom Integrations
+duckdb_by_unifyapps	DuckDB
+ecg_by_unifyapps	Enterprise Context Graph
+edi_tools_by_unifyapps	EDI Tools
+encryption_tools_by_unifyapps	Encryption Tools
+excel_by_unifyapps	Excel
+files_by_unifyapps	Files
+git_by_unifyapps	Git
+hdfc_custom_integrations	HDFC Custom Integrations
+hl7_tools_by_unifyapps	HL7 Tools
+if_else	Condition
+impersonated_action	Run action as user
+internal_api_executor	Internal API Executor
+java_archive_by_unifyapps	Java Archive
+json_by_unifyapps	JSON
+latch_by_unifyapps	Latch
+loop	Loop
+maven	Maven
+mcp_by_unifyapps	MCP
+mdm_by_unifyapps	Ontology
+meeting_bot_by_unifyapps	Meeting bot
+notification_by_unifyapps	Notification
+on_prem_browser_by_unifyapps	On Prem Browser
+on_prem_command_by_unifyapps	On Prem Commands
+on_prem_files_by_unifyapps	On Prem Files
+ortools_by_unifyapps	OR Solver
+parquet_by_unifyapps	Parquet
+pdf_by_unifyapps	PDF
+pgp_by_unifyapps	PGP Tools
+pii_by_unifyapps	PII
+platform_by_unifyapps	Platform
+platform_tools_by_unifyapps	Platform Tools
+ppt_by_unifyapps	PPT
+routines_by_unifyapps	Routines
+rss_feed_by_unifyapps	RSS Feed
+rtsp_inference_by_unifyapps	RTSP Inference
+schedule	Schedule
+scope	Scope
+screen_by_unifyapps	Screen
+segments_by_unifyapps	Audience Segments
+signals_by_unifyapps	Signals
+smart_router_by_unifyapps	Smart Router
+solution_by_unifyapps	Solution by UnifyApps
+standard_entities	Standard entities
+stop	Stop
+storage_by_unifyapps	Storage
+streams_by_unifyapps	Streams
+tcc_by_unifyapps	TCC
+template_by_unifyapps	Template
+test_http	Test HTTP API
+text_by_unifyapps	Text Reader
+unified_entity_by_unifyapps	Unified Entity
+unify_ai	Unify AI
+unit_testing_by_unifyapps	Unit Testing
+url_shortener_by_unifyapps	URL Shortener
+utility_by_unifyapps	Utility
+variable_by_unifyapps	Variable
+video_utility_by_unifyapps	Video
+voicebot_by_unifyapps	Voicebot
+webhooks	Webhook
+workflow_agent_ask_ai_agent	Agent
+workflow_agent_generate_response	Respond
+workflow_agent_prompt	Prompt
+workflow_agent_search_knowledge	Search the Knowledge

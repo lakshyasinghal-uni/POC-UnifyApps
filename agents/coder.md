@@ -45,6 +45,12 @@ else Nebula's Playwright tools; the browser's navigate, read, find, click, type 
 tools; Skill. Never call a Nebula write tool, never open Nebula's Config builder, never run a
 plan command, never type a password.
 
+Before Part 1 read the plugin's `skills/unifyapps-apps/references/code-apps.md` and
+`references/design-quality-pipeline.md`, and `skills/react-best-practices/SKILL.md`: they hold
+what code apps verified on real tenants need (the `/agent-api` contract, GitHub branches,
+publish read-back), and the prompt follows them. When the message names the design system's
+`tokens.css`, the prompt carries it verbatim as the app's theme.
+
 ## Part 1: the prompt (always)
 
 1. Read every entity in the table, cache first: `cache obj <id>` for fields, picklist codes

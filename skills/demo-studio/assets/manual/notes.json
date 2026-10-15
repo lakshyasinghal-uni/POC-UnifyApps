@@ -1,0 +1,14 @@
+{
+  "_comment": "Presenter instructions, keyed by step id. The entry below is an example and is deliberately not a real id — replace the key with the id of the step it belongs to. {{personaId}} expands to that persona's base URL. Anything here can live inline on the step instead, as \"manual\": { ... } in steps.json, which wins over this file.",
+
+  "example-step-id": {
+    "do": [
+      "Use the window signed in as <b>REPLACE_ME</b>.",
+      "Click once in the address bar so the existing address is highlighted.",
+      "Type or paste this exactly:<br><code>{{app}}/dashboard</code>",
+      "Press <b>Enter</b> and wait about 8 seconds. The numbers load last — do not start talking until the tiles show figures."
+    ],
+    "expect": "A page headed <b>Dashboard</b> with four tiles showing numbers.",
+    "recover": "If you land on a login screen you are not signed in. Go back to <i>Before you start</i> and sign in again in this window."
+  }
+}

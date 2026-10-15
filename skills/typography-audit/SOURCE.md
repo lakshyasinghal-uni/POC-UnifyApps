@@ -1,0 +1,1 @@
+Installed 2026-09-24 from https://github.com/mblode/agent-skills (skills/typography-audit, MIT). Siblings installed: ui-animation, ui-design, product-design, ui-verification, typography-audit. Update: re-clone and copy over.

@@ -1,0 +1,54 @@
+{
+  "_comment": "Everything project-specific lives here. No URL, username, colour or act title belongs anywhere else. See references/config.md in the demo-studio skill.",
+
+  "title": "REPLACE ME — the name on the title card and every cover page",
+  "subtitle": "Customer · built on <platform>",
+  "slug": "Replace_Me_Demo",
+
+  "voice": { "name": "en-GB-SoniaNeural", "rate": "-4%" },
+
+  "brand": {
+    "ink": "#0d1a33",
+    "accent": "#d6a04a",
+    "muted": "#9fb0c9",
+    "font": "\"Segoe UI\", system-ui, sans-serif"
+  },
+
+  "personas": {
+    "app": {
+      "label": "Operations lead",
+      "user": "REPLACE_ME",
+      "base": "https://replace-me.example.com",
+      "login": "/login",
+      "home": "/",
+      "colour": "#24406e",
+      "auth": true
+    }
+  },
+
+  "acts": {
+    "A": { "title": "REPLACE ME — what this act proves", "goal": "The one thing the room should take away." }
+  },
+
+  "opening": { "heading": "REPLACE ME", "sub": "Customer · built on <platform>" },
+  "closing": { "heading": "The closing line", "sub": "" },
+
+  "manual": {
+    "kicker": "Demonstration Manual",
+    "warnings": [
+      "REPLACE ME — the mistakes that actually broke this demo in rehearsal."
+    ],
+    "warmup": "Open the slowest screens once before the customer joins so they paint instantly.",
+    "story": "REPLACE ME — one paragraph: whose day this is, and what changes by the end."
+  },
+
+  "runbook": {
+    "warnings": [
+      "REPLACE ME — same traps, stated for someone presenting live."
+    ],
+    "qa": [
+      { "q": "\"Is the AI making the decision?\"", "a": "REPLACE ME — the honest answer, and the beat to point at." }
+    ],
+    "ifItBreaks": "REPLACE ME — the one recovery instruction that keeps the demo moving."
+  }
+}

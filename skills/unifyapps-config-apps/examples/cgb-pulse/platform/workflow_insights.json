@@ -1,0 +1,155 @@
+{
+ "description": "CGB Pulse: LLM insight engine — p_screen, p_context, p_actions, p_data -> {headline, insights[]} as JSON text.",
+ "edges": [
+  {
+   "fromNodeId": "n_in",
+   "id": "next@n_in@n_llm",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_llm",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_llm",
+   "id": "next@n_llm@n_out",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_out",
+   "type": "next"
+  }
+ ],
+ "name": "cgbp_ai_insights",
+ "nodes": [
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3109,
+    "resourceName": "callables_from_automation"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_in",
+   "index": 0,
+   "inputs": {
+    "setup": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "p_screen",
+      "p_context",
+      "p_actions",
+      "p_data"
+     ],
+     "properties": {
+      "p_screen": {
+       "type": "string",
+       "title": "p_screen",
+       "description": "The screen being viewed, e.g. Qatar Geographic Intelligence."
+      },
+      "p_context": {
+       "type": "string",
+       "title": "p_context",
+       "description": "Who is viewing, the reporting period and today's date, as plain text."
+      },
+      "p_actions": {
+       "type": "string",
+       "title": "p_actions",
+       "description": "JSON array of actions this screen can execute: [{id,label,params}]."
+      },
+      "p_data": {
+       "type": "string",
+       "title": "p_data",
+       "description": "JSON object of the live records the screen is showing."
+      }
+     }
+    }
+   },
+   "skip": false,
+   "title": "Input",
+   "trigger": {
+    "type": "CALLABLE"
+   },
+   "type": "START"
+  },
+  {
+   "context": {
+    "appName": "conv_ai_by_unifyapps",
+    "resourceVersion": 2471,
+    "resourceName": "conv_ai_by_unifyapps_call_llm_model_with_options"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_llm",
+   "index": 1,
+   "inputs": {
+    "callableInterfaceId": "__ua__call_ai_agent_llm_model",
+    "parameters": {
+     "modelId": "e_ai_agent_openai_gpt_4.1_mini",
+     "systemPrompt": "You are the insight engine of CGB Pulse, an executive command centre over Qatar's\ngovernment service programme (a UnifyApps config-app sample). You receive: the screen being viewed, who is viewing it and the date, a list of\nACTIONS the application can execute right now, and LIVE records just read from the UnifyApps data objects.\n\nProduce the few things a Bureau director would raise first in a leadership meeting, each tied to an action\nthey can take on this screen.\n\nRules — follow all of them:\n1. Use ONLY facts present in the data. Quote real numbers, codes, names and periods from the records.\n   Never invent a record, a code or a figure.\n2. Prefer what is moving, concentrated, breaching or unanswered over what is merely low. A number that has\n   fallen three months running matters more than a number that has always been low.\n3. Compare: largest gap, share of the total, best against worst, this month against the trend. A figure with\n   nothing to compare it to is not an insight.\n4. Say the so-what. \"Al Rayyan is at 76.2%\" is a reading; \"Al Rayyan is 7.6 points below national and the gap\n   has widened for three months, which makes it the largest single regional driver of complaints\" is an insight.\n5. Every insight has exactly one action, chosen from the ACTIONS list by its \"id\". Fill \"params\" only with the\n   parameter names that action lists, copying values from the data. For \"ask_agent\", write a precise question\n   in \"prompt\" that the CGB Pulse analyst can answer from the same objects. Use \"none\" only if no listed action fits.\n6. Never recommend an employment, disciplinary or promotion decision about a person. Employee findings are\n   coaching, support, workload or recognition, and they say that human review is required.\n7. Never claim an action has been performed, and never promise a date the data does not support.\n8. Be concise and specific. No markdown.\n\n9. Add a chart to an insight ONLY when the point IS a shape — a series over months, a ranking across\n   four or more items, or a split of a whole. A chart of two numbers, or of numbers already in your\n   sentence, adds nothing and costs the reader a second look. At most two of your insights carry one.\n   Chart values come from the data given to you and must equal the numbers in the detail line.\n\nReturn ONLY a JSON object with this shape:\n{\"headline\": \"one sentence, max 160 chars, the single most important takeaway from this screen\",\n \"insights\": [\n   {\"title\": \"max 70 chars\", \"detail\": \"ONE sentence (max 240 chars) carrying the specific evidence and the so-what\",\n    \"severity\": \"critical\" | \"warning\" | \"opportunity\" | \"info\",\n    \"metric\": \"the short figure that anchors it, e.g. '-7.6 pts' or '2.4x national' or '1,840 mentions'\",\n    \"evidence\": [\"at most 2 short references to the records used, e.g. 'cgbp_region · RAYYAN · response_ratio 2.4'\"],\n    \"action\": {\"id\": \"<an id from ACTIONS>\", \"label\": \"imperative button text, max 34 chars\", \"params\": {}, \"prompt\": \"\"},\n    \"chart\": {\"type\": \"line\" | \"bar\" | \"hbar\" | \"area\" | \"doughnut\" | \"stacked\",\n              \"title\": \"max 60 chars\", \"labels\": [\"...\"],\n              \"series\": [{\"name\": \"...\", \"data\": [1, 2, 3]}],\n              \"unit\": \"pts\" | \"%\" | \"mentions\" | \"...\"}}\n ]}\nReturn two or three insights, most important first. Keep every field short. \"chart\" is optional and\nis omitted entirely when the insight is not about a shape.\n\nNUMBERS (hard rule): quote only figures that appear in the data exactly as given. Never count rows, add, average or derive a new figure yourself, in the text or in a chart. If a count matters and the data does not state it, name the records instead of counting them. A chart may only plot values present in the data.",
+     "message": [
+      {
+       "role": "user",
+       "content": [
+        {
+         "type": "text",
+         "text": "SCREEN: {{ n_in.outputs.p_screen }}\nCONTEXT: {{ n_in.outputs.p_context }}\nACTIONS: {{ n_in.outputs.p_actions }}\nLIVE CGB PULSE RECORDS (JSON): {{ n_in.outputs.p_data }}"
+        }
+       ]
+      }
+     ],
+     "temperature": 0.2,
+     "maxTokens": 1600,
+     "responseFormat": {
+      "type": "json_object"
+     }
+    }
+   },
+   "skip": false,
+   "subTitle": "UnifyApps LLM",
+   "title": "Reason over the live records",
+   "type": "CALL_INTERFACE_WORKFLOW"
+  },
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3111,
+    "resourceName": "callables_return_to_automation",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_out",
+   "index": 2,
+   "inputs": {
+    "result": {
+     "insights": "{{ n_llm.outputs.llmResponse }}",
+     "success": "{{ n_llm.outputs.success }}",
+     "tokensUsed": "{{ n_llm.outputs.tokensUsed }}"
+    }
+   },
+   "skip": false,
+   "title": "Response",
+   "type": "STOP"
+  }
+ ],
+ "schemaReferences": [],
+ "settings": {
+  "enableNodeLevelLogging": true,
+  "enableRunLogging": true,
+  "enableVariableLogging": true,
+  "route": {
+   "default": false,
+   "tierName": "global"
+  }
+ },
+ "standard": false,
+ "tags": [
+  "sharek"
+ ]
+}
