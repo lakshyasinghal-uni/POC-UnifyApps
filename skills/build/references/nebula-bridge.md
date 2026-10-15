@@ -128,7 +128,7 @@ Read these from `NEBULA`, never copy them into Studio: they move with Nebula.
    Agent tool (`nebula:app-agent`, `nebula:fde-agent`, `nebula:automation-agent`,
    `nebula:agent-builder`, `nebula:page-reviewer`) using the exact prompt the reply gives;
    pass the returned agent ids back with `--agent-ids`; record each report as the loop says.
-   The Studio overrides are in SKILL.md § Act 3.
+   The Studio overrides are in SKILL.md § Phase 3, Build, which is Nebula.
 4. When `plan ready` exits 5, the plan is no longer in progress: `NEB plan finish <planId> --json`
    and keep its `entityTable` and `notes`.
 

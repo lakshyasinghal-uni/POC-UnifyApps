@@ -1,57 +1,110 @@
 # POC Studio
 
-Based on [Demo Studio](https://github.com/gouravUnifyapps/DemoStudio-UnifyApps) 0.6.0 by Gourav Mahunta. Install and contribution steps are in [CONTRIBUTING.md](CONTRIBUTING.md).
+Runs a UnifyApps POC end to end, from the first client signal to a released demo, with the
+owner deciding at four gates. Built on Demo Studio 0.6.0 by Gourav Mahunta and Maher's verified
+UnifyApps platform skills. Plugin maintenance notes are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Builds client-branded UnifyApps demo assets from one request, with no clarifying questions in
-between. A team of agents settles every open decision itself, the installed Nebula plugin
-builds the result through its own plan and builder agents, and a rehearsal agent walks the
-finished demo in a browser the way the presenter will.
+Every document, gate decision and piece of feedback is saved to **Orbit**
+(orbit.uat.unifyapps.com). Gates are sent to **Slack** with links to the Orbit records and shown
+in the chat at the same time. The final app is built **code-first** by the Nebula plugin with
+its code builder.
 
-Requires the **Nebula** plugin (written against 3.47.0, checked for 3.46.0 and later 3.x).
+## Before your first build: connect once
+
+Run this once, and again whenever a connection breaks:
+
+```
+/poc-studio:setup
+```
+
+It checks and connects, in this order:
+
+1. **Slack** (required): gate messages, replies and feedback. **Google Calendar** and **Google
+   Drive** are checked too; when either is missing you get a connector card, and the build
+   goes on without it.
+2. **Orbit** (required), by direct API with an environment secret: `ORBIT_COOKIE`, or
+   `ORBIT_USERNAME` and `ORBIT_PASSWORD` for a local account. Set these as environment
+   secrets; never paste them into the chat. Without them, it uses an Orbit tab you are signed
+   in to. It warns you if Orbit is signed in as someone else.
+3. **The three Orbit objects** POC Studio writes to: `poc_studio_poc`, `poc_studio_document`
+   and `poc_studio_feedback`. Any that is missing is created; none is ever changed or deleted.
+4. **Who approves gates** (just you, you and your manager, or others) and **where gate
+   messages go** (a DM to you by default, a group DM with the approvers, or a channel).
+5. **Nebula**: its version, and whether it can build code apps. The first build updates it
+   to the code-builder version if needed.
+6. **One test gate**, end to end: a test POC row and document in Orbit, a test gate in Slack
+   and the chat, your answer recorded and read back.
+
+It writes `poc-studio.yml` in your working folder, with no secret in it.
 
 ## What you type
 
 ```
-/poc-studio:build Build a demo for Acme Logistics (acmelogistics.com): fleet maintenance with
-approvals and an AI assistant, 20 minutes for their COO on Friday.
+/poc-studio:build Build a POC for Acme Logistics (acmelogistics.com): fleet maintenance with
+approvals and an AI assistant, demo to their COO on Friday.
 ```
 
-Optional, once per client, so later demos need even fewer decisions:
+Optional, once per client, so later runs need fewer decisions:
 
 ```
-/poc-studio:profile Acme Logistics · site acmelogistics.com · audience COO, 20 minutes, in person ·
-show off approvals by amount and an AI assistant · tenant orbit.uat.unifyapps.com
+/poc-studio:profile Acme Logistics · site acmelogistics.com · owner Harshal · approvers Harshal,
+Rohit · audience COO, 20 minutes · demo date 2026-10-23
 ```
 
 ## What happens
 
-| Act | Who | What |
+| Phase | Produces, saved to Orbit | Ends with |
 |---|---|---|
-| 0 Setup | the skill | Nebula setup from the profile: tenant, sign-in, solution, Sonic mode. Sign-in is the only possible stop. |
-| 1 Discovery | Scout, Researcher, Ideator, Designer; then Data Assumer, Innovator, Connector; then Stand-in | the tenant and platform map; what the client said in Slack, email and the calendar; three storylines; the client's brand from its site; the data plan (given versus assumed, how many rows and how they get in, where the data lives, masking); three to six ideas for using platform features as demo beats; one to three external "bonus" beats (a ticket created, an email sent, rows read from their database) probed on real connections; the demo intent settled from the client's own sentences; every open decision answered for you |
-| 2 Convergence | Judge, Designer, Scout, Stand-in, Mockups | one storyline chosen to match the intent and cut to budget, with everything no beat uses removed; the app look and every page designed; every line checked against what the platform can build, with any platform question asked of Nebula rather than guessed; three to five UI mockups drawn in Claude as complete HTML pages with the client's brand and the demo's data, shown to you, and **one chosen by you**; the brief and the look re-derived from your choice; the Nebula brief filed |
-| 3 Build | Nebula | the plan, the builders, the page reviewer, read-back proof, publish and deploy |
-| 3b Code app | Coder, Critic | a Text2Code prompt written from the built ids and the code design brief (the client's real fonts, full palette, layout language, every component, motion); with `frontend: code` or `both`, the app built in the Code Builder from that prompt, iterated until the beats pass, then reviewed by the Critic against the brief and the brand, two rounds, and published |
-| 4 Rehearsal | Rehearsal | every beat of the demo walked in a browser with a shot; fixes filed as Nebula later tasks; two rounds at most |
-| 4b Explainer | Scribe | a plain-words document, Markdown and HTML, with one picture of the whole thing, an entity diagram, a step diagram per automation and one record's journey, written from what actually exists |
-| 5 Handoff | the skill | a runbook with the script, shots, links, the look, the explainer, the prompt, and every decision taken for you with the profile line that would have avoided it |
+| **0 · Kickoff** | prerequisites checked (Slack and Orbit before anything else), the profile, the POC row in Orbit with owner, approvers and tier | — |
+| **1 · Signals and research** | what the client and team said in Slack, Gmail, Calendar and Drive; cited web research on the client, the process, the rules, the market and realistic data; a readiness assessment; the data plan | **G1 · Path** |
+| **2 · Scope, BRD and design** | three storylines argued down to one; a BRD sized to the tier; the client's design system; three to five mockups; a one-page scope | **G2 · Scope and BRD** |
+| **3 · Build** | the app, built code-first by the code-builder Nebula in Sonic mode from the approved BRD and design system; every beat rehearsed in a browser; mechanical checks; an explainer with diagrams; the evidence pack | **G3 · Final review** |
+| **4 · Collaterals** | the runbook, the narrated video and its PDFs (when the profile asks), the field note | **G4 · Release** |
+
+## The four gates
+
+Each gate is sent to Slack, in the POC's thread, with links to the Orbit records and the
+feedback raised since the last gate, and shown in the chat at the same time. The owner or an
+approver answers in either place with the gate's reply words; the first answer counts and the
+other place is told.
+
+| Gate | You decide | Reply with |
+|---|---|---|
+| **G1 · Path** | whether the research holds and how to proceed | `approve` · `partial` · `edited` · `block` |
+| **G2 · Scope and BRD** | what gets built, from which BRD, in which design; nothing touches the tenant before this | `approve` · `approve <mockup letter>` · `changes: …` · `stop` |
+| **G3 · Final review** | you open the app and accept it, or list the changes; each becomes a ticket, the BRD gets a new version when a requirement changes, every check runs again | `approve` · `changes: …` · `stop` |
+| **G4 · Release** | the demo and its collaterals go to the field | `approve` · `changes: …` · `hold` |
+
+- Only approvers' replies count. Anyone else's reply is logged as a comment.
+- Silence or an emoji is never a yes. An unclear reply is asked back.
+- One reminder goes after 24 hours (or what setup recorded). An unattended run waits at the
+  gate; it never passes it.
+- With three days or fewer to the demo date, the gates come in pairs (G1 with G2, G3 with G4).
+- Before any gate is sent, every document made so far is read back from Orbit. If something
+  did not save, you are asked to reconnect, and the gate waits.
+
+## Feedback, any time
+
+Say it in the chat or in a gate thread, whenever. Each piece of feedback becomes a ticket in
+Orbit (`FB-_1001`, `FB-_1002`, …) with your exact words, is acknowledged with its number, and is
+closed with what was done. Feedback from the owner or an approver overrules any decision the
+team made; anyone else's is weighed and shown at the next gate.
+
+Between gates, only these reach you: a missing required connection, an expired sign-in, a
+delete, a credential for a new connection, a budget that cannot be met, a risky fix during the
+build, the design system's two stops, a Nebula update that needs a fresh session, and the
+narration approval before a video is recorded.
 
 ## Three rules worth knowing
 
 - **It asks Nebula, never guesses.** Any question about what the platform can do or store is
-  answered from Nebula's knowledge skills, the platform's knowledge sheets or a tenant read
+  answered from Nebula, then from the verified UnifyApps skills shipped here
   (`skills/build/references/ask-nebula.md`). The platform fails silently, so a guess is worse
   than no answer.
-- **It pulls context from Slack, Gmail and Calendar.** The Researcher searches channels,
-  threads and events by the client's name, domain and the demo words, reads the relevant
-  ones, and writes what the client and the team actually said, plus the demo slot's length
-  and setting. No personal data leaves the sources; a source that is not connected is skipped.
-- **It builds nothing a beat does not use, and it decides the demo's intent first.** Is the
-  audience there for the use case, for a look at how it is configured on the platform, or
-  both? The Stand-in settles that from the request, the profile and Slack before any
-  storyline is chosen; a `platform` demo keeps the use case small and the configuration
-  legible, with hood beats that open the builder; a `use-case` demo keeps the platform out of
-  sight. Everything no beat shows is cut by the Judge.
+- **Orbit is the record.** The full file of every document is uploaded, versioned (a new
+  version supersedes the old one; nothing is deleted) and its text kept alongside.
+- **It builds only what the approved BRD and the demo's beats use.** Everything else is cut,
+  however good.
 
 ## Which browser it uses
 
@@ -66,71 +119,46 @@ that reaches you.
 
 ## What you get at the end
 
-- The published demo app on your tenant, in the client's colours and fonts, with its data,
+- The app on your tenant, code-first, in the client's colours and fonts, with its data,
   automations and assistant.
-- `<Client> Demo Runbook.md`: the script with a shot per beat, links, the look, and the
-  decisions taken for you.
-- `<Client> Demo Explainer.md` and `.html`: what each object, automation, agent and page does
-  and how data flows, with diagrams, for anyone who was not in the room.
-- `<Client> Text2Code Prompt.md`: the same demo as a prompt for the Code Builder, carrying
-  the real ids, and the code app itself when the profile asks for it.
-- `studio/profiles/<client>.md`: the profile, ready for the next demo.
-
-## The four gates, and what else reaches you
-
-The owner (the profile's `owner` line, else you) decides at four gates, each one stop with
-its pack shown and one question (`skills/build/references/gates.md`):
-
-- **G1 · Path**, after research: the cited research document and a readiness score; proceed,
-  proceed partial, or block.
-- **G2 · Scope**, after the design system: the one-page scope, the style guide and the
-  mockups; pick a mockup and approve the scope. Nothing touches the tenant before this.
-- **G3 · Build verified**, after finalize: the evidence pack; you walk the demo script once
-  as the dry run, then freeze the build or send fixes back.
-- **G4 · Release**, after the collaterals: runbook, explainer, video, field note; release or
-  hold.
-
-With three days or fewer to the demo date the gates are asked in pairs (G1 with G2, G3 with
-G4); none is ever skipped, and an unattended run waits at a gate rather than passing it.
-
-Between gates only these reach you: an expired sign-in, a delete, a budget the Judge cannot
-meet, one credential when an external beat needs a connection the tenant does not hold, a
-risky fix during the build, the design system's two stops, a Nebula update that needs a fresh
-session, and the narration approval before a video is recorded.
+- In Orbit, under the POC: the research, assessment, context notes, data plan, scope, BRD,
+  design system, mockups, explainer, evidence pack, runbook, video and PDFs, field note, every
+  gate decision and every feedback ticket.
+- The same documents in your working folder as working copies, and the client profile in
+  `studio/profiles/<client>.md`.
 
 ## Files
 
 ```
 poc-studio/
   .claude-plugin/plugin.json
-  skills/build/SKILL.md            the five acts
-  skills/build/references/         nebula-bridge, ask-nebula, context-research, data-plan,
-                                   external-connections, innovation, mockups, explainer,
-                                   text2code, code-design-brief, brand-to-look, demo-defaults,
-                                   when-something-fails, ledger, storyline, demo-script,
-                                   runbook and profile templates
+  skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, Orbit, approvers, a test gate
+  skills/build/SKILL.md            the four phases and their gates
+  skills/build/references/         gates, gate-delivery, orbit-records, orbit-objects.json,
+                                   brd-template, nebula-bridge, ask-nebula, context-research,
+                                   data-plan, external-connections, innovation, mockups,
+                                   explainer, text2code, code-design-brief, brand-to-look,
+                                   demo-defaults, when-something-fails, ledger, storyline,
+                                   demo-script, runbook and profile templates
   skills/profile/SKILL.md          write or edit a client profile
-  agents/                          stand-in, scout, researcher, ideator, innovator,
-                                   data-assumer, connector, designer, mockups, judge, critic,
-                                   rehearsal, scribe, coder
-  scripts/explainer-html.mjs       turns the explainer's Markdown into one HTML page
-  scripts/nebula-root.mjs          finds the installed Nebula, checks its version and whether
-                                   it can build code-first apps
-  skills/poc-research/             Stages 1–2: cited web research, approved by the owner at G1
-  skills/design-system/            Stage 4: the client's measured design system (DL v3.4)
+  skills/poc-research/             cited web research for phase 1
+  skills/design-system/            the client's measured design system (Design Language v3.4)
+  skills/demo-studio/              narrated demo video and its PDFs
   skills/unifyapps-*/              verified UnifyApps platform skills (builder, apps, config
                                    apps, connectors, context graph, governance, backup and
-                                   restore, solution playbook), from Maher's unifyapps-helper
+                                   restore, solution playbook)
   skills/atomic-agent-architecture/, skills/oracle-ebs-apis/
-  skills/demo-studio/              narrated demo video and presenter companions
   skills/<design and a11y skills>  the design-quality pipeline (see THIRD_PARTY.md)
-  agents/ua-scout.md, ua-checker.md  read-only lookups and mechanical pass/fail checks
+  agents/                          stand-in, scout, researcher, ideator, innovator,
+                                   data-assumer, connector, designer, mockups, judge, critic,
+                                   rehearsal, scribe, coder, ua-scout, ua-checker
+  scripts/orbit-api.mjs            Orbit without a browser: check, records, upload, save-doc,
+                                   readback, flush
+  scripts/nebula-root.mjs          finds Nebula, checks its version and code-builder support
+  scripts/explainer-html.mjs       turns the explainer's Markdown into one HTML page
   hooks/                           no-delete-guard
   API-SPEC.md                      the verified record of UnifyApps endpoints
 ```
-
-Working files go under `.sessions/<sessionId>/drafts/studio/`; profiles under
-`studio/profiles/`; the runbook in the working folder.
 
 ## Design notes
 

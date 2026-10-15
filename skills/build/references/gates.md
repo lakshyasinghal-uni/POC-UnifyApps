@@ -1,44 +1,47 @@
 # The four gates
 
-A POC moves through four owner gates, in the places the POC Studio flow puts them. Between
-gates the team decides, logs and moves on. At a gate it stops, shows the owner what it made,
-and waits. Nothing past a gate starts until the owner answers it.
+A POC moves through four owner gates. Each gate closes a phase; the answer starts the next.
+Between gates the team decides, logs and moves on. At a gate it stops, shows the owner what it
+made, and waits. Nothing past a gate starts until the owner or an approver answers it.
 
-| Gate | Sits after | Decides | The owner sees |
+| Gate | Closes | Decides | The pack (Orbit documents) |
 |---|---|---|---|
-| **G1 · Path** | Stage 2 · Research, assess | Proceed, proceed partial, or block | The research document and the readiness assessment |
-| **G2 · Scope** | Stage 4 · Design system | What gets built and how it looks | The scope summary, the design system's style guide, and the mockups |
-| **G3 · Build verified** | Stage 6 · Finalize | The demo works and is frozen | The evidence pack, the demo script for the dry run, and what is unverified |
-| **G4 · Release** | Stage 7 · Collaterals | The demo goes to the field | The runbook, the explainer, the video and PDFs when made, and the field note |
+| **G1 · Path** | Phase 1: signal capture, research, assessment | Proceed, proceed partial, or block | Research document, readiness assessment, context notes, data plan |
+| **G2 · Scope and BRD** | Phase 2: scope, storyline, BRD, design system, mockups | What gets built, from which BRD, in which design | Scope summary, BRD, style guide, mockups |
+| **G3 · Final review** | Phase 3: the code-first build, rehearsal, checks, evidence | The app is accepted as built | The app link, evidence pack, unverified list |
+| **G4 · Release** | Phase 4: collaterals | The demo goes to the field | Runbook, explainer, video and PDFs, field note |
+
+Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: to Slack with links to
+the Orbit records and in the chat at the same time, answered with the gate's reply words,
+first answer counts. Every pack document is saved to Orbit and read back before the gate is
+sent ([orbit-records.md](orbit-records.md) § The write-back check).
 
 ## Rules for every gate
 
-- **Only the owner answers a gate.** The Stand-in, the Judge and the moderator never answer
-  one, never treat silence as a yes, and never pre-fill an answer. The owner is the
-  profile's `owner` line; when the line is empty, the person who started the build.
-- **One stop per gate.** Show the gate pack with SendUserFile (display `render` for pages,
-  `attach` for documents) in one call, say in two or three lines what the owner is deciding
-  and what is weakest, then ask ONE AskUserQuestion. A gate may carry up to three questions in
-  that one call (G2 does), never a second stop.
-- **Changes loop back, twice at most.** An answer that asks for changes goes back to the
-  stage that owns them, with the owner's words quoted in the agent's message file. Then the
-  same gate is asked again. After the second round of changes, the third answer can only be
-  approve, approve with the changes listed as `Not done`, or stop.
-- **Stop means stop.** `Stop here` ends the build at that gate. Write the runbook with what
-  exists, mark the gate `stopped` and say so in one line.
-- **Unattended runs wait.** When nobody is there to answer (a scheduled run, or the question
-  has gone unanswered), write the gate pack, send it with SendUserMessage and a one-line
-  summary, and end the turn. A returning owner answers the gate and the build carries on
-  from it. A gate is never skipped because nobody answered.
-- **Every answer is logged** in `$STUDIO/gates.md`, one row per ask:
-  `Gate | Round | Asked | Answer | Owner's words | Next`. The runbook carries the table.
-- **Edits win.** When the owner edits a file in the gate pack, re-read it; the edited
-  version is the source of truth for every later stage.
+- **Only the owner or an approver answers a gate.** The Stand-in, the Judge and the moderator
+  never answer one, never treat silence or an emoji as a yes, and never pre-fill an answer.
+  The owner and approvers are the profile's `owner` and `approvers` lines, else
+  `poc-studio.yml`, else the person who started the build.
+- **One question per gate,** in both places at once, with the gate's reply words.
+- **Changes loop back, twice at most.** A `changes: …` answer becomes feedback tickets tagged
+  `OWNER`, goes back to the phase that owns them, and the same gate is asked again. After the
+  second round of changes, the third answer can only approve, approve with the open tickets
+  listed as `Not done`, or stop.
+- **Stop means stop.** `block`, `stop` and `hold` end the build at that gate with what exists
+  saved to Orbit, the POC row set to `blocked`, `stopped` or `held`, and one line saying so.
+- **Unattended runs wait.** The gate is sent, the thread is checked on a schedule, one reminder
+  goes after `reminder_hours`, and the build carries on from the gate when an answer comes. A
+  gate is never skipped because nobody answered.
+- **Every answer is a record:** a `gate_decision` document and the gate's status on the POC
+  row, written before the next phase starts. The runbook carries the table of gate answers.
+- **Edits win.** When the owner edits a document in Orbit (`edited` at G1, or a newer version
+  at any gate), read the latest version back; it is the source of truth for every later phase.
+- **Feedback since the last gate** is listed in every gate message by ticket number and status.
 
 ## Merged gates on short timelines
 
-The demo date sets the tier at kickoff (profile `demo date`, else the date of the demo event
-the Researcher found, else `standard`):
+The demo date sets the tier at kickoff (profile `demo date`, else the demo event the
+Researcher found, else `standard`):
 
 | Days to the demo | Tier | Gates |
 |---|---|---|
@@ -47,17 +50,16 @@ the Researcher found, else `standard`):
 | more than 10 | `full` | all four, separately |
 
 The profile's `gates` line overrides the tier (`full` or `merged`). A merged gate shows both
-packs and carries both gates' questions in one AskUserQuestion. It is still two rows in
-`gates.md`.
+packs and takes both gates' reply words (`approve` approves both; anything else names the
+gate it is about). It is still two `gate_decision` records.
 
 ## G1 · Path
 
-**When:** after discovery, once the Scout, the Researcher (with the research document) and
-the Data Assumer have reported, before the Judge picks a storyline.
+**When:** at the end of phase 1, once signal capture, the research document, the context
+notes and the data plan exist and are saved to Orbit.
 
-**Pack:** `research/<client-slug>-research.md` (status Draft) and
-`$STUDIO/assessment.md`, which the moderator writes from `scout.md`, the research document,
-`context-notes.md` and `data-plan.md`:
+**Pack:** the research document (status `in_review`), the context notes, the data plan, and
+the readiness assessment the moderator writes from them and the Scout's tenant map:
 
 ```markdown
 # <Client>: readiness
@@ -79,79 +81,64 @@ Recommendation: <proceed | proceed partial | block> · tier <sprint | standard |
 - In: <what the demo will show> · Out: <what waits, and why>
 ```
 
-`proceed` needs no score below 3; `proceed partial` names what is cut; `block` names the gap
-that stops it.
+`proceed` needs no score below 3; `proceed partial` names what is cut; `block` names the gap.
 
-**Question:** header `G1 Path`, `How should this POC proceed?` Options: `Proceed`, `Proceed
-partial` (the cut list in the assessment), `I edited the research` (re-read both files and
-carry on with the owner's version), `Block`. `Block` is a stop: write the gaps as the
-runbook's `Not done` and end.
+**Reply words:** `approve` · `partial` · `edited` · `block`.
 
-**After:** set the document's status to `Approved by <owner> on <date>`. The research's open
-questions and the assessment's gaps become ledger rows. With `Proceed partial`, the cut list
-goes to the Judge as a hard limit.
+**After:** the research and assessment become `approved`. Their open questions and gaps become
+ledger rows. With `partial`, the cut list is a hard limit for the Stand-in and the Judge.
+`approve` or `partial` starts phase 2.
 
-## G2 · Scope
+## G2 · Scope and BRD
 
-**When:** after Round 2, once the design system exists, the Scout's capability table is in,
-and the mockups are drawn; before the brief is filed. Nothing is written to the tenant before
-G2 is approved.
+**When:** at the end of phase 2, once the storyline is chosen, the BRD is written, the design
+system exists and the mockups are drawn. Nothing is written to the tenant before G2.
 
 **Pack:**
 
-- `$STUDIO/scope.md`, the scope summary, one page: the storyline in one line and its beats;
-  the screens (one line each, the job of the page); the flows (each automation, what starts it
-  and what it writes); the AI agents and what each answers; the data (given or assumed, rows,
-  where it lives); the external beat, if any; what was cut and why; the `Check this`
-  assumptions; the size against the budget and the tier.
-- The design system's `style-guide.html`.
-- The mockup gallery and each mockup, unless the profile's `mockups` line is `off` or `auto`.
+- The scope summary, one page: the storyline in one line and its beats; the screens; the
+  flows; the AI agents; the data; the external beat, if any; what was cut and why; the
+  `Check this` assumptions; the size against the budget and the tier.
+- The BRD ([brd-template.md](brd-template.md)), sized to the tier.
+- The design system's style guide, and the mockups unless the profile's `mockups` line is
+  `off` or `auto`.
 
-**Question:** header `G2 Scope`, one AskUserQuestion with up to two questions:
+**Reply words:** `approve` (takes the recommended mockup) · `approve <letter>` · `changes: …`
+· `stop`.
 
-1. When mockups were drawn and the line is not `auto`: `Which design should the demo
-   follow?`, one option per mockup (letter and direction in a few words), the recommended one
-   first and marked, at most four, a fifth reachable through the free-text answer.
-2. `Approve this scope for the build?` Options: `Approve and build`, `Change the scope`
-   (free text: what to add, cut or change), `Stop here`.
+**After:** the chosen mockup becomes the design reference and the Designer refines. Each
+change is a ticket and a ledger row tagged `OWNER`, a new BRD version when a requirement
+changes, and G2 is asked again. `approve` starts phase 3, which builds only what the approved
+BRD and design system say.
 
-**After:** the chosen mockup becomes `design-reference.html` and the Designer refines as the
-build skill says. `Change the scope` goes to the Stand-in and a fresh Judge with the owner's
-words; the changes are ledger rows tagged `OWNER`, which nothing else may overrule. Then the
-brief is filed from the approved scope only.
+## G3 · Final review
 
-## G3 · Build verified
+**When:** at the end of phase 3, once the app is built code-first, rehearsed, checked, and
+the evidence pack is saved.
 
-**When:** after the build, the rehearsal, the checks and the finalize stage, before any
-collateral is made.
+**Pack:** the app's link, the demo script for the owner's walk through it, the evidence pack
+(rehearsal with a shot per beat, checks with evidence, the entity table with builder links,
+the external check when there is one) and the unverified list.
 
-**Pack:** `studio/evidence/<client-slug>/`, the evidence pack the finalize stage writes:
-`rehearsal.md` with a shot per beat, `checks.md` with its evidence, the entity table with
-builder links, `external-verify.md` when there is an external beat, the explainer, and
-`unverified.md` (every beat or check still failing, every `Check this` assumption). Plus the
-demo script, which the owner walks once as the dry run.
+**Reply words:** `approve` · `changes: …` · `stop`.
 
-**Question:** header `G3 Verified`, `Walk the demo script once. Is the build verified?`
-Options: `Verified, freeze it`, `Fix these first` (free text: what failed on the dry run),
-`Stop here`.
-
-**After:** `Fix these first` becomes later tasks; each is classed safe or risky as the build
-skill's fix loop says, risky ones need the owner's yes, and rehearsal and checks run again
-on everything before G3 is asked again. `Verified, freeze it` freezes the build: from here no
-tenant change happens except as a later task the owner asks for, which reopens G3.
+**After:** the owner opens the app and either accepts it or lists changes. Each change becomes
+a feedback ticket tagged `OWNER`. A change that alters a requirement gives the BRD a new
+version first. The fixes run through the build's fix loop, rehearsal and every check run again
+on the whole app, the evidence pack gets a new version, and G3 is asked again. `approve`
+freezes the build: from here no tenant change happens unless the owner asks for one, which
+reopens G3. It starts phase 4.
 
 ## G4 · Release
 
-**When:** after the collaterals are made.
+**When:** at the end of phase 4, once the collaterals are made and saved to Orbit.
 
-**Pack:** the runbook, the explainer, the video and its PDFs when made, the Text2Code prompt
-or code app link when there is one, and `field-note.md`: a five-line note for the field team
-(what the demo shows, the link, how long it runs, what not to click, who to ask). The note is
-a draft; nothing is posted or sent from this skill.
+**Pack:** the runbook, the explainer, the video and its PDFs when made, the Text2Code prompt,
+and the field note: five lines for the field team (what the demo shows, the link, how long it
+runs, what not to click, who to ask). Nothing is posted to the field from here; the note is
+for the owner to send.
 
-**Question:** header `G4 Release`, `Release this demo to the field?` Options: `Release`,
-`Change the collaterals` (free text), `Hold`.
+**Reply words:** `approve` · `changes: …` · `hold`.
 
-**After:** `Release` marks the runbook `Demo-ready · released by <owner> on <date>` and the
-build ends with the handoff lines. `Hold` keeps everything as it is, marked `held`, with the
-owner's reason in the runbook.
+**After:** `approve` marks the runbook `Demo-ready · released by <name> on <date>`, the POC row
+`released`, stage `demo_ready`. `hold` keeps everything as it is, `held`, with the reason.

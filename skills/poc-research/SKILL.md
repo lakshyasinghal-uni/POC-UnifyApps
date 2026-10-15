@@ -23,7 +23,8 @@ use case arrives → [poc-research] → scoping → BRD → design → build (Ne
 
 - **Input:** the requirement as it arrived — a brief, an email, sales notes, Slack history, an RFP
   extract, or a few lines from the user.
-- **Output:** `research/<poc-slug>-research.md`, status **Draft**. It is a draft until the PM approves it
+- **Output:** `research/<poc-slug>-research.md`, status **Draft**, saved to Orbit as the POC's
+  `research` document when run inside a POC Studio build. It is a draft until the PM approves it
   at the research gate. Nothing in this skill sends, publishes or contacts anyone.
 - **Used by:** the scoping and BRD skills (problem, process, KPIs, rules), the design-system skill
   (client brand, industry look), and the demo-collateral skill (real entities, realistic sample data).
@@ -70,7 +71,7 @@ does not apply, and say why.
 | **3. Rules and standards** | Regulations, compliance requirements, published standards, government data that the POC must respect or can use | Government and regulator sites, standards bodies, official registers |
 | **4. Market and alternatives** | Products that already solve this, how they position it, what they automate, typical outcomes they claim | Vendor product pages, analyst summaries, case studies (treat vendor claims as claims) |
 | **5. Demo realism** | Real entities and reference data to make the demo believable: locations, store or site types, product catalogues, public price lists, document formats, units, currencies, time zones | Official public lists, catalogues, open datasets |
-| **6. Prior work** | Similar finished POCs or reusable assets in the team's knowledge repository | The POC knowledge repo, if connected, and this plugin's `unifyapps-solution-playbook` (eleven past UnifyApps builds and which to start from) |
+| **6. Prior work** | Similar finished POCs or reusable assets | Earlier POCs' approved documents in Orbit (`find poc_studio_document --field status --value approved` with `orbit-api.mjs`, then filter by industry or use case), and this plugin's `unifyapps-solution-playbook` (eleven past UnifyApps builds and which to start from) |
 
 When the user is present and the requirement is ambiguous in a way that changes the research (for
 example, which country the pilot runs in), ask **one** question before searching. When the loop is

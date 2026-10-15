@@ -2,10 +2,11 @@
 
 UnifyApps has two app builders. Nebula builds **Config** apps (pages as a block tree). The
 **Code Builder** ("Text2Code") takes a prompt, plans, and writes real front-end source code.
-Demo Studio always writes a Text2Code prompt from what Nebula built, so the same demo can be
-made as a code app too; when the profile's `frontend` line says `code` or `both`, the Coder
-agent takes that prompt into the Code Builder in a browser, approves the plan, iterates until
-the storyline's beats pass, and publishes. The person's `code-builder` skill, when the session
+POC Studio builds the final app code-first: it writes a Text2Code prompt from what Nebula
+built, and with the profile's `frontend` line at `code` (the default) or `both`, that prompt is
+the code builder's input. With a code-builder Nebula the app is Nebula's code-builder task;
+without one, the Coder agent takes the prompt into the Code Builder in a browser, approves the
+plan, iterates until the storyline's beats pass, and publishes. The person's `code-builder` skill, when the session
 lists it (`anthropic-skills:code-builder` or `unifyapps-operator:code-builder`), is the
 reference for the screens; load it first.
 
@@ -13,8 +14,8 @@ reference for the screens; load it first.
 
 | Value | Nebula builds | Code Builder builds | Rehearsal walks |
 |---|---|---|---|
-| `nebula` (default) | objects, seeds, automations, agents, the Config app | nothing; the prompt is written for the person to use later | the Config app |
-| `code` | objects, seeds, automations, agents; no page lines, no publish | the app, from the prompt, iterated and published by the Coder | the code app, by the Coder |
+| `code` (default) | objects, seeds, automations, agents; with a code-builder Nebula, the code app too | without a code-builder Nebula, the app, from the prompt, iterated and published by the Coder | the code app |
+| `nebula` | objects, seeds, automations, agents, the Config app | nothing; the prompt is written for the person to use later | the Config app |
 | `both` | everything, as `nebula` | the app too, as `code` | both; good for a `platform` demo that compares the two builders |
 
 With `code`, the brief has no `page`, `job`, `design` or `app look` lines and no `publish`;

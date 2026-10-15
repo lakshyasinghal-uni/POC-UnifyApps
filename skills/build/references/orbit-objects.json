@@ -1,0 +1,1143 @@
+{
+  "_about": "POC Studio's three Orbit objects on orbit.uat.unifyapps.com. Object ids are fixed. Field shapes follow API-SPEC \u00a724 (Objects Manager). Written 2026-10-15 from the agreed field list; run `node scripts/orbit-api.mjs schema <id>` against the tenant and replace each `schema` with the live read so this file matches exactly. The File field format is the one shape not yet read back from a live object.",
+  "tenant": "https://orbit.uat.unifyapps.com",
+  "objects": [
+    {
+      "id": "poc_studio_poc",
+      "name": "POC Studio POC",
+      "pluralName": "POC Studio POCs",
+      "description": "One row per POC run through POC Studio: owner, approvers, tier, stage, gates, Slack thread, sessions and counts.",
+      "metadata": {
+        "storeDetails": {
+          "store": "MONGO"
+        }
+      },
+      "tags": [
+        "POC_STUDIO"
+      ],
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "poc_id",
+          "client",
+          "owner",
+          "stage",
+          "status"
+        ],
+        "properties": {
+          "poc_id": {
+            "type": "string",
+            "format": "text",
+            "title": "POC ID",
+            "primaryKey": true,
+            "searchable": true,
+            "sortable": true,
+            "filterable": true,
+            "description": "POC-<client-slug>-<yyyymmdd>"
+          },
+          "client": {
+            "type": "string",
+            "format": "text",
+            "title": "Client",
+            "nameField": true,
+            "searchable": true,
+            "sortable": true,
+            "filterable": true
+          },
+          "client_slug": {
+            "type": "string",
+            "format": "text",
+            "title": "Client slug",
+            "filterable": true
+          },
+          "use_case": {
+            "type": "string",
+            "format": "text",
+            "title": "Use case",
+            "searchable": true
+          },
+          "owner": {
+            "type": "string",
+            "format": "text",
+            "title": "Owner",
+            "description": "Gate owner: name and Slack ID, e.g. Harshal Arya <U0123>",
+            "filterable": true
+          },
+          "started_by": {
+            "type": "string",
+            "format": "text",
+            "title": "Started by",
+            "filterable": true
+          },
+          "approvers": {
+            "type": "string",
+            "format": "text",
+            "title": "Approvers",
+            "description": "Comma-separated names with Slack IDs; their replies count at a gate"
+          },
+          "tier": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Tier",
+            "oneOf": [
+              {
+                "const": "sprint",
+                "title": "sprint"
+              },
+              {
+                "const": "standard",
+                "title": "standard"
+              },
+              {
+                "const": "full",
+                "title": "full"
+              }
+            ],
+            "filterable": true
+          },
+          "demo_date": {
+            "type": "integer",
+            "format": "date-time",
+            "dateFormat": "epoch",
+            "title": "Demo date",
+            "sortable": true,
+            "filterable": true
+          },
+          "stage": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Stage",
+            "oneOf": [
+              {
+                "const": "0_kickoff",
+                "title": "0 kickoff"
+              },
+              {
+                "const": "1_signal_capture",
+                "title": "1 signal capture"
+              },
+              {
+                "const": "2_research_assess",
+                "title": "2 research assess"
+              },
+              {
+                "const": "3_scope",
+                "title": "3 scope"
+              },
+              {
+                "const": "4_design_system",
+                "title": "4 design system"
+              },
+              {
+                "const": "5_build",
+                "title": "5 build"
+              },
+              {
+                "const": "6_finalize",
+                "title": "6 finalize"
+              },
+              {
+                "const": "7_collaterals",
+                "title": "7 collaterals"
+              },
+              {
+                "const": "demo_ready",
+                "title": "demo ready"
+              }
+            ],
+            "filterable": true
+          },
+          "status": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Status",
+            "oneOf": [
+              {
+                "const": "running",
+                "title": "running"
+              },
+              {
+                "const": "waiting_on_gate",
+                "title": "waiting on gate"
+              },
+              {
+                "const": "waiting_on_reconnect",
+                "title": "waiting on reconnect"
+              },
+              {
+                "const": "blocked",
+                "title": "blocked"
+              },
+              {
+                "const": "stopped",
+                "title": "stopped"
+              },
+              {
+                "const": "held",
+                "title": "held"
+              },
+              {
+                "const": "released",
+                "title": "released"
+              }
+            ],
+            "filterable": true
+          },
+          "current_gate": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Current gate",
+            "oneOf": [
+              {
+                "const": "none",
+                "title": "none"
+              },
+              {
+                "const": "G1",
+                "title": "G1"
+              },
+              {
+                "const": "G2",
+                "title": "G2"
+              },
+              {
+                "const": "G3",
+                "title": "G3"
+              },
+              {
+                "const": "G4",
+                "title": "G4"
+              }
+            ],
+            "filterable": true
+          },
+          "g1_status": {
+            "type": "string",
+            "format": "single-select",
+            "title": "G1 Path",
+            "oneOf": [
+              {
+                "const": "not_started",
+                "title": "not started"
+              },
+              {
+                "const": "asked",
+                "title": "asked"
+              },
+              {
+                "const": "approved",
+                "title": "approved"
+              },
+              {
+                "const": "approved_partial",
+                "title": "approved partial"
+              },
+              {
+                "const": "approved_with_changes",
+                "title": "approved with changes"
+              },
+              {
+                "const": "changes_requested",
+                "title": "changes requested"
+              },
+              {
+                "const": "blocked",
+                "title": "blocked"
+              },
+              {
+                "const": "stopped",
+                "title": "stopped"
+              },
+              {
+                "const": "held",
+                "title": "held"
+              },
+              {
+                "const": "released",
+                "title": "released"
+              }
+            ],
+            "filterable": true
+          },
+          "g2_status": {
+            "type": "string",
+            "format": "single-select",
+            "title": "G2 Scope and BRD",
+            "oneOf": [
+              {
+                "const": "not_started",
+                "title": "not started"
+              },
+              {
+                "const": "asked",
+                "title": "asked"
+              },
+              {
+                "const": "approved",
+                "title": "approved"
+              },
+              {
+                "const": "approved_partial",
+                "title": "approved partial"
+              },
+              {
+                "const": "approved_with_changes",
+                "title": "approved with changes"
+              },
+              {
+                "const": "changes_requested",
+                "title": "changes requested"
+              },
+              {
+                "const": "blocked",
+                "title": "blocked"
+              },
+              {
+                "const": "stopped",
+                "title": "stopped"
+              },
+              {
+                "const": "held",
+                "title": "held"
+              },
+              {
+                "const": "released",
+                "title": "released"
+              }
+            ],
+            "filterable": true
+          },
+          "g3_status": {
+            "type": "string",
+            "format": "single-select",
+            "title": "G3 Final review",
+            "oneOf": [
+              {
+                "const": "not_started",
+                "title": "not started"
+              },
+              {
+                "const": "asked",
+                "title": "asked"
+              },
+              {
+                "const": "approved",
+                "title": "approved"
+              },
+              {
+                "const": "approved_partial",
+                "title": "approved partial"
+              },
+              {
+                "const": "approved_with_changes",
+                "title": "approved with changes"
+              },
+              {
+                "const": "changes_requested",
+                "title": "changes requested"
+              },
+              {
+                "const": "blocked",
+                "title": "blocked"
+              },
+              {
+                "const": "stopped",
+                "title": "stopped"
+              },
+              {
+                "const": "held",
+                "title": "held"
+              },
+              {
+                "const": "released",
+                "title": "released"
+              }
+            ],
+            "filterable": true
+          },
+          "g4_status": {
+            "type": "string",
+            "format": "single-select",
+            "title": "G4 Release",
+            "oneOf": [
+              {
+                "const": "not_started",
+                "title": "not started"
+              },
+              {
+                "const": "asked",
+                "title": "asked"
+              },
+              {
+                "const": "approved",
+                "title": "approved"
+              },
+              {
+                "const": "approved_partial",
+                "title": "approved partial"
+              },
+              {
+                "const": "approved_with_changes",
+                "title": "approved with changes"
+              },
+              {
+                "const": "changes_requested",
+                "title": "changes requested"
+              },
+              {
+                "const": "blocked",
+                "title": "blocked"
+              },
+              {
+                "const": "stopped",
+                "title": "stopped"
+              },
+              {
+                "const": "held",
+                "title": "held"
+              },
+              {
+                "const": "released",
+                "title": "released"
+              }
+            ],
+            "filterable": true
+          },
+          "gate_destination": {
+            "type": "string",
+            "format": "text",
+            "title": "Gate destination",
+            "description": "dm | group_dm | channel, with the Slack conversation ID"
+          },
+          "slack_channel": {
+            "type": "string",
+            "format": "text",
+            "title": "Slack channel ID"
+          },
+          "slack_thread_ts": {
+            "type": "string",
+            "format": "text",
+            "title": "Slack thread",
+            "description": "ts of the POC's root message; every gate posts in this thread"
+          },
+          "sessions": {
+            "type": "string",
+            "format": "text",
+            "title": "Sessions",
+            "description": "Claude session links, newest first, one per line"
+          },
+          "document_count": {
+            "type": "integer",
+            "title": "Documents"
+          },
+          "open_feedback_count": {
+            "type": "integer",
+            "title": "Open feedback"
+          },
+          "app_url": {
+            "type": "string",
+            "format": "text",
+            "title": "App link"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "date-time",
+            "dateFormat": "epoch",
+            "title": "Created",
+            "sortable": true
+          },
+          "updated_at": {
+            "type": "integer",
+            "format": "date-time",
+            "dateFormat": "epoch",
+            "title": "Updated",
+            "sortable": true,
+            "filterable": true
+          }
+        }
+      },
+      "layout": {
+        "ui:order": [
+          "poc_id",
+          "client",
+          "client_slug",
+          "use_case",
+          "owner",
+          "started_by",
+          "approvers",
+          "tier",
+          "demo_date",
+          "stage",
+          "status",
+          "current_gate",
+          "g1_status",
+          "g2_status",
+          "g3_status",
+          "g4_status",
+          "gate_destination",
+          "slack_channel",
+          "slack_thread_ts",
+          "sessions",
+          "document_count",
+          "open_feedback_count",
+          "app_url",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    },
+    {
+      "id": "poc_studio_document",
+      "name": "POC Studio Document",
+      "pluralName": "POC Studio Documents",
+      "description": "One row per document version a POC produces; the full file is uploaded and text is also kept in content.",
+      "metadata": {
+        "storeDetails": {
+          "store": "MONGO"
+        }
+      },
+      "tags": [
+        "POC_STUDIO"
+      ],
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "doc_id",
+          "title",
+          "poc_id",
+          "stage",
+          "file_slug",
+          "version",
+          "status"
+        ],
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "format": "text",
+            "title": "Document ID",
+            "primaryKey": true,
+            "searchable": true,
+            "sortable": true,
+            "filterable": true,
+            "description": "<poc_id>__<stage>__<file-slug>__v<n>"
+          },
+          "title": {
+            "type": "string",
+            "format": "text",
+            "title": "Title",
+            "nameField": true,
+            "searchable": true,
+            "sortable": true
+          },
+          "poc_id": {
+            "type": "string",
+            "format": "single-select",
+            "title": "POC",
+            "foreignKey": {
+              "reference": "ENTITY_ID:poc_studio_poc"
+            },
+            "filterable": true
+          },
+          "stage": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Stage",
+            "oneOf": [
+              {
+                "const": "0_kickoff",
+                "title": "0 kickoff"
+              },
+              {
+                "const": "1_signal_capture",
+                "title": "1 signal capture"
+              },
+              {
+                "const": "2_research_assess",
+                "title": "2 research assess"
+              },
+              {
+                "const": "3_scope",
+                "title": "3 scope"
+              },
+              {
+                "const": "4_design_system",
+                "title": "4 design system"
+              },
+              {
+                "const": "5_build",
+                "title": "5 build"
+              },
+              {
+                "const": "6_finalize",
+                "title": "6 finalize"
+              },
+              {
+                "const": "7_collaterals",
+                "title": "7 collaterals"
+              },
+              {
+                "const": "demo_ready",
+                "title": "demo ready"
+              }
+            ],
+            "filterable": true
+          },
+          "file_slug": {
+            "type": "string",
+            "format": "text",
+            "title": "File slug",
+            "filterable": true
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version",
+            "sortable": true,
+            "filterable": true
+          },
+          "doc_type": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Type",
+            "oneOf": [
+              {
+                "const": "research",
+                "title": "research"
+              },
+              {
+                "const": "assessment",
+                "title": "assessment"
+              },
+              {
+                "const": "context_notes",
+                "title": "context notes"
+              },
+              {
+                "const": "data_plan",
+                "title": "data plan"
+              },
+              {
+                "const": "scope",
+                "title": "scope"
+              },
+              {
+                "const": "brd",
+                "title": "brd"
+              },
+              {
+                "const": "design_system",
+                "title": "design system"
+              },
+              {
+                "const": "mockup",
+                "title": "mockup"
+              },
+              {
+                "const": "evidence",
+                "title": "evidence"
+              },
+              {
+                "const": "rehearsal",
+                "title": "rehearsal"
+              },
+              {
+                "const": "checks",
+                "title": "checks"
+              },
+              {
+                "const": "runbook",
+                "title": "runbook"
+              },
+              {
+                "const": "explainer",
+                "title": "explainer"
+              },
+              {
+                "const": "video",
+                "title": "video"
+              },
+              {
+                "const": "pdf",
+                "title": "pdf"
+              },
+              {
+                "const": "field_note",
+                "title": "field note"
+              },
+              {
+                "const": "gate_pack",
+                "title": "gate pack"
+              },
+              {
+                "const": "gate_decision",
+                "title": "gate decision"
+              },
+              {
+                "const": "text2code_prompt",
+                "title": "text2code prompt"
+              },
+              {
+                "const": "other",
+                "title": "other"
+              }
+            ],
+            "filterable": true
+          },
+          "gate": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Gate",
+            "oneOf": [
+              {
+                "const": "none",
+                "title": "none"
+              },
+              {
+                "const": "G1",
+                "title": "G1"
+              },
+              {
+                "const": "G2",
+                "title": "G2"
+              },
+              {
+                "const": "G3",
+                "title": "G3"
+              },
+              {
+                "const": "G4",
+                "title": "G4"
+              }
+            ],
+            "filterable": true
+          },
+          "status": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Status",
+            "oneOf": [
+              {
+                "const": "draft",
+                "title": "draft"
+              },
+              {
+                "const": "in_review",
+                "title": "in review"
+              },
+              {
+                "const": "approved",
+                "title": "approved"
+              },
+              {
+                "const": "superseded",
+                "title": "superseded"
+              }
+            ],
+            "filterable": true
+          },
+          "file": {
+            "type": "object",
+            "format": "file",
+            "title": "File",
+            "description": "Platform File field: {name, source (storage key user-uploads/<customer>/\u2026), sourceType CLOUD_STORAGE, mimeType, size, type FILE, url}"
+          },
+          "content": {
+            "type": "string",
+            "format": "text",
+            "title": "Content",
+            "description": "Text of the file when it is text, up to ~1 MB; empty for binaries"
+          },
+          "mime_type": {
+            "type": "string",
+            "format": "text",
+            "title": "MIME type"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "title": "Size (bytes)"
+          },
+          "supersedes": {
+            "type": "string",
+            "format": "text",
+            "title": "Supersedes",
+            "description": "doc_id of the previous version"
+          },
+          "created_by": {
+            "type": "string",
+            "format": "text",
+            "title": "Created by",
+            "filterable": true
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "date-time",
+            "dateFormat": "epoch",
+            "title": "Created",
+            "sortable": true,
+            "filterable": true
+          }
+        }
+      },
+      "layout": {
+        "ui:order": [
+          "doc_id",
+          "title",
+          "poc_id",
+          "stage",
+          "file_slug",
+          "version",
+          "doc_type",
+          "gate",
+          "status",
+          "file",
+          "content",
+          "mime_type",
+          "size_bytes",
+          "supersedes",
+          "created_by",
+          "created_at"
+        ]
+      }
+    },
+    {
+      "id": "poc_studio_feedback",
+      "name": "POC Studio Feedback",
+      "pluralName": "POC Studio Feedback",
+      "description": "One ticket per piece of feedback on a POC, with the exact words, who gave it, where, and what was done.",
+      "metadata": {
+        "storeDetails": {
+          "store": "MONGO"
+        }
+      },
+      "tags": [
+        "POC_STUDIO"
+      ],
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "poc_id",
+          "words",
+          "given_by",
+          "status"
+        ],
+        "properties": {
+          "ticket": {
+            "type": "string",
+            "format": "auto-generate",
+            "title": "Ticket",
+            "primaryKey": true,
+            "searchable": true,
+            "sortable": true,
+            "filterable": true,
+            "autoGeneratedFieldDefinition": {
+              "prefix": "FB-",
+              "startFrom": 1001
+            },
+            "description": "Server joins prefix and counter with _ \u2192 FB-_1001"
+          },
+          "summary": {
+            "type": "string",
+            "format": "text",
+            "title": "Summary",
+            "nameField": true,
+            "searchable": true
+          },
+          "poc_id": {
+            "type": "string",
+            "format": "single-select",
+            "title": "POC",
+            "foreignKey": {
+              "reference": "ENTITY_ID:poc_studio_poc"
+            },
+            "filterable": true
+          },
+          "document_id": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Document",
+            "foreignKey": {
+              "reference": "ENTITY_ID:poc_studio_document"
+            },
+            "filterable": true
+          },
+          "words": {
+            "type": "string",
+            "format": "text",
+            "title": "Exact words",
+            "searchable": true
+          },
+          "given_by": {
+            "type": "string",
+            "format": "text",
+            "title": "Given by",
+            "description": "Name and Slack ID",
+            "filterable": true
+          },
+          "giver_role": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Giver role",
+            "oneOf": [
+              {
+                "const": "owner",
+                "title": "owner"
+              },
+              {
+                "const": "approver",
+                "title": "approver"
+              },
+              {
+                "const": "other",
+                "title": "other"
+              }
+            ],
+            "filterable": true
+          },
+          "ledger_tag": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Ledger tag",
+            "oneOf": [
+              {
+                "const": "OWNER",
+                "title": "OWNER"
+              },
+              {
+                "const": "COMMENT",
+                "title": "COMMENT"
+              }
+            ],
+            "filterable": true
+          },
+          "channel": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Where",
+            "oneOf": [
+              {
+                "const": "chat",
+                "title": "chat"
+              },
+              {
+                "const": "slack_thread",
+                "title": "slack thread"
+              }
+            ],
+            "filterable": true
+          },
+          "stage": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Stage",
+            "oneOf": [
+              {
+                "const": "0_kickoff",
+                "title": "0 kickoff"
+              },
+              {
+                "const": "1_signal_capture",
+                "title": "1 signal capture"
+              },
+              {
+                "const": "2_research_assess",
+                "title": "2 research assess"
+              },
+              {
+                "const": "3_scope",
+                "title": "3 scope"
+              },
+              {
+                "const": "4_design_system",
+                "title": "4 design system"
+              },
+              {
+                "const": "5_build",
+                "title": "5 build"
+              },
+              {
+                "const": "6_finalize",
+                "title": "6 finalize"
+              },
+              {
+                "const": "7_collaterals",
+                "title": "7 collaterals"
+              },
+              {
+                "const": "demo_ready",
+                "title": "demo ready"
+              }
+            ],
+            "filterable": true
+          },
+          "gate": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Gate",
+            "oneOf": [
+              {
+                "const": "none",
+                "title": "none"
+              },
+              {
+                "const": "G1",
+                "title": "G1"
+              },
+              {
+                "const": "G2",
+                "title": "G2"
+              },
+              {
+                "const": "G3",
+                "title": "G3"
+              },
+              {
+                "const": "G4",
+                "title": "G4"
+              }
+            ],
+            "filterable": true
+          },
+          "category": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Category",
+            "oneOf": [
+              {
+                "const": "scope",
+                "title": "scope"
+              },
+              {
+                "const": "requirement",
+                "title": "requirement"
+              },
+              {
+                "const": "design",
+                "title": "design"
+              },
+              {
+                "const": "data",
+                "title": "data"
+              },
+              {
+                "const": "build_defect",
+                "title": "build defect"
+              },
+              {
+                "const": "content",
+                "title": "content"
+              },
+              {
+                "const": "collateral",
+                "title": "collateral"
+              },
+              {
+                "const": "process",
+                "title": "process"
+              },
+              {
+                "const": "skill",
+                "title": "skill"
+              }
+            ],
+            "filterable": true
+          },
+          "severity": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Severity",
+            "oneOf": [
+              {
+                "const": "low",
+                "title": "low"
+              },
+              {
+                "const": "medium",
+                "title": "medium"
+              },
+              {
+                "const": "high",
+                "title": "high"
+              },
+              {
+                "const": "blocker",
+                "title": "blocker"
+              }
+            ],
+            "filterable": true
+          },
+          "status": {
+            "type": "string",
+            "format": "single-select",
+            "title": "Status",
+            "oneOf": [
+              {
+                "const": "open",
+                "title": "open"
+              },
+              {
+                "const": "acknowledged",
+                "title": "acknowledged"
+              },
+              {
+                "const": "in_progress",
+                "title": "in progress"
+              },
+              {
+                "const": "done",
+                "title": "done"
+              },
+              {
+                "const": "wont_do",
+                "title": "wont do"
+              }
+            ],
+            "filterable": true
+          },
+          "resolution": {
+            "type": "string",
+            "format": "text",
+            "title": "What was done"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "date-time",
+            "dateFormat": "epoch",
+            "title": "Created",
+            "sortable": true,
+            "filterable": true
+          },
+          "closed_at": {
+            "type": "integer",
+            "format": "date-time",
+            "dateFormat": "epoch",
+            "title": "Closed",
+            "sortable": true
+          }
+        }
+      },
+      "layout": {
+        "ui:order": [
+          "ticket",
+          "summary",
+          "poc_id",
+          "document_id",
+          "words",
+          "given_by",
+          "giver_role",
+          "ledger_tag",
+          "channel",
+          "stage",
+          "gate",
+          "category",
+          "severity",
+          "status",
+          "resolution",
+          "created_at",
+          "closed_at"
+        ]
+      }
+    }
+  ]
+}

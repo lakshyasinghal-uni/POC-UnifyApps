@@ -166,10 +166,11 @@ failure, whatever else works.
 
 ## Frontend: which builder makes the app
 
-The profile's `frontend` line (text2code.md § The frontend line): `nebula` (default) builds the
-Config app through Nebula's page builders and reviewers; `code` builds the app in the Code
-Builder from the Text2Code prompt, with no page lines in the brief; `both` does both, which
-suits a `platform` demo that compares the two builders. The Text2Code prompt is written
+The profile's `frontend` line (text2code.md § The frontend line): `code` (the default) builds
+the final app code-first, with the code-builder Nebula from the approved BRD, the Text2Code
+prompt and the design system, with no config page lines in the brief; `nebula` builds a Config
+app through Nebula's page builders and reviewers; `both` does both, which suits a `platform`
+demo that compares the two builders. The Text2Code prompt is written
 whatever the value, from the built ids, so the person can try the Code Builder later.
 
 ## Always produced

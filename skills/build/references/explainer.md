@@ -9,7 +9,7 @@ the brief. The Scribe writes it; a script turns it into a page that opens in any
 ## Files
 
 - `<Client> Demo Explainer.md` in the working folder: Markdown with Mermaid diagrams. It
-  renders on GitHub and in most editors.
+  renders in most Markdown viewers and editors.
 - `<Client> Demo Explainer.html` beside it: the same content as one self-contained page, made
   with `node "$STUDIO_ROOT/scripts/explainer-html.mjs" "<md>" "<html>"`. It loads two small
   libraries from a public CDN and needs nothing else.
