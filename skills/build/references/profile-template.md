@@ -32,7 +32,6 @@ request.
 - video: <on | off> · <on renders the demo assets at handoff: narrated video with an architecture opening, subtitles, live-demo runbook, presenter manual, PG playbook and screenshot library>
 - frontend: <code | nebula | both> · <code (the default) builds the final app code-first with the code-builder Nebula from the approved BRD and design system; nebula builds a Config app; both does both>
 - innovate: <nebula | all | off> · <nebula admits platform-feature ideas Nebula can build; all admits ideas a browser agent could build from the operator skills; off skips the Innovator>
-- mockups: <3 | 4 | 5 | auto | off> · <a number draws that many UI mockups and asks you to choose one at G2; auto takes the recommendation; off skips them>
 - avoid: <what must not appear or happen>
 - tenant: <host> · solution: <name> (create if missing)
 - release: <publish and deploy without asking | leave unpublished> · visibility <PRIVATE | shareable>
@@ -65,7 +64,6 @@ request.
 | video | `off` |
 | frontend | `code`: the final app is a code app from the code-builder Nebula; the Text2Code prompt is written in every case |
 | innovate | `nebula`: the Innovator runs, and the Judge admits at most two ideas Nebula can build |
-| mockups | `4`: four directions drawn and one chosen by the owner at G2 |
 | avoid | deletes · anything needing a connection the tenant lacks · more pages than the budget |
 | tenant | the host of a builder link in the request; else the folder's Nebula solution; else the most recent tenant Nebula's `state next` lists |
 | solution | `<Client> Demo` |

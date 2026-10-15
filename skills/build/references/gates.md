@@ -4,12 +4,17 @@ A POC moves through four owner gates. Each gate closes a phase; the answer start
 Between gates the team decides, logs and moves on. At a gate it stops, shows the owner what it
 made, and waits. Nothing past a gate starts until the owner or an approver answers it.
 
-| Gate | Closes | Decides | The pack (Orbit documents) |
+| Gate | Closes | Decides | What the owner reviews |
 |---|---|---|---|
-| **G1 · Path** | Phase 1: signal capture, research, assessment | Proceed, proceed partial, or block | Research document, readiness assessment, context notes, data plan |
-| **G2 · Scope and BRD** | Phase 2: scope, storyline, BRD, design system, mockups | What gets built, from which BRD, in which design | Scope summary, BRD, style guide, mockups |
-| **G3 · Final review** | Phase 3: the code-first build, rehearsal, checks, evidence | The app is accepted as built | The app link, evidence pack, unverified list |
-| **G4 · Release** | Phase 4: collaterals | The demo goes to the field | Runbook, explainer, video and PDFs, field note |
+| **G1 · Path** | Phase 1: signal capture and research | Proceed, proceed partial, or block | The research document |
+| **G2 · Scope and BRD** | Phase 2: the BRD, then the design system | What gets built, and how it looks | The BRD and the design system |
+| **G3 · Final review** | Phase 3: the code-first build and its checks | The app is accepted as built | The app |
+| **G4 · Release** | Phase 4: collaterals | The demo goes to the field | The collaterals: runbook, explainer, video and PDFs when made, field note |
+
+These are the only documents a POC produces for review. Everything else the team writes along
+the way (the decision ledger, storylines, the data plan, design notes, the Nebula brief, the
+entity table, rehearsal and check results, the Text2Code prompt) is a working document: saved to
+Orbit so a resume can carry on, never sent as a gate document.
 
 Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: to Slack with links to
 the Orbit records and in the chat at the same time, answered with the gate's reply words,
@@ -56,20 +61,21 @@ packs and takes both gates' reply words (`approve` approves both; anything else 
 gate it is about). It is still two `gate_decision` records.
 
 In a merged G1 and G2, phase 2 runs before G1 is answered. When the answer is `block` for G1,
-every document phase 2 made (scope, BRD, storyline, design system, mockups, and the working
-rulings and designs) is set to `superseded`, the POC goes to `status: blocked`, `run_state:
+the BRD, the design system and every working document phase 2 made are set to `superseded`, the POC goes to `status: blocked`, `run_state:
 abandoned`, and nothing is built.
 
 ## G1 · Path
 
-**When:** at the end of phase 1, once signal capture, the research document, the context
-notes and the data plan exist and are saved to Orbit.
+**When:** at the end of phase 1, once the research document is written and saved to Orbit.
 
-**Pack:** the research document (status `in_review`), the context notes, the data plan, and
-the readiness assessment the moderator writes from them and the Scout's tenant map:
+**Pack:** the research document (status `in_review`). Besides the web research, it carries two
+sections the moderator adds from the phase's working documents: **What the client and team
+said** (from the context notes: the ask in their words, the audience, the demo slot, the
+intent signals, the systems they run) and **Readiness**, in this shape, from the context notes,
+the data plan and the Scout's tenant map:
 
 ```markdown
-# <Client>: readiness
+## Readiness
 
 Recommendation: <proceed | proceed partial | block> · tier <sprint | standard | full>
 
@@ -81,10 +87,10 @@ Recommendation: <proceed | proceed partial | block> · tier <sprint | standard |
 | Connections | | systems the demo would touch and whether the tenant has them |
 | Time | | the demo date against the budget |
 
-## Gaps
+### Gaps
 - <gap> → <what closes it, and who>
 
-## If proceeding partial
+### If proceeding partial
 - In: <what the demo will show> · Out: <what waits, and why>
 ```
 
@@ -92,47 +98,43 @@ Recommendation: <proceed | proceed partial | block> · tier <sprint | standard |
 
 **Reply words:** `approve` · `partial` · `edited` · `block`.
 
-**After:** the research and assessment become `approved`. Their open questions and gaps become
+**After:** the research document becomes `approved`. Its open questions and gaps become
 ledger rows. With `partial`, the cut list is a hard limit for the Stand-in and the Judge.
 `approve` or `partial` starts phase 2.
 
 ## G2 · Scope and BRD
 
-**When:** at the end of phase 2, once the storyline is chosen, the BRD is written, the design
-system exists and the mockups are drawn. Nothing is written to the tenant before G2.
+**When:** at the end of phase 2, once the BRD is written and the design system is made from
+it. Nothing is written to the tenant before G2.
 
 **Pack:**
 
-- The scope summary, one page: the storyline in one line and its beats; the screens; the
-  flows; the AI agents; the data; the external beat, if any; what was cut and why; the
-  `Check this` assumptions; the size against the budget and the tier.
-- The BRD ([brd-template.md](brd-template.md)), sized to the tier.
-- The design system's style guide, and the mockups unless the profile's `mockups` line is
-  `off` or `auto`.
+- The BRD ([brd-template.md](brd-template.md)), sized to the tier. Its summary, storyline,
+  data, scope and out-of-scope sections carry what the team decided.
+- The design system: its style guide (the visual reference the app follows), token block and
+  logo kit.
 
-**Reply words:** `approve` (takes the recommended mockup) · `approve <letter>` · `changes: …`
-· `stop`.
+**Reply words:** `approve` · `changes: …` · `stop`.
 
-**After:** the chosen mockup becomes the design reference and the Designer refines. Each
-change is a ticket and a ledger row tagged `OWNER`, a new BRD version when a requirement
-changes, and G2 is asked again. `approve` starts phase 3, which builds only what the approved
+**After:** each change is a ticket and a ledger row tagged `OWNER`: a new BRD version when a
+requirement changes, a new design system version when the look changes. Then G2 is asked
+again. `approve` starts phase 3, which builds only what the approved
 BRD and design system say.
 
 ## G3 · Final review
 
-**When:** at the end of phase 3, once the app is built code-first, rehearsed, checked, and
-the evidence pack is saved.
+**When:** at the end of phase 3, once the app is built code-first, rehearsed and checked.
 
-**Pack:** the app's link, the demo script for the owner's walk through it, the evidence pack
-(rehearsal with a shot per beat, checks with evidence, the entity table with builder links,
-the external check when there is one) and the unverified list.
+**Pack:** the app's link. The gate message itself says, in a few lines, how many beats passed
+rehearsal and how many checks passed, and lists anything unverified; the rehearsal and check
+results are working documents in Orbit for anyone who wants the detail.
 
 **Reply words:** `approve` · `changes: …` · `stop`.
 
 **After:** the owner opens the app and either accepts it or lists changes. Each change becomes
 a feedback ticket tagged `OWNER`. A change that alters a requirement gives the BRD a new
 version first. The fixes run through the build's fix loop, rehearsal and every check run again
-on the whole app, the evidence pack gets a new version, and G3 is asked again. `approve`
+on the whole app, and G3 is asked again. `approve`
 freezes the build: from here no tenant change happens unless the owner asks for one, which
 reopens G3. It starts phase 4.
 
@@ -140,8 +142,8 @@ reopens G3. It starts phase 4.
 
 **When:** at the end of phase 4, once the collaterals are made and saved to Orbit.
 
-**Pack:** the runbook, the explainer, the video and its PDFs when made, the Text2Code prompt,
-and the field note: five lines for the field team (what the demo shows, the link, how long it
+**Pack:** the collaterals: the runbook, the explainer, the video and its PDFs when made, and the
+field note: five lines for the field team (what the demo shows, the link, how long it
 runs, what not to click, who to ask). Nothing is posted to the field from here; the note is
 for the owner to send.
 

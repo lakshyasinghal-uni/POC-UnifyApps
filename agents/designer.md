@@ -90,25 +90,6 @@ The message carries `fast brief`'s exact refusal, or a Critic `design question`.
 what it names in `design.md` or `code-design.md`, run the checker again when the look line
 changed, and report the new numbers.
 
-## Phase `refine`
-
-The person chose a mockup; the message names `design-reference.html`. Read its `<style>` block
-and markup, then:
-
-1. Rewrite `code-design.md` so the mockup is the brief: its CSS variables are the palette with
-   their roles and values, its loaded fonts and sizes the type scale, its header, grid and
-   regions the layout language, its buttons, chips, tables, tiles and cards the component
-   specs, its animation the motion. Keep every section of `code-design-brief.md`; fill each
-   from the file, not from memory. Add one line at the top: `Reference: design-reference.html
-   (mockup <letter>, <direction>). Match it.`
-2. Re-derive the Nebula `app look` line in `design.md` from the same mockup within Nebula's
-   limits: the nearest of the 12 fonts to the mockup's font, the 13 roles from its variables,
-   radius, gaps, groups and depth as the mockup does them, `bold` where the mockup puts it.
-   Run the look checker again and replace the printed numbers.
-3. Re-order each page's `design` regions to follow the mockup's lead page where the storyline
-   allows, and name the mockup's parts in the region text ("the KPI strip above the table").
-
-Report what changed in `code-design.md` and `design.md`, in five lines or fewer.
 
 ## Rules
 

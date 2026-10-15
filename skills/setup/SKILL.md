@@ -10,7 +10,7 @@ description: >
   gate end to end, and saves the settings (no secrets) in Orbit with a local copy in
   poc-studio.yml, so a new chat does not need setup again.
 metadata:
-  version: "0.4.2"
+  version: "0.4.3"
 ---
 
 # POC Studio: setup

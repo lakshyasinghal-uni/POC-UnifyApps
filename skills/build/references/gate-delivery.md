@@ -49,7 +49,7 @@ posted in Slack; the first answer from either place counts.`
 | Gate | Approve | Other answers |
 |---|---|---|
 | G1 · Path | `approve` | `partial` (proceed with the cut list), `edited` (I edited the research or assessment in Orbit), `block` |
-| G2 · Scope and BRD | `approve`, or `approve <letter>` to pick a mockup | `changes: <what>`, `stop` |
+| G2 · Scope and BRD | `approve` | `changes: <what>`, `stop` |
 | G3 · Final review | `approve` | `changes: <what>`, `stop` |
 | G4 · Release | `approve` | `changes: <what>`, `hold` |
 

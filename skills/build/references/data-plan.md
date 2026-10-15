@@ -83,7 +83,7 @@ The story row is always in the first 20, named, with the values the beats depend
 
 - `given` only for a file, link, screenshot or schema that exists. The word "their data" in a
   request is not a file.
-- Nothing personal from a given file reaches a seed, a mockup, a script or an explainer.
+- Nothing personal from a given file reaches a seed, a script or an explainer.
 - Volume follows the intent and the budget, not ambition: more rows than a beat shows is
   cost without story.
 - Where data lives is a sentence the presenter will be asked to say; write it so they can.

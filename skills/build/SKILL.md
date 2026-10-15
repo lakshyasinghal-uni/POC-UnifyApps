@@ -9,18 +9,19 @@ description: >
   a resume finds the row, confirms it, reads the working documents back from Orbit and carries
   on from its resume point. It runs a POC end to end in four phases, each closed
   by an owner gate delivered in Slack and in the chat: phase 1 captures signals from Slack,
-  Gmail, Calendar and Drive and researches the web into a research document, readiness
-  assessment, context notes and data plan (G1 Path); phase 2 chooses the storyline and writes a
-  BRD sized to the tier, the client's design system and mockups (G2 Scope and BRD); phase 3
+  Gmail, Calendar and Drive and researches the web into one research document (G1 Path); phase
+  2 writes a BRD sized to the tier, then the client's design system from it (G2 Scope and BRD);
+  phase 3
   builds the app code-first with the latest code-builder Nebula in the POC's mode, rehearses and
-  checks it (G3 Final review); phase 4 makes the runbook, explainer, video, PDFs and field note
+  checks it (G3 Final review); phase 4 makes the collaterals: runbook, explainer, video, PDFs
+  and field note
   (G4 Release). Every document, decision and feedback ticket is saved to Orbit and read back
   before any human step. A team of agents (Stand-in, Scout, Researcher, Ideator, Innovator, Data
-  Assumer, Connector, Designer, Mockups, Judge, Critic, Rehearsal, Scribe, Coder, ua-checker)
+  Assumer, Connector, Designer, Judge, Critic, Rehearsal, Scribe, Coder, ua-checker)
   settles what it can between gates and asks Nebula and the verified UnifyApps skills rather
   than guessing. Needs /poc-studio:setup once first.
 metadata:
-  version: "0.4.2"
+  version: "0.4.3"
   requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; Orbit"
 ---
 
@@ -38,10 +39,16 @@ lives in Orbit, and one POC is one row there however many sessions work on it
 | Phase | Stages of the flow | Produces (saved to Orbit) | Ends with |
 |---|---|---|---|
 | 0 · Kickoff | 0 · Kickoff | prerequisites checked, profile, POC row, owner, approvers, tier | — |
-| 1 · Signals and research | 1 · Signal capture, 2 · Research, assess | research document, readiness assessment, context notes, data plan | **G1 · Path** |
-| 2 · Scope and design | 3 · Scope the demo, 4 · Design system | scope summary, storyline, BRD, design system, mockups | **G2 · Scope and BRD** |
-| 3 · Build | 5 · Build in phases, 6 · Finalize | the code-first app, rehearsal, checks, explainer, evidence pack | **G3 · Final review** |
-| 4 · Collaterals | 7 · Collaterals | runbook, video, PDFs, field note | **G4 · Release** |
+| 1 · Signals and research | 1 · Signal capture, 2 · Research, assess | the research document (with what the client said and the readiness verdict) | **G1 · Path** |
+| 2 · Scope and design | 3 · Scope the demo, 4 · Design system | the BRD, then the design system made from it | **G2 · Scope and BRD** |
+| 3 · Build | 5 · Build in phases, 6 · Finalize | the code-first app, rehearsed and checked | **G3 · Final review** |
+| 4 · Collaterals | 7 · Collaterals | the collaterals: runbook, explainer, video and PDFs when asked for, field note | **G4 · Release** |
+
+These are the only documents a POC produces for review: the research document, the BRD, the
+design system, the app and the collaterals. Everything else the team writes (ledger,
+storylines, context notes, data plan, design notes, brief, entity table, rehearsal and check
+results, Text2Code prompt) is a working document, saved to Orbit for resuming and never sent as
+a gate document.
 
 Each gate is defined in [references/gates.md](references/gates.md) and delivered as
 [references/gate-delivery.md](references/gate-delivery.md) says. An approved gate starts the
@@ -250,11 +257,13 @@ listing and [references/data-plan.md](references/data-plan.md). It writes
 data lives today and in the demo, the masking rules and the masked copies, the story row. Merge
 its open rows into the ledger.
 
-**The initial documents.** Write the readiness assessment in the shape gates.md gives, from
-`scout.md`, the research document, `context-notes.md` and `data-plan.md`. Save the four to
-Orbit with `save-doc` (stage `2_research_assess`; types `research`, `assessment`,
-`context_notes`, `data_plan`; status `in_review`), set the POC's stage, and post one line in the
-POC's Slack thread with their Orbit links (the first post opens the thread).
+**The research document.** Add its two closing sections as gates.md § G1 says: **What the
+client and team said**, from `context-notes.md`, and **Readiness**, from `scout.md`,
+`context-notes.md` and `data-plan.md`. Save it to Orbit with `save-doc` (stage
+`2_research_assess`, slug `research`, type `research`, status `in_review`); save the context
+notes, the data plan and the Scout's map as working documents. Set the POC's stage, and post
+one line in the POC's Slack thread with the research document's Orbit link (the first post
+opens the thread).
 
 **G1 · Path.** Run the write-back check, then send G1 as gate-delivery.md says (merged into G2
 when the tier is `sprint`). Wait. Say `G1: <answer>.` `block` ends the build. `edited` re-reads
@@ -266,7 +275,7 @@ gates) before the build ends.
 ## Phase 2 · Scope, BRD and design → G2 Scope and BRD
 
 In ONE message start the two agents of the second wave, each with the request, the profile,
-`storylines.md`, `scout.md`, `context-notes.md`, the approved research and assessment:
+`storylines.md`, `scout.md`, `context-notes.md`, the approved research document:
 
 - `poc-studio:innovator` → `innovator-1.md`, with
   [references/innovation.md](references/innovation.md), unless the profile's `innovate` line
@@ -285,7 +294,7 @@ Merge their open rows into the ledger.
 Then start `poc-studio:stand-in` → `stand-in-1.md`: the POC's `build_mode`, the profile, the
 request, the ledger,
 `storylines.md`, `ideas.md`, `data-plan.md`, `external.md`, `scout.md`, `context-notes.md`,
-the approved research document and assessment with the owner's G1 answer, every `OWNER`
+the approved research document with the owner's G1 answer, every `OWNER`
 ticket so far, Nebula memory (`memory get`), and the rule that it settles `demo.intent` first (use case, platform configuration, or both) from the request,
 the profile and the context notes with the sentences that show it quoted, then answers every
 other row in one specific line tagged `STAND-IN` (or `SLACK` when a message settled it),
@@ -310,7 +319,33 @@ sharpening a beat, within the budget and the `innovate` line), the external beat
 why, in three lines, every entity, page or beat no beat of that storyline uses (cut, listed),
 and a ruling on any row both Scout and Stand-in left open. Merge into the ledger.
 
-**The design system (stage 4).** Before Round 2, settle the client's design system once:
+**Round 2.** Send the Scout, by SendMessage, the chosen storyline's entities and beats, and
+every `platform question` row still open. It appends to `scout.md` a table with one row per intended
+`## Changes` line: the beat that uses it, the builder, the tool that makes it, the read that
+proves it, and `ok` or `no tool` with the nearest thing the platform can do. A line no beat
+uses is flagged for the Judge to cut. Each platform question is answered through
+ask-nebula.md and logged `NEBULA`, each admitted idea's `Built by` is confirmed or
+corrected, each seed's volume is checked against data-plan.md's limits (named rows to 20, a
+file to 200, an automation above), and the admitted external beat's connection is confirmed
+live with `list_connections`.
+
+New rows it exposes go to the Stand-in by SendMessage. Merge everything into the ledger.
+
+**Round 3, only if rows are still open.** A fresh Judge rules on every remaining row from
+the ledger alone. Nothing stays open after this round.
+
+**The convergence test** is in [references/ledger-template.md](references/ledger-template.md):
+every row settled, no open objection, no new open row, and the storyline chosen with no
+unresolved `no tool` line.
+
+**The BRD (stage 3), first.** Write it from [references/brd-template.md](references/brd-template.md),
+sized to the tier, from the approved research document, the ledger, the rulings, the Scout's
+capability table and `data-plan.md`. It carries what used to be separate notes: the chosen
+storyline (§ 10), the data plan's summary (§ 6), what was cut (§ 11) and the `Check this`
+assumptions (§ 12). Every requirement traces to a source and a beat. Save it to Orbit
+(`--stage 3_scope --slug brd --type brd --status in_review`).
+
+**The design system (stage 4), from the BRD.** Settle the client's design system once:
 
 - **Reuse** when `studio/design-systems/<client-slug>/` already holds `tokens.css`,
   `style-guide.html` and `port-note.md`: read the port note, check its source version is
@@ -326,71 +361,31 @@ and a ruling on any row both Scout and Stand-in left open. Merge into the ledger
 between gates (gate-delivery.md). Say
   `Design system generated: <swatch>, <shipped face>, max ΔY <n>.`
 
-Every later design file follows it: the Designer's `code-design.md` takes its palette, type
-scale, radii and components from `tokens.css` and the style guide; the mockups paste its
-stylesheet and change only layout; Nebula's `app look` line is the nearest the look script
-allows, with each departure logged `DESIGNER`.
+Then start `poc-studio:designer` → `designer-2.md` with `phase: look`: `brand.md`, `context-notes.md`
+(brand hints, vocabulary), the approved BRD, the chosen storyline, the settled `demo.intent`, the profile,
+brand-to-look.md, and the Nebula files the bridge names for the look (`app-look.md`,
+`default-looks.md`, `app-page-planner/SKILL.md`, `kit.md`), and the design system's
+`tokens.css`, `style-guide.html` and `port-note.md`. It writes `$STUDIO/design.md`:
+the `app look` line, then one `job` line and one `design` block per page, in Nebula's brief
+format, checked with Nebula's look script; and `$STUDIO/code-design.md`, the code design
+brief for the Text2Code prompt
+([references/code-design-brief.md](references/code-design-brief.md)): the client's real
+fonts, the full palette, the layout language of their site, every component specified,
+motion, the bold moment and the `not` list, every line a value the Critic can check.
 
-**Round 2.** In ONE message start:
-
-- `poc-studio:designer` → `designer-2.md` with `phase: look`: `brand.md`, `context-notes.md`
-  (brand hints, vocabulary), the chosen storyline, the settled `demo.intent`, the profile,
-  brand-to-look.md, and the Nebula files the bridge names for the look (`app-look.md`,
-  `default-looks.md`, `app-page-planner/SKILL.md`, `kit.md`), and the design system's
-  `tokens.css`, `style-guide.html` and `port-note.md`. It writes `$STUDIO/design.md`:
-  the `app look` line, then one `job` line and one `design` block per page, in Nebula's brief
-  format, checked with Nebula's look script; and `$STUDIO/code-design.md`, the code design
-  brief for the Text2Code prompt
-  ([references/code-design-brief.md](references/code-design-brief.md)): the client's real
-  fonts, the full palette, the layout language of their site, every component specified,
-  motion, the bold moment and the `not` list, every line a value the Critic can check.
-- Scout, by SendMessage: the chosen storyline's entities and beats, and every `platform
-  question` row still open. It appends to `scout.md` a table with one row per intended
-  `## Changes` line: the beat that uses it, the builder, the tool that makes it, the read that
-  proves it, and `ok` or `no tool` with the nearest thing the platform can do. A line no beat
-  uses is flagged for the Judge to cut. Each platform question is answered through
-  ask-nebula.md and logged `NEBULA`, each admitted idea's `Built by` is confirmed or
-  corrected, each seed's volume is checked against data-plan.md's limits (named rows to 20, a
-  file to 200, an automation above), and the admitted external beat's connection is confirmed
-  live with `list_connections`.
-
-New rows either exposes go to the Stand-in by SendMessage. Merge everything into the ledger.
-
-**The mockups.** Unless the profile's `mockups` line is `off`, start `poc-studio:mockups` →
-`mockups-1.md`: `brand.md`, `code-design.md`, the design system's `tokens.css` and
-`style-guide.html`, the chosen storyline, `design.md`, the number to draw (3 to 5, default 4),
-and [references/mockups.md](references/mockups.md). It writes
-`$STUDIO/mockups/mockup-<letter>.html`, one per design direction, complete pages with the
-client's brand and the storyline's real content, and `gallery.html` with a recommendation.
-
-**Round 3, only if rows are still open.** A fresh Judge rules on every remaining row from
-the ledger alone. Nothing stays open after this round.
-
-**The convergence test** is in [references/ledger-template.md](references/ledger-template.md):
-every row settled, no open objection, no new open row, and the storyline chosen with no
-unresolved `no tool` line.
-
-**The BRD.** Write it from [references/brd-template.md](references/brd-template.md), sized to
-the tier, from the approved research and assessment, the ledger, the rulings, the Scout's
-capability table, `design.md` and `data-plan.md`. Every requirement traces to a source and a
-beat. Then write the one-page scope summary gates.md describes.
-
-**The phase 2 documents.** Save to Orbit (stage `3_scope` or `4_design_system`; status
-`in_review`): the scope summary (`scope`), the BRD (`brd`), the chosen storyline (`scope`), the
-design system's style guide and token block (`design_system`), and each mockup and the gallery
-(`mockup`).
+Every later design file follows the design system: `code-design.md` takes its palette, type
+scale, radii and components from `tokens.css` and the style guide, and the style guide is the
+visual reference the app is built and reviewed against. With `frontend: nebula` or `both`,
+Nebula's `app look` line is the nearest the look script allows, with each departure logged
+`DESIGNER`. Save the design system to Orbit (`--stage 4_design_system --type design_system
+--status in_review`): the style guide, the token block and the logo kit.
 
 **G2 · Scope and BRD.** Run the write-back check, then send G2 as gate-delivery.md says, with
-the mockup reply words when mockups were drawn and the line is not `auto` (with `auto`, take the
-recommendation). Wait. When a mockup is chosen, copy it to `$STUDIO/design-reference.html`
-(and its PNG when one exists), then start a fresh Designer with `phase: refine`: it rewrites
-`code-design.md` from the mockup (its CSS variables are the palette, its fonts and sizes the
-type scale, its layout the layout language) and re-derives the page designs in `design.md`,
-checked again with the look script. A `changes: …` answer becomes tickets tagged `OWNER`: a
-change to the mockups goes to a fresh `mockups-2.md` with the words quoted; a change to scope
-goes to the Stand-in and a fresh Judge; a changed requirement gives the BRD a new version.
-Then G2 is asked again, twice at most. Say `G2: approved, mockup <letter>, BRD v<n>.` No tenant
-write happens before this line.
+the BRD and the design system as its pack. Wait. A `changes: …` answer becomes tickets tagged
+`OWNER`: a change to scope goes to the Stand-in and a fresh Judge and gives the BRD a new
+version; a change to the look gives the design system a new version, and the Designer redoes
+`code-design.md` from it. Then G2 is asked again, twice at most. Say `G2: approved, BRD v<n>,
+design system v<n>.` No tenant write happens before this line.
 
 ## Phase 3 · Build → G3 Final review
 
@@ -398,7 +393,7 @@ G2's approval starts the build. The final app is a code app (`frontend: code`, t
 built by the latest code-builder Nebula, in the POC's build mode, from the approved BRD and design system.
 Objects, automations and AI agents are built by Nebula's builders as before; the app's screens
 are Nebula's code-builder task, from `code-design.md`, the design system's `tokens.css` and
-`design-reference.html`, bound to the entity table's ids. With `frontend: code` the brief
+the style guide, bound to the entity table's ids. With `frontend: code` the brief
 carries no config page, job, design or app-look lines. Nebula's code-builder skill and tools
 are read at run time from `NEBULA` as nebula-bridge.md names them.
 
@@ -469,7 +464,7 @@ and cannot be fixed in the run goes to run-control.md § Failed build: failure d
 
 The back end is built first, so the app binds to real ids. Start `poc-studio:coder` →
 `coder-1.md`: the profile (its `frontend` line), the approved BRD, the chosen storyline,
-`design.md`, `code-design.md`, `design-reference.html`, the design system's `tokens.css`, the
+`design.md`, `code-design.md`, the design system's `tokens.css` and `style-guide.html`, the
 ledger, the entity table, the tenant host, [references/text2code.md](references/text2code.md),
 and the platform skills `unifyapps-apps` (its `references/code-apps.md` and
 `references/design-quality-pipeline.md`) and `react-best-practices`. It writes `<Client>
@@ -485,8 +480,8 @@ That prompt is the code builder's input:
   change a turn for at most 6 turns until the beats pass, and report `READY FOR REVIEW`.
 
 Keep the Coder's agent id. Then start `poc-studio:critic` → `critic-1.md`: the preview address
-and page list from `$STUDIO/code-app.md`, `code-design.md`, `brand.md`, `design-reference.html`,
-`tokens.css`, the beats; the Critic also runs the design-quality pipeline's verify step
+and page list from `$STUDIO/code-app.md`, `code-design.md`, `brand.md`, the design system's
+`style-guide.html` and `tokens.css`, the beats; the Critic also runs the design-quality pipeline's verify step
 (`ui-verification`, `accessibility-scan`, `typography-audit`, `web-design-guidelines`) and
 reports each as a finding. Send its `send` lines to the Coder by SendMessage; it applies each
 as one change (a Nebula code-builder later task, or one Code Builder turn), at most 4 a round,
@@ -539,39 +534,35 @@ Say one line per beat that needed a fix, and the final `Rehearsal: <n> of <n> be
 
 ### Finalize
 
-Start `poc-studio:scribe` → `scribe-1.md`: the entity table, the demo script, `rehearsal.md`
-with its shot folder, `code-app.md` when it exists, the profile, the context notes, the client
-slug, and [references/explainer.md](references/explainer.md). It reads what exists through the
-Nebula cache and writes `<Client> Demo Explainer.md` and `<Client> Demo Explainer.html` in the
-working folder, with the shots under `studio/explainer/<client-slug>/`: one picture of the
-whole thing, an entity diagram, a step diagram and five plain lines per automation, the
-assistant, the pages, and one record's journey through the beats. Say `Explainer written.`
+Write `unverified.md` (every beat or check still failing, every `Check this` assumption). Save
+as working documents in Orbit: `rehearsal.md` with its shots, `checks.md`, the entity table with
+builder links, `external-verify.md` when it exists, `unverified.md`, the demo script and the
+Text2Code prompt. Put the app's link on the POC row.
 
-Then assemble the evidence pack under `studio/evidence/<client-slug>/`: `rehearsal.md` with
-its shots, `checks.md`, the entity table with builder links, `external-verify.md` when it
-exists, links to the explainer, and `unverified.md` (every beat or check still failing, every
-`Check this` assumption). Copy `demo-script.md` beside it for the owner's walk through the app.
-
-Save to Orbit (stage `6_finalize`; status `in_review`): the explainer (`explainer`), the demo
-script, `rehearsal.md` (`rehearsal`), `checks.md` (`checks`), the evidence pack and the
-unverified list (`evidence`), and the Text2Code prompt (`text2code_prompt`). Put the app's link
-on the POC row.
-
-**G3 · Final review.** Run the write-back check, then send G3 as gate-delivery.md says, with
-the app's link first (merged into G4 when the tier is `sprint`). The owner opens the app and
+**G3 · Final review.** Run the write-back check, then send G3 as gate-delivery.md says: the app's
+link, and in the message how many beats and checks passed and what is unverified (merged into
+G4 when the tier is `sprint`). The owner opens the app and
 answers. `changes: …` becomes one ticket per change tagged `OWNER`; a change to a requirement
 gives the BRD a new version first; the fixes run through the fix loop above (safe or risky);
-rehearsal and every check run again on the whole app; the evidence pack gets a new version;
-then G3 is asked again, twice at most. `approve` freezes the build: from here no tenant change
+rehearsal and every check run again on the whole app; then G3 is asked again, twice at most. `approve` freezes the build: from here no tenant change
 happens unless the owner asks for one, which reopens G3. Say `G3: app accepted and frozen.`
 
 ## Phase 4 · Collaterals → G4 Release
 
-G3's approval starts the collaterals.
+G3's approval starts the collaterals: the runbook, the explainer, the video and its PDFs when
+the profile asks for them, and the field note.
 
-1. Follow nebula-bridge.md § Finish: feature upserts, `solution context`, and memory lines
+1. **The explainer.** Start `poc-studio:scribe` → `scribe-1.md`: the entity table, the demo script, `rehearsal.md`
+   with its shot folder, `code-app.md` when it exists, the profile, the context notes, the client
+   slug, and [references/explainer.md](references/explainer.md). It reads what exists through the
+   Nebula cache and writes `<Client> Demo Explainer.md` and `<Client> Demo Explainer.html` in the
+   working folder, with the shots under `studio/explainer/<client-slug>/`: one picture of the
+   whole thing, an entity diagram, a step diagram and five plain lines per automation, the
+   assistant, the pages, and one record's journey through the beats. Say `Explainer written.`
+
+2. Follow nebula-bridge.md § Finish: feature upserts, `solution context`, and memory lines
    only for what clears Nebula's bar (an unexplained failure, a tenant fact, a correction).
-2. Write `<Client> Demo Runbook.md` in the working folder from
+3. Write `<Client> Demo Runbook.md` in the working folder from
    [references/runbook-template.md](references/runbook-template.md): the script with a shot per
    beat, the entity table as Nebula returned it, the brand evidence, the sources read (Slack,
    email, calendar) and the `demo.intent` decision with the sentences that settled it, the
@@ -582,7 +573,7 @@ G3's approval starts the collaterals.
    `Decisions taken for you` (every `STAND-IN`, `SLACK`, `JUDGE`, `DESIGNER`, `NEBULA` and
    `MODERATOR` row with the profile line that would have avoided it), the design system's
    folder and its type note, `checks.md`'s results, and what is unverified.
-3. **The demo assets**, when the profile's `video` line is `on`: load `poc-studio:demo-studio`
+4. **The demo assets**, when the profile's `video` line is `on`: load `poc-studio:demo-studio`
    with the Skill tool and scaffold it under `studio/video/<client-slug>/`. Its `steps.json`
    comes from the demo script's beats and real record names; its `brand` from the design
    system (`tokens.css`, the shipped font file); its architecture act's `diagram.json` from
@@ -595,18 +586,18 @@ G3's approval starts the collaterals.
    playbook, and the screenshot library. Save each to Orbit (`--stage 7_collaterals`, types
    `video` and `pdf`) and link them from the runbook. Say `Demo video rendered: <length>, <n>
    PDFs.` With `video: off`, skip it.
-4. Write `field-note.md` beside the runbook: five lines for the field team (what the demo
+5. Write `field-note.md` beside the runbook: five lines for the field team (what the demo
    shows, the link, how long it runs, what not to click, who to ask). It is a draft; nothing
    is posted to the field from this skill.
-5. Save to Orbit (stage `7_collaterals`; status `in_review`): the runbook (`runbook`), the
-   explainer's final version when it changed (`explainer`), and the field note (`field_note`).
-6. **G4 · Release.** Run the write-back check, then send G4 as gate-delivery.md says (with
+6. Save to Orbit (stage `7_collaterals`; status `in_review`): the runbook (`runbook`), the
+   explainer (`explainer`), and the field note (`field_note`).
+7. **G4 · Release.** Run the write-back check, then send G4 as gate-delivery.md says (with
    G3's pack too when the tier merged them). Wait. `changes: …` becomes tickets, reworks the
    named collaterals, saves new versions and asks again, twice at most. `approve` marks the
    runbook `Demo-ready · released by <name> on <date>` (a new version), the POC row
    `released` with stage `demo_ready`; `hold` marks it `held` with the reason. Write the
    decision back. Say `G4: <released | held>.`
-7. Say five to eight lines: what exists, the app's link, each gate's answer, the tickets
+8. Say five to eight lines: what exists, the app's link, each gate's answer, the tickets
    raised and closed, what is unverified, and the POC's Orbit link. Offer `Next task` and
    `Save session`. `Next task` goes to the bridge's § Later task with the person's words, as
    a ticket, and reopens G3 when it changes the app.
@@ -641,8 +632,8 @@ line each.
 
 Follow [references/when-something-fails.md](references/when-something-fails.md): a fresh
 agent twice then carry on, the nearest passing value on a second brief refusal, no third try
-of a failed plan, one line when the tenant is down, and what to do when the gallery cannot be
-shown or the code app is still `fix` after two Critic rounds. A build that cannot recover
+of a failed plan, one line when the tenant is down, and what to do when the code app is still
+`fix` after two Critic rounds. A build that cannot recover
 follows run-control.md § Failed build.
 An Orbit write that does not land is queued, the user is asked to reconnect, and the next
 human step waits for the write-back check. A queued write that can never be replayed (its

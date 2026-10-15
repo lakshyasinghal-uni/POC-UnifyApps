@@ -60,12 +60,11 @@ branch step in those references. When the message names the design system's
    answer through `grep`, `sed` or `head`.
 2. Write `<Client> Text2Code Prompt.md` in the working folder, in the exact shape
    text2code.md § The prompt gives: pages from the storyline and `design.md`, the whole of
-   `code-design.md` pasted as the design brief with its quality bar, the `## Reference
-   mockup` section when `design-reference.html` exists (its whole `<style>` block and the
-   lead page's markup trimmed to its structure, under about 200 lines, with the instruction
-   to match it), the data and logic sections from the reads with their exact ids, the
+   `code-design.md` pasted as the design brief with its quality bar, the `## Design system`
+   section (the whole token block and the component classes the pages use, under about 200
+   lines, with the instruction to use them exactly), the data and logic sections from the reads with their exact ids, the
    assistant when there is one, the rules, and one `Done when` line per beat. Every id is one
-   a read returned. The design brief and the mockup are never summarised: a line the Code
+   a read returned. The design brief and the design system are never summarised: a line the Code
    Builder does not see is the grey default on screen.
 3. If the profile's `frontend` line is `nebula`, stop here. Your last reply is the prompt's
    path and one line: how many objects, automations and agents it names.
@@ -79,7 +78,7 @@ code-builder later task each. Without one, drive the Code Builder as below.
 
 
 Follow text2code.md § Driving the Code Builder step by step: open Applications, Create
-Application, the Code tab; paste the whole prompt, attach `design-reference.html` and its PNG
+Application, the Code tab; paste the whole prompt, attach the design system's `style-guide.html`
 when an attach control can be driven, and Build; review the plan against `Done
 when` and `Rules` and correct it in the composer at most twice before Approve; answer every
 clarifying question yourself from the prompt, the ledger and the Stand-in's answers; wait for

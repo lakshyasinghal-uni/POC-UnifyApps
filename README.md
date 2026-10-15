@@ -108,10 +108,15 @@ Rohit · audience COO, 20 minutes · demo date 2026-10-23
 | Phase | Produces, saved to Orbit | Ends with |
 |---|---|---|
 | **0 · Kickoff** | prerequisites checked (Slack and Orbit before anything else), the profile, the POC row in Orbit with owner, approvers and tier | — |
-| **1 · Signals and research** | what the client and team said in Slack, Gmail, Calendar and Drive; cited web research on the client, the process, the rules, the market and realistic data; a readiness assessment; the data plan | **G1 · Path** |
-| **2 · Scope, BRD and design** | three storylines argued down to one; a BRD sized to the tier; the client's design system; three to five mockups; a one-page scope | **G2 · Scope and BRD** |
-| **3 · Build** | the app, built code-first by the code-builder Nebula (in Sonic or Zen, as chosen) from the approved BRD and design system; every beat rehearsed in a browser; mechanical checks; an explainer with diagrams; the evidence pack | **G3 · Final review** |
-| **4 · Collaterals** | the runbook, the narrated video and its PDFs (when the profile asks), the field note | **G4 · Release** |
+| **1 · Signals and research** | **the research document**: cited web research on the client, the process, the rules, the market and realistic data, plus what the client and team said in Slack, Gmail, Calendar and Drive, and a readiness verdict | **G1 · Path** |
+| **2 · Scope, BRD and design** | **the BRD**, sized to the tier, then **the design system** made from it | **G2 · Scope and BRD** |
+| **3 · Build** | **the app**, built code-first by the code-builder Nebula (in Sonic or Zen, as chosen) from the approved BRD and design system, then rehearsed in a browser and checked | **G3 · Final review** |
+| **4 · Collaterals** | **the collaterals**: the runbook, the explainer, the narrated video and its PDFs (when the profile asks), the field note | **G4 · Release** |
+
+Those five are the only documents a POC produces for review, in that order: research
+document, BRD, design system, app, collaterals. The team's own notes along the way (the
+decision ledger, storylines, data plan, design notes, check results and so on) are saved to
+Orbit as working documents so any chat can resume the POC; they are never sent at a gate.
 
 ## The four gates
 
@@ -123,7 +128,7 @@ other place is told.
 | Gate | You decide | Reply with |
 |---|---|---|
 | **G1 · Path** | whether the research holds and how to proceed | `approve` · `partial` · `edited` · `block` |
-| **G2 · Scope and BRD** | what gets built, from which BRD, in which design; nothing touches the tenant before this | `approve` · `approve <mockup letter>` · `changes: …` · `stop` |
+| **G2 · Scope and BRD** | the BRD and the design system; nothing touches the tenant before this | `approve` · `changes: …` · `stop` |
 | **G3 · Final review** | you open the app and accept it, or list the changes; each becomes a ticket, the BRD gets a new version when a requirement changes, every check runs again | `approve` · `changes: …` · `stop` |
 | **G4 · Release** | the demo and its collaterals go to the field | `approve` · `changes: …` · `hold` |
 
@@ -185,9 +190,9 @@ that reaches you.
 
 - The app on your tenant, code-first, in the client's colours and fonts, with its data,
   automations and assistant.
-- In Orbit, under the POC: the research, assessment, context notes, data plan, scope, BRD,
-  design system, mockups, explainer, evidence pack, runbook, video and PDFs, field note, every
-  gate decision and every feedback ticket.
+- In Orbit, under the POC: the research document, the BRD, the design system, the
+  collaterals (runbook, explainer, video and PDFs, field note), every gate decision and every
+  feedback ticket, plus the working documents that let any chat resume it.
 - The same documents in your working folder as working copies, and the client profile in
   `studio/profiles/<client>.md`.
 
@@ -201,7 +206,7 @@ poc-studio/
   skills/build/SKILL.md            the four phases and their gates
   skills/build/references/         gates, gate-delivery, run-control, orbit-records, orbit-objects.json,
                                    brd-template, nebula-bridge, ask-nebula, context-research,
-                                   data-plan, external-connections, innovation, mockups,
+                                   data-plan, external-connections, innovation,
                                    explainer, text2code, code-design-brief, brand-to-look,
                                    demo-defaults, when-something-fails, ledger, storyline,
                                    demo-script, runbook and profile templates
@@ -215,7 +220,7 @@ poc-studio/
   skills/atomic-agent-architecture/, skills/oracle-ebs-apis/
   skills/<design and a11y skills>  the design-quality pipeline (see THIRD_PARTY.md)
   agents/                          stand-in, scout, researcher, ideator, innovator,
-                                   data-assumer, connector, designer, mockups, judge, critic,
+                                   data-assumer, connector, designer, judge, critic,
                                    rehearsal, scribe, coder, ua-scout, ua-checker
   scripts/orbit-api.mjs            Orbit without a browser: check, new-poc, find-poc, claim,
                                    heartbeat, records, upload, save-doc, fetch-doc, readback, flush
