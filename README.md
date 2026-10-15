@@ -9,6 +9,40 @@ Every document, gate decision and piece of feedback is saved to **Orbit**
 in the chat at the same time. The final app is built **code-first** by the Nebula plugin with
 its code builder.
 
+## Install and stay up to date
+
+In Claude Code on your machine:
+
+```
+claude plugin marketplace add shubhankargarg-lang/POC-UnifyApps
+claude plugin install poc-studio@poc-unifyapps
+```
+
+**Auto-update is on by default.** `/poc-studio:setup` (and `/poc-studio:update`) turn on
+background auto-update for the `poc-unifyapps` marketplace by adding this entry to your
+`~/.claude/settings.json`, keeping everything else in the file and leaving a backup beside it:
+
+```json
+"extraKnownMarketplaces": {
+  "poc-unifyapps": {
+    "source": { "source": "github", "repo": "shubhankargarg-lang/POC-UnifyApps" },
+    "autoUpdate": true
+  }
+}
+```
+
+Claude Code keeps marketplace auto-update as a per-person setting (a marketplace file cannot
+turn it on), so this is where it lives. This repository's own `.claude/settings.json` carries
+the same entry for anyone working inside it. To turn it off, set `"autoUpdate": false` there,
+or use `/plugin` → Marketplaces → poc-unifyapps.
+
+**Every run checks first.** `/poc-studio:build` and `/poc-studio:setup` compare the installed
+version with GitHub main before doing anything. When yours is older, in Claude Code they update
+the marketplace and the plugin themselves, then ask you to start a fresh session (or run
+`/reload-plugins`) and stop, so nothing runs on an old version. In the Claude app they show the
+newer version and how to update, then ask whether to stop or carry on. `/poc-studio:update`
+runs the same check on its own.
+
 ## Before your first build: connect once
 
 Run this once, and again whenever a connection breaks:
@@ -163,6 +197,7 @@ that reaches you.
 poc-studio/
   .claude-plugin/plugin.json
   skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, Orbit, approvers, a test gate
+  skills/update/SKILL.md           check for and install the latest version; auto-update on
   skills/build/SKILL.md            the four phases and their gates
   skills/build/references/         gates, gate-delivery, run-control, orbit-records, orbit-objects.json,
                                    brd-template, nebula-bridge, ask-nebula, context-research,
@@ -185,6 +220,9 @@ poc-studio/
   scripts/orbit-api.mjs            Orbit without a browser: check, new-poc, find-poc, claim,
                                    heartbeat, records, upload, save-doc, fetch-doc, readback, flush
   scripts/nebula-root.mjs          finds Nebula, checks its version and code-builder support
+  scripts/version-check.mjs        installed vs GitHub main; updates in Claude Code with --apply
+  scripts/enable-autoupdate.mjs    turns on auto-update for poc-unifyapps in your Claude settings
+  .claude/settings.json            the same auto-update entry for work inside this repository
   scripts/explainer-html.mjs       turns the explainer's Markdown into one HTML page
   hooks/                           no-delete-guard
   API-SPEC.md                      the verified record of UnifyApps endpoints

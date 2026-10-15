@@ -6,6 +6,21 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.2 (2026-10-15)
+
+- **New `/poc-studio:update`**, and a version check as the first step of `/poc-studio:build`
+  and `/poc-studio:setup` (new `scripts/version-check.mjs`): the installed version is compared
+  with GitHub main. Behind in Claude Code on a machine: it runs `claude plugin marketplace
+  update poc-unifyapps` and `claude plugin update poc-studio@poc-unifyapps`, then asks for a
+  fresh session (or `/reload-plugins`) and stops. Behind in the Claude app: it shows the newer
+  version and how to update, then asks whether to stop or carry on.
+- **Auto-update on by default** for the `poc-unifyapps` marketplace: setup and update add
+  `autoUpdate: true` to its `extraKnownMarketplaces` entry in `~/.claude/settings.json` (new
+  `scripts/enable-autoupdate.mjs`; keeps other settings, writes a backup, never rewrites a file
+  that is not plain JSON). The repository's `.claude/settings.json` carries the same entry.
+  Claude Code has no marketplace.json field for this, so it is a per-person setting.
+- README: install steps and the auto-update setting.
+
 ## 0.4.1 (2026-10-15)
 
 - **Build mode, chosen once per POC:** a new build asks Sonic (no questions between gates;
