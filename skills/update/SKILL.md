@@ -9,7 +9,7 @@ description: >
   runs the new version; in the Claude app it shows the newer version and how to update, then
   asks whether to stop or carry on.
 metadata:
-  version: "0.4.6"
+  version: "0.4.7"
 ---
 
 # POC Studio: update

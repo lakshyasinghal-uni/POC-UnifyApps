@@ -47,12 +47,15 @@ AskUserQuestion call, up to four.
 
 ## Creating the row (new builds)
 
-`new-poc @<file>` with: `client`, `client_slug`, `use_case`, `use_case_slug`, `poc_name`
-(`<Client> · <use case in a few words>`), `owner` and `started_by` (the person running this
-session, with their Slack ID), `approvers` (the same person), `gate_destination` and
-`slack_channel` (their personal Slack chat, from their settings), `tier`, `demo_date`, `build_mode`, `stage: 0_kickoff`, `status: running`,
-`run_state: running`, `current_gate: none`, all four gate statuses `not_started`, and
-`active_session` (this session's link). **Never pass `poc_id`**: Orbit generates it
+`new-poc @<file>` with the live field names (orbit-records.md § Field names): `client_name`,
+`client_slug`, `use_case`, `use_case_slug`, `poc_name` (`<Client> · <use case in a few
+words>`), `request` (the person's request as typed), `owner_name`, `owner_email` and
+`owner_slack_id` (the person running this session; the name and email default to the signed-in
+Orbit user), `slack_destination` (their personal Slack chat, from their settings), `tier`,
+`demo_date`, `tenant_host` and `solution_name` when the profile names them, `build_mode`,
+`stage: 0_kickoff`, `status: running`, `run_state: running`, `current_gate: none`, all four gate
+statuses `not_started`, and `active_session` (this session's link). `started_at`,
+`last_activity` and `last_activity_at` are filled by the command. **Never pass `poc_id`**: Orbit generates it
 (`POC-_1001`, `POC-_1002`, …). Read it from the command's output and use it everywhere,
 including every document key `<poc_id>__<stage>__<file-slug>__v<n>`. If the output carries no
 ID, find the row with `find-poc` before trying again; never create a second one.

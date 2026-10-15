@@ -67,6 +67,21 @@ It checks and connects, in this order:
 6. **One test gate**, end to end: a test POC row and document in Orbit, a test notification in
    your Slack, the approval in the chat, recorded and read back.
 
+Setup also runs a **schema check**: it reads the three objects' live schemas and compares them
+with every field name and single-select value POC Studio writes. If anything differs, setup
+(and every build, which runs the same check first) stops with the exact list and writes
+nothing. POC Studio never changes the Orbit objects.
+
+To test the Orbit connection end to end on the real tenant:
+
+```
+node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" selftest
+```
+
+It runs the schema check, writes and reads back one record on each object (on a single
+`POC Studio · self-test` row it reuses), uploads and downloads one file, and prints a results
+table.
+
 It saves your settings in Orbit (with a copy in `poc-studio.yml`), with no secret in either,
 so a new chat finds them without running setup again. It also asks how long a gate may wait
 before the POC is put on hold.
@@ -218,8 +233,9 @@ poc-studio/
   agents/                          stand-in, scout, researcher, ideator, innovator,
                                    data-assumer, connector, designer, judge, critic,
                                    rehearsal, scribe, coder, ua-scout, ua-checker
-  scripts/orbit-api.mjs            Orbit without a browser: check, new-poc, find-poc, claim,
-                                   heartbeat, records, upload, save-doc, fetch-doc, readback, flush
+  scripts/orbit-api.mjs            Orbit without a browser: check, schema-check, selftest, new-poc,
+                                   find-poc, claim, heartbeat, records, upload, save-doc, fetch-doc,
+                                   readback, new-ticket, close-ticket, flush
   scripts/nebula-root.mjs          finds Nebula, checks its version and code-builder support
   scripts/version-check.mjs        installed vs GitHub main; updates in Claude Code with --apply
   scripts/enable-autoupdate.mjs    turns on auto-update for poc-unifyapps in your Claude settings

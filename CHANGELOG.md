@@ -6,6 +6,32 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.7 (2026-10-15)
+
+- **Orbit writes use the live tenant's field names.** POC: `client_name`, `owner_name`,
+  `slack_destination`, `last_gate_thread`, `session_ids`, `documents_count`, plus `request`,
+  `owner_email`, `owner_slack_id`, `started_at`, `tenant_host`, `solution_name`,
+  `last_activity`, `last_activity_at` (`app_url`, `updated_at`, `approvers`, `started_by` and
+  `created_at` are no longer written). Document: `name`, `poc` (a reference to the POC row),
+  `summary`, `source_path`, `file_url`; the slug is read from `doc_id`. Feedback: `ticket_no`,
+  `title`, `poc`, `feedback`, `given_by_name`, `poc_stage`, `related_document`,
+  `action_taken`, `resolved_at`, plus `client_name`, `given_by_email`, `given_by_slack_id`,
+  `source_link`. The Orbit objects themselves are not changed.
+- **`schema-check`**, run by setup and at the start of every build, compares the live schemas
+  with every field and single-select value the plugin writes and stops with the list (exit 5)
+  when they differ. Every write is checked the same way before it is sent; nothing is renamed
+  or changed on the fly. A row written before a field was renamed keeps working: its old keys
+  are left out of the update and reported.
+- **Upload bucket read from the tenant** (`GET /api/file/upload-bucket`), with `ORBIT_BUCKET`
+  only as an override. The hardcoded `uat-uploads.unifyapps.com` is gone, from the script and
+  from the signed-in-tab helper.
+- **`new-ticket` and `close-ticket`** own the feedback field names, so the build never writes
+  them by hand.
+- **`selftest`**: on the real tenant, the schema check, a write and a read-back on all three
+  objects, and one file upload and download, with a results table.
+- **`refresh-schemas`** now also lists every field and its options, to paste back.
+- `orbit-objects.json` carries the live field names.
+
 ## 0.4.6 (2026-10-15)
 
 - **No GitHub call at the start of build or setup.** The version check ran before every build
