@@ -6,6 +6,16 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.11 (2026-10-15)
+
+- **The plugin's home is now `lakshyasinghal-uni/POC-UnifyApps`.** The install commands
+  (README, CONTRIBUTING), the auto-update marketplace entry (`.claude/settings.json`, the update
+  skill), the version check and `enable-autoupdate.mjs` all point to it.
+- `enable-autoupdate.mjs` moves an existing `poc-unifyapps` entry that still points at
+  `shubhankargarg-lang/POC-UnifyApps` to the new repo (with a backup, and `movedFrom` /
+  `movedTo` in its output), so people who installed from the old repo start updating from the
+  new one the next time setup or `/poc-studio:update` runs. Any other source is left as it is.
+
 ## 0.4.10 (2026-10-15)
 
 - **Orbit through the signed-in tab, with no cookie to copy.** New `scripts/orbit-tab.mjs` runs

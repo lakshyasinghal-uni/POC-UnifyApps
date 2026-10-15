@@ -3,7 +3,7 @@
 ## Install
 
 ```
-claude plugin marketplace add shubhankargarg-lang/POC-UnifyApps
+claude plugin marketplace add lakshyasinghal-uni/POC-UnifyApps
 claude plugin install poc-studio@poc-unifyapps
 ```
 

@@ -22,7 +22,7 @@ const MARKETPLACE = "poc-unifyapps";
 const PLUGIN = "poc-studio";
 const TIMEOUT_MS = (() => { const i = process.argv.indexOf("--timeout"); const n = i > -1 ? Number(process.argv[i + 1]) : 8; return (Number.isFinite(n) && n > 0 ? n : 8) * 1000; })();
 const LATEST_URL = process.env.POC_STUDIO_LATEST_URL ||
-  "https://raw.githubusercontent.com/shubhankargarg-lang/POC-UnifyApps/main/.claude-plugin/plugin.json";
+  "https://raw.githubusercontent.com/lakshyasinghal-uni/POC-UnifyApps/main/.claude-plugin/plugin.json";
 
 const out = (o, code = 0) => { process.stdout.write(JSON.stringify(o) + "\n"); process.exit(code); };
 const readJson = (p) => { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } };

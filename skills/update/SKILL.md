@@ -69,14 +69,15 @@ Background auto-update is off by default for marketplaces like `poc-unifyapps`, 
 ```json
 "extraKnownMarketplaces": {
   "poc-unifyapps": {
-    "source": { "source": "github", "repo": "shubhankargarg-lang/POC-UnifyApps" },
+    "source": { "source": "github", "repo": "lakshyasinghal-uni/POC-UnifyApps" },
     "autoUpdate": true
   }
 }
 ```
 
 `enable-autoupdate.mjs` adds it to `~/.claude/settings.json`, keeping every other setting and
-an existing source, with a backup beside the file; it never rewrites a file that is not plain
+an existing source (a source still on the old `shubhankargarg-lang/POC-UnifyApps` repo is moved
+to `lakshyasinghal-uni/POC-UnifyApps`; say so in one line), with a backup beside the file; it never rewrites a file that is not plain
 JSON. Setup and this skill run it in Claude Code; say in one line when it turned the setting on.
 With it on, Claude Code checks the marketplace in the background during a session and offers
 `/reload-plugins` when a new version arrived; the check above still catches a session that
