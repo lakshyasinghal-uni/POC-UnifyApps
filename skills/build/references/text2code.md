@@ -120,7 +120,7 @@ one line and wait; never type a password.
    mode is for a colour, size or spacing that is easier to click than describe.
 7b. **Design review, with fresh eyes.** When the beats pass, the Coder writes `code-app.md`
    with the preview address and the page list and ends its reply with `READY FOR REVIEW`.
-   The moderator starts `demo-studio:critic` with that address, `code-design.md`, `brand.md`
+   The moderator starts `poc-studio:critic` with that address, `code-design.md`, `brand.md`
    and the beats, and `design-reference.html` when the person chose a mockup; it screenshots
    each page, reads the fonts and colours off the page, scores ten qualities (Nebula's seven
    plus brand, distinctiveness and motion) and, with a mockup, an eleventh, `fidelity`: the

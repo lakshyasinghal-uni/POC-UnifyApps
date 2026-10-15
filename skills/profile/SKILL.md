@@ -3,7 +3,7 @@ name: profile
 description: >
   This skill should be used when the user asks to "create a demo profile", "set up a client
   profile for <client>", "update the profile for <client>", "remember this about <client>'s
-  demos", or types /demo-studio:profile followed by a client name and details. It writes or
+  demos", or types /poc-studio:profile followed by a client name and details. It writes or
   edits the one file the build skill reads so that later demos for that client need no
   clarifying questions.
 metadata:

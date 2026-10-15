@@ -1,12 +1,12 @@
 {
-  "name": "demo-studio",
+  "name": "poc-unifyapps",
   "owner": {
-    "name": "Gourav Mahunta"
+    "name": "Harshal"
   },
-  "description": "Demo Studio: client-branded UnifyApps demo assets built on Nebula with no clarifying questions.",
+  "description": "POC Studio: UnifyApps POC delivery skills, based on Demo Studio.",
   "plugins": [
     {
-      "name": "demo-studio",
+      "name": "poc-studio",
       "source": "./",
       "description": "Builds client-branded UnifyApps demo assets from one request. A team of agents settles every clarifying question itself, Nebula builds the result, and a rehearsal agent walks the demo in a browser."
     }

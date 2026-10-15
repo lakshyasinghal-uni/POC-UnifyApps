@@ -20,7 +20,7 @@ Use the desktop app's Code tab or the terminal. One folder holds one demo.
 This tells Demo Studio about the client so it never has to ask.
 
 ```
-/demo-studio:profile Acme Logistics · site acmelogistics.com · audience COO, 20 minutes · tenant orbit.uat.unifyapps.com
+/poc-studio:profile Acme Logistics · site acmelogistics.com · audience COO, 20 minutes · tenant orbit.uat.unifyapps.com
 ```
 
 Skip this and Demo Studio drafts a profile for you.
@@ -28,7 +28,7 @@ Skip this and Demo Studio drafts a profile for you.
 **3. Ask for the demo.**
 
 ```
-/demo-studio:build Build a demo for Acme Logistics: fleet maintenance with approvals and an AI assistant, for their COO.
+/poc-studio:build Build a demo for Acme Logistics: fleet maintenance with approvals and an AI assistant, for their COO.
 ```
 
 **4. Sign in, if asked.**

@@ -1,4 +1,6 @@
-# Demo Studio
+# POC Studio
+
+Based on [Demo Studio](https://github.com/gouravUnifyapps/DemoStudio-UnifyApps) 0.6.0 by Gourav Mahunta. Install and contribution steps are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Builds client-branded UnifyApps demo assets from one request, with no clarifying questions in
 between. A team of agents settles every open decision itself, the installed Nebula plugin
@@ -10,14 +12,14 @@ Requires the **Nebula** plugin (written against 3.47.0, checked for 3.46.0 and l
 ## What you type
 
 ```
-/demo-studio:build Build a demo for Acme Logistics (acmelogistics.com): fleet maintenance with
+/poc-studio:build Build a demo for Acme Logistics (acmelogistics.com): fleet maintenance with
 approvals and an AI assistant, 20 minutes for their COO on Friday.
 ```
 
 Optional, once per client, so later demos need even fewer decisions:
 
 ```
-/demo-studio:profile Acme Logistics · site acmelogistics.com · audience COO, 20 minutes, in person ·
+/poc-studio:profile Acme Logistics · site acmelogistics.com · audience COO, 20 minutes, in person ·
 show off approvals by amount and an AI assistant · tenant orbit.uat.unifyapps.com
 ```
 
@@ -84,7 +86,7 @@ follow (`mockups: auto` removes even that). Nothing else.
 ## Files
 
 ```
-demo-studio/
+poc-studio/
   .claude-plugin/plugin.json
   skills/build/SKILL.md            the five acts
   skills/build/references/         nebula-bridge, ask-nebula, context-research, data-plan,

@@ -2,7 +2,7 @@
 name: build
 description: >
   This skill should be used when the user asks to "build a demo", "make a demo for <client>",
-  "prepare a showcase app", "demo asset", "pitch app for <client>", or types /demo-studio:build
+  "prepare a showcase app", "demo asset", "pitch app for <client>", or types /poc-studio:build
   followed by a request. It runs a team of agents (Stand-in, Scout, Researcher, Ideator,
   Innovator, Data Assumer, Connector, Designer, Mockups, Judge, Critic, Rehearsal, Scribe,
   Coder) that pulls client context from Slack, Gmail and
@@ -96,18 +96,18 @@ Say one line when setup ends: `Signed in to <host>. Solution <name>. Profile <cl
 
 Start four agents in ONE message, each with a message file under `$STUDIO/messages/`:
 
-- `demo-studio:scout` → `scout-1.md`: the request, the profile, `NEBULA`, the `cli` line, and
+- `poc-studio:scout` → `scout-1.md`: the request, the profile, `NEBULA`, the `cli` line, and
   the reads of nebula-bridge.md § Reads. It writes `$STUDIO/scout.md`: the tenant map, what
   already exists that a demo could reuse, the capability boundaries it loaded, and an
   `open rows` list of decisions the tenant forces.
-- `demo-studio:ideator` → `ideator-1.md`: the request, the profile,
+- `poc-studio:ideator` → `ideator-1.md`: the request, the profile,
   [references/storyline-template.md](references/storyline-template.md) and
   demo-defaults.md. It writes `$STUDIO/storylines.md`: one safe, one bold and one unexpected
   storyline, each with beats, entities, a story row and a risk line, plus `open rows`.
-- `demo-studio:designer` → `designer-1.md` with `phase: brand`: the profile's site, the
+- `poc-studio:designer` → `designer-1.md` with `phase: brand`: the profile's site, the
   request, [references/brand-to-look.md](references/brand-to-look.md). It writes
   `$STUDIO/brand.md`: the brand evidence and the subject's own world. No look line yet.
-- `demo-studio:researcher` → `researcher-1.md`: the request, the profile (its `sources` and
+- `poc-studio:researcher` → `researcher-1.md`: the request, the profile (its `sources` and
   `slack` lines), [references/context-research.md](references/context-research.md). It finds
   the relevant Slack channels, Gmail threads and Calendar events itself and writes
   `$STUDIO/context-notes.md`: the ask in the client's and the team's words, the audience and
@@ -128,15 +128,15 @@ every `open rows` list, deduplicated by meaning, each with its candidates and wh
 **The second wave**, three agents in ONE message, each with the request, the profile,
 `storylines.md`, `scout.md` and `context-notes.md`:
 
-- `demo-studio:data-assumer` → `data-assumer-1.md`, with the `studio/data/` listing and
+- `poc-studio:data-assumer` → `data-assumer-1.md`, with the `studio/data/` listing and
   [references/data-plan.md](references/data-plan.md). It writes `$STUDIO/data-plan.md`: per
   entity, given or assumed, the rows and how they get in, where the data lives today and in
   the demo, the masking rules and the masked copies, the story row. Always runs.
-- `demo-studio:innovator` → `innovator-1.md`, with
+- `poc-studio:innovator` → `innovator-1.md`, with
   [references/innovation.md](references/innovation.md), unless the profile's `innovate` line
   is `off`. It writes `$STUDIO/ideas.md`: three to six platform-feature ideas, each a beat
   tied to a storyline, with a feasibility guess the Scout confirms in round 2.
-- `demo-studio:connector` → `connector-1.md` with `phase: propose`, the profile's
+- `poc-studio:connector` → `connector-1.md` with `phase: propose`, the profile's
   `external` and `sandboxes` lines and
   [references/external-connections.md](references/external-connections.md), unless
   `external` is `off`. It writes `$STUDIO/external.md`: the tenant's connections, one to
@@ -146,7 +146,7 @@ every `open rows` list, deduplicated by meaning, each with its candidates and wh
 
 Merge every open row of the three into the ledger.
 
-Then start `demo-studio:stand-in` → `stand-in-1.md`: the profile, the request, the ledger,
+Then start `poc-studio:stand-in` → `stand-in-1.md`: the profile, the request, the ledger,
 `storylines.md`, `ideas.md`, `data-plan.md`, `external.md`, `scout.md`, `context-notes.md`,
 Nebula memory (`memory get`), and the rule that
 it settles `demo.intent` first (use case, platform configuration, or both) from the request,
@@ -161,7 +161,7 @@ into the ledger.
 Run rounds against the ledger until the test passes or three rounds are done. Say one line
 per round: `Round <n>: <what was decided>, <k> rows open.`
 
-**Round 1 ruling.** Start `demo-studio:judge` → `judge-1.md`: the ledger with the settled
+**Round 1 ruling.** Start `poc-studio:judge` → `judge-1.md`: the ledger with the settled
 `demo.intent`, the storylines with fit and Scout's feasibility and size, `ideas.md` and
 `external.md` with the Stand-in's interest scores, `data-plan.md`, the profile's budget,
 `innovate` and `external` lines. It writes `$STUDIO/rulings.md`: the chosen storyline (or a
@@ -174,7 +174,7 @@ and a ruling on any row both Scout and Stand-in left open. Merge into the ledger
 
 **Round 2.** In ONE message start:
 
-- `demo-studio:designer` → `designer-2.md` with `phase: look`: `brand.md`, `context-notes.md`
+- `poc-studio:designer` → `designer-2.md` with `phase: look`: `brand.md`, `context-notes.md`
   (brand hints, vocabulary), the chosen storyline, the settled `demo.intent`, the profile,
   brand-to-look.md, and the Nebula files the bridge names for the look (`app-look.md`,
   `default-looks.md`, `app-page-planner/SKILL.md`, `kit.md`). It writes `$STUDIO/design.md`:
@@ -197,7 +197,7 @@ and a ruling on any row both Scout and Stand-in left open. Merge into the ledger
 New rows either exposes go to the Stand-in by SendMessage. Merge everything into the ledger.
 
 **The mockups, and the one choice the person asked for.** Unless the profile's `mockups` line
-is `off`, start `demo-studio:mockups` → `mockups-1.md`: `brand.md`, `code-design.md`, the
+is `off`, start `poc-studio:mockups` → `mockups-1.md`: `brand.md`, `code-design.md`, the
 chosen storyline, `design.md`, the number to draw (3 to 5, default 4), and
 [references/mockups.md](references/mockups.md). It writes `$STUDIO/mockups/mockup-<letter>.html`,
 one per design direction, complete pages with the client's brand and the storyline's real
@@ -276,14 +276,14 @@ After the graph drains, run `plan finish` and keep its `entityTable`.
 
 ## Act 3b: The Text2Code prompt, and the code app
 
-Start `demo-studio:coder` → `coder-1.md`: the profile (its `frontend` line), the chosen
+Start `poc-studio:coder` → `coder-1.md`: the profile (its `frontend` line), the chosen
 storyline, `design.md`, `code-design.md`, `design-reference.html` when it exists, the ledger,
 the entity table, the tenant host, and [references/text2code.md](references/text2code.md). It always writes
 `<Client> Text2Code Prompt.md` in the working folder, from reads of the built ids and their
 contracts. With `frontend: code` or `both` it then drives the Code Builder in a browser as
 text2code.md says: paste, review and correct the plan, approve, answer the builder's questions
 itself, iterate one change a turn for at most 6 turns until the beats pass, and report
-`READY FOR REVIEW`. Keep its agent id. Then start `demo-studio:critic` → `critic-1.md`: the
+`READY FOR REVIEW`. Keep its agent id. Then start `poc-studio:critic` → `critic-1.md`: the
 preview address and page list from `$STUDIO/code-app.md`, `code-design.md`, `brand.md`,
 `design-reference.html` when it exists, the beats. Send its `send` lines to the Coder by SendMessage; it applies each as one turn, at
 most 4 a round, and replies `REVIEWED`; a fresh Critic with the earlier findings and scores
@@ -305,7 +305,7 @@ names from the seed rows, what the presenter does and what the screen must show.
 `platform` or `both` intent the script also carries the hood beats: each opens the builder
 link `entity link` returned for the automation, object, page or agent, and says what the
 canvas, schema or configuration must show. Start
-`demo-studio:rehearsal` → `rehearsal-1.md`: the script, the entity table, `NEBULA`, the
+`poc-studio:rehearsal` → `rehearsal-1.md`: the script, the entity table, `NEBULA`, the
 browser folder `$STUDIO/work/rehearsal/browser/`. It writes `$STUDIO/rehearsal.md`: pass or
 fix per beat with a shot each, and for every fix a one-line later task in Nebula's words.
 
@@ -313,7 +313,7 @@ A fix is a later task: follow nebula-bridge.md § Later task, which files the sm
 runs the plan with no questions. Then run Rehearsal again with `rehearsal-2.md`, carrying the
 earlier findings. Two rounds at most; a beat still failing is reported as unverified.
 
-When the demo has an external beat, start `demo-studio:connector` → `connector-2.md` with
+When the demo has an external beat, start `poc-studio:connector` → `connector-2.md` with
 `phase: verify` and the keys the automation's run returned; it reads the ticket, the message
 or the row back from the external system and writes `$STUDIO/external-verify.md`, which
 Rehearsal's verdict on that beat follows.
@@ -322,7 +322,7 @@ Say one line per beat that needed a fix, and the final `Rehearsal: <n> of <n> be
 
 ## Act 4b: The explainer
 
-Start `demo-studio:scribe` → `scribe-1.md`: the entity table, the demo script, `rehearsal.md`
+Start `poc-studio:scribe` → `scribe-1.md`: the entity table, the demo script, `rehearsal.md`
 with its shot folder, `code-app.md` when it exists, the profile, the context notes, the client
 slug, and [references/explainer.md](references/explainer.md). It reads what exists through the
 Nebula cache and writes `<Client> Demo Explainer.md` and `<Client> Demo Explainer.html` in the

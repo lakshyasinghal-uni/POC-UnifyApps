@@ -1,9 +1,9 @@
 {
-  "name": "demo-studio",
-  "version": "0.6.0",
-  "description": "Builds client-branded UnifyApps demo assets from one request. A team of agents pulls client context from Slack, Gmail and Calendar, proposes platform features (agents, evaluations, context graph) as demo beats, decides whether the demo is about the use case or the platform's configuration, asks Nebula about the platform instead of guessing, settles every clarifying question itself, builds nothing a beat does not use, lets the installed Nebula plugin build the result, rehearses the demo in a browser, writes a plain-words explainer with diagrams, and can build the app in the Code Builder from a design brief drawn from the client's own site, reviewed by a critic until it looks like theirs. Requires the Nebula plugin.",
+  "name": "poc-studio",
+  "version": "0.1.0",
+  "description": "POC Studio: UnifyApps POC delivery plugin (research, scoping, build, collaterals) with human review gates. Based on Demo Studio 0.6.0 by Gourav Mahunta. Builds client-branded UnifyApps demo assets from one request. A team of agents pulls client context from Slack, Gmail and Calendar, proposes platform features (agents, evaluations, context graph) as demo beats, decides whether the demo is about the use case or the platform's configuration, asks Nebula about the platform instead of guessing, settles every clarifying question itself, builds nothing a beat does not use, lets the installed Nebula plugin build the result, rehearses the demo in a browser, writes a plain-words explainer with diagrams, and can build the app in the Code Builder from a design brief drawn from the client's own site, reviewed by a critic until it looks like theirs. Requires the Nebula plugin.",
   "author": {
-    "name": "Gourav Mahunta"
+    "name": "Harshal"
   },
   "keywords": [
     "unifyapps",
