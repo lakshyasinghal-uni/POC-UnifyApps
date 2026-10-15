@@ -97,7 +97,9 @@ stalled by the next `claim`.
 
 ## Working documents
 
-These live in `$STUDIO` while a session works and are saved to Orbit as working documents
+The only documents sent for review are the research document, the BRD, the design system and
+the collaterals (and the app itself). Everything the team writes along the way lives in
+`$STUDIO` while a session works and is saved to Orbit as a working document
 (type `other`, status `draft`) at every write-back check when they changed, so a resume in a
 new chat can carry on:
 
@@ -107,11 +109,15 @@ new chat can carry on:
 | `working-rulings` | `rulings.md` | round 1 on |
 | `working-storylines` | `storylines.md` | phase 1 on |
 | `working-scout` | `scout.md` (tenant map and capability table) | phase 1 on |
+| `working-context-notes` | `context-notes.md` (what the client and team said) | phase 1 on |
+| `working-data-plan` | `data-plan.md` | phase 1 on |
 | `working-design` | `design.md` | round 2 on |
 | `working-code-design` | `code-design.md` | round 2 on |
 | `working-profile` | the client profile | phase 0 on |
 | `working-brief` | the Nebula brief | phase 3 on |
 | `entity-table` | the entity table with builder links (Markdown) | after every `plan finish`, and on a failure |
+| `working-rehearsal`, `working-checks`, `working-unverified` | rehearsal (with shots), check results, the unverified list | phase 3 on |
+| `working-demo-script`, `working-text2code` | the demo script and the Text2Code prompt | phase 3 on |
 | `run-log` | this session: link, start, steps done, how it ended | at every write-back check |
 
 ## Failed build

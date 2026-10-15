@@ -6,7 +6,7 @@ gates. Everything it makes is saved to Orbit.
 
 ## Before you start
 
-- The **POC Studio** plugin, version 0.4.2 or later (each run checks for a newer one and
+- The **POC Studio** plugin, version 0.4.3 or later (each run checks for a newer one and
   updates itself in Claude Code), and the **Nebula** plugin (the first build updates
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
@@ -44,7 +44,7 @@ If your login has expired it asks you to sign in to the tenant. Pick "Open brows
 
 **6. Answer the gates.**
 At the end of each phase it posts a gate in Slack and shows it here. Open the Orbit links,
-then reply with the gate's words (for example `approve B` at G2 to build with mockup B). The
+then reply with the gate's words (for example `approve`, or `changes: drop the SMS step`). The
 first answer from either place counts.
 
 **7. Wait.**
@@ -95,10 +95,10 @@ new POC.
 At four gates. Each is posted to Slack with links to the Orbit records and shown in the chat at
 the same time; the owner or an approver answers in either place:
 
-1. **G1 · Path** (`approve`, `partial`, `edited`, `block`): the research and readiness
-   assessment.
-2. **G2 · Scope and BRD** (`approve`, `approve <letter>`, `changes: …`, `stop`): the scope, the
-   BRD, the design system and a mockup. Nothing is built before this.
+1. **G1 · Path** (`approve`, `partial`, `edited`, `block`): the research document, with what
+   the client said and the readiness verdict.
+2. **G2 · Scope and BRD** (`approve`, `changes: …`, `stop`): the BRD, and the design system
+   made from it. Nothing is built before this.
 3. **G3 · Final review** (`approve`, `changes: …`, `stop`): open the app and accept it, or list
    changes; each becomes a ticket and the checks run again.
 4. **G4 · Release** (`approve`, `changes: …`, `hold`): the runbook, video and field note.

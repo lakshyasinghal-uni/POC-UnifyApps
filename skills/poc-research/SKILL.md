@@ -198,8 +198,9 @@ Go through the document once more and fix anything that fails:
 ## Inside a POC Studio build
 
 When `poc-studio:build` runs this skill, the Researcher agent does it in discovery and the
-build owns the gate: the document is the main part of G1 · Path, where the owner approves or
-edits it, together with the readiness assessment, before scoping starts. G1 is never
+build owns the gate: the document is the one G1 · Path document, where the owner approves or
+edits it before scoping starts. The build adds two closing sections to it: what the client and
+team said (from Slack, email, Calendar and Drive) and the readiness verdict. G1 is never
 skipped. The document is written to `research/<poc-slug>-research.md`, and its *Open
 questions* become ledger rows.
 

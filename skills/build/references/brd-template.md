@@ -67,8 +67,8 @@ demo proves it>
 | System | Connection (existing, sandbox, client, simulated) | Operations | Fallback |
 
 ## 9. Design
-Design system v<n> (<swatch>, <shipped face>), mockup <letter> as the reference, the app built
-code-first.
+The client's design system, made from this BRD and approved with it at G2 (<swatch>, <shipped
+face>); the app is built code-first from both.
 
 ## 10. Demo storyline
 <the beats in order, each with the requirement IDs it proves>
@@ -81,6 +81,6 @@ code-first.
 
 ## 13. Acceptance at G3
 - Every `must` requirement is shown by a beat that passes rehearsal.
-- Every check in the evidence pack passes, or is on the unverified list with a reason.
+- Every check passes, or is on the unverified list with a reason.
 - <client-specific acceptance lines>
 ```

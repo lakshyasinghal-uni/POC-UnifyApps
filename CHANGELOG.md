@@ -6,6 +6,27 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.3 (2026-10-15)
+
+- **Only five things are produced for review, in this order:** the research document, the
+  BRD, the design system, the app, and the collaterals (runbook, explainer, video and PDFs
+  when asked for, field note).
+- **No mockups.** The Mockups agent and its reference are removed, with the profile's
+  `mockups` line and the `approve <letter>` reply at G2. The design system's style guide is
+  the visual reference: the Text2Code prompt carries its tokens and component classes, and
+  the Critic scores fidelity to it.
+- **BRD first, then the design system,** in phase 2; G2 reviews the two together.
+- **One G1 document:** the research document now ends with what the client and team said and
+  the readiness verdict; the readiness assessment, context notes and data plan are no longer
+  separate gate documents.
+- **Folded into the BRD:** the scope summary and the storyline (the BRD's summary, storyline,
+  data and out-of-scope sections).
+- **G3 is the app.** The gate message gives the beat and check pass counts and anything
+  unverified; the evidence pack is no longer a document.
+- **The explainer moves to the collaterals** in phase 4.
+- Context notes, data plan, rehearsal and check results, the unverified list, the demo script
+  and the Text2Code prompt are kept as working documents in Orbit, for resuming only.
+
 ## 0.4.2 (2026-10-15)
 
 - **New `/poc-studio:update`**, and a version check as the first step of `/poc-studio:build`
