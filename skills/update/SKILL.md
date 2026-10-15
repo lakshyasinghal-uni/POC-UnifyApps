@@ -2,14 +2,14 @@
 name: update
 description: >
   This skill should be used when the user types /poc-studio:update, asks to "update POC Studio",
-  "check for a new version of POC Studio" or "is POC Studio up to date". Build and setup do
-  not run it. It compares the installed POC Studio version with
+  "check for a new version of POC Studio" or "is POC Studio up to date". /poc-studio:start runs
+  the same check with a 5-second limit; build and setup do not run it. It compares the installed POC Studio version with
   GitHub main; in Claude Code on the person's machine it updates the marketplace and the plugin
   itself, turns on auto-update for the poc-unifyapps marketplace, and stops so the next session
   runs the new version; in the Claude app it shows the newer version and how to update, then
   asks whether to stop or carry on.
 metadata:
-  version: "0.4.7"
+  version: "0.4.8"
 ---
 
 # POC Studio: update

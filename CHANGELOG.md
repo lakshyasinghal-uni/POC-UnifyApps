@@ -6,6 +6,16 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.8 (2026-10-15)
+
+- **`/poc-studio:start`**, one command for the whole journey: it checks GitHub for a newer
+  version (5 seconds at most, then it carries on), installs it in Claude Code and asks for
+  `/reload-plugins` and a rerun, runs setup when the person has never run it, then hands over
+  to the build, which checks the connectors, Orbit and the schema and starts the POC. Without
+  a request it asks what the POC is; `resume <POC>` carries on an existing one.
+- `version-check.mjs --timeout <seconds>`; a slow GitHub now reports how long it waited, and
+  the Claude Code detection waits 3 seconds at most.
+
 ## 0.4.7 (2026-10-15)
 
 - **Orbit writes use the live tenant's field names.** POC: `client_name`, `owner_name`,
