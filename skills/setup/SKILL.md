@@ -10,7 +10,7 @@ description: >
   gate end to end, and saves the settings (no secrets) in Orbit with a local copy in
   poc-studio.yml, so a new chat does not need setup again.
 metadata:
-  version: "0.4.1"
+  version: "0.4.2"
 ---
 
 # POC Studio: setup
@@ -19,7 +19,16 @@ Make every connection the build needs, once, and prove it with one test gate. Th
 refuses to start research or write anything until Slack and Orbit pass here.
 
 Say one line at the start: `Setting up POC Studio: connectors, Orbit, approvers, then one test
-gate.` Keep a task list with the six steps below.
+gate.` Keep a task list with the steps below.
+
+## 0. Latest version, and auto-update
+
+Run the check in [../update/SKILL.md](../update/SKILL.md) § The check first. Behind in Claude
+Code: update, tell the person to start a fresh session, and stop; setup runs on the new
+version. Behind in the Claude app: show the newer version and ask whether to stop or carry on.
+In Claude Code, also run `node "${CLAUDE_PLUGIN_ROOT}/scripts/enable-autoupdate.mjs"` so later
+releases arrive by themselves, and say in one line whether it turned auto-update on or found it
+already on.
 
 ## 1. Connectors
 
@@ -133,6 +142,7 @@ slack:
   gate_expiry_hours: 72 | <n> | never
 connectors: { slack: ok, calendar: ok | missing, drive: ok | missing }
 nebula: { version: <v>, code_builder: true | false }
+poc_studio: { version: <v>, auto_update: on | off | not applicable }
 test_gate: { poc: <setup row>, answered_in: chat | slack, at: <ISO> }
 ```
 
