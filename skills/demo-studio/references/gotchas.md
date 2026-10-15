@@ -37,6 +37,20 @@ persona, the recorder keeps the origin state (whatever the app accumulated — a
 hint, a conversation, a counter) and keeps the *saved* cookies. A context that was handed a
 rotated token would otherwise pass a dead session to the next act.
 
+**Never remove a node the app owns.** The engine used to clear leftover toasts with
+`el.remove()`. When the toast's own timer fired, React tried to remove the same `<li>`,
+found it gone, and the whole page fell to the error screen ("Failed to execute
+'removeChild' on 'Node'"). It looked exactly like an app bug and cost two rehearsals on the
+SZGMC Hijri Calendar film (2026-10-02). The app never crashed by hand. `clearToasts` now hides
+toasts (`display: none`). Any custom step that tidies the screen should hide, not remove; the
+engine's own overlays (`ds-*`) are the only nodes it may remove. If a page crashes only under
+the recorder, suspect the engine first.
+
+**`ctx.click` settles for six seconds by default — longer than a toast lives.** In a custom
+step that clicks and then waits for the confirmation toast, pass a short settle
+(`ctx.click({ text: 'Publish', settle: 300 })`), or the toast has come and gone before
+`ctx.toast` starts looking and the step reports `TIMEOUT` although the action worked.
+
 **Hide the demo tooling on camera.** If the app has a demo-control or admin panel used for
 staging, turn it off in the recorded context through the persona's `localStorage` seed. The
 customer should never see the levers being pulled.
@@ -222,3 +236,11 @@ In a shared environment, the demo is a guest. Do not change objects, records or 
 that belong to someone else's work, and rehearse destructive steps (accepting an offer,
 submitting a form) only where the state resets — or leave them out of the recording and
 mark them **do not click** in the manual.
+
+**Waiting for a copilot answer: use the "Copy message" button, not the status line.** (GSPC Knowledge Hub film,
+2026-10-04.) In the UnifyApps copilot island, "Response has been generated" flashes between tool calls mid-answer and
+the "Thinking… / Executing tool" lines stay in the transcript afterwards, so neither text nor a count of either is a
+signal: a wait that trusted them ended after 7 s, the next question was typed while the agent was still answering, sat
+unsent, and the one after was typed into the same box. Reliable: a finished answer adds a `button[aria-label="Copy
+message"]`, and `button[aria-label="Stop generating response"]` is present only while one is written. Wait for
+copies > before && no Stop button, and before typing wait for the Stop button to go and clear the composer.

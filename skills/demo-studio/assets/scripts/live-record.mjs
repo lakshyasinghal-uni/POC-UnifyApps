@@ -9,7 +9,7 @@
 //   SEGMENTS=E,F PERSONA=candidate node scripts/live-record.mjs
 import { config, RAW, VIEW, steps, chromium, personaOf, logTo, sleep, log, fs, path } from './config.mjs'
 import { clearOverlays } from './lib.mjs'
-import { playAct, mergeTimeline, syncMark } from './record-core.mjs'
+import { playAct, mergeTimeline, syncMark, CARDS } from './record-core.mjs'
 
 logTo('live-record')
 const wanted = (process.env.SEGMENTS ?? '').split(',').filter(Boolean)
@@ -33,7 +33,7 @@ const context = await chromium.launchPersistentContext(profileDir, {
 
 const page = context.pages()[0] ?? await context.newPage()
 const recordingStart = Date.now()
-await page.goto(p.base + p.login, { waitUntil: 'domcontentloaded' })
+await page.goto(/^https?:/.test(p.login) ? p.login : p.base + p.login, { waitUntil: 'domcontentloaded' })
 
 const who = (p.user + '  (' + p.label + ')').padEnd(42).slice(0, 42)
 console.log('')
@@ -74,7 +74,7 @@ for (const segment of wanted) {
   const actStartMs = Date.now() - videoStart
   const timeline = await playAct(page, p.base, segment, segmentSteps, videoStart)
   recorded.push({
-    segment, steps: timeline, actStartMs, actEndMs: Date.now() - videoStart,
+    segment, steps: timeline, actStartMs, actEndMs: Date.now() - videoStart, cards: CARDS,
     ...(markAt ? { syncMs: videoStart + actStartMs - markAt } : {}),
   })
 }

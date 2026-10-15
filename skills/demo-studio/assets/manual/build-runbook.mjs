@@ -5,7 +5,7 @@
 //
 // `key` on a step is the one sentence that must land in that scene. Without it the
 // caption is used, which is usually too thin to present from — write the keys.
-import { steps, bySegment, actMeta, personaOf, BUILD } from '../scripts/config.mjs'
+import { steps, bySegment, actMeta, personaOf, BUILD, DIAGRAM_SEAT } from '../scripts/config.mjs'
 import { config, BRAND, esc, escAll, fill, notesFor, shot, today, css, renderPdf, fs, path, logoTag } from './doc-kit.mjs'
 
 // documentGuard — these documents go to customers: refuse to print template placeholders or a personal
@@ -25,6 +25,7 @@ const groups = bySegment()
 const mm = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
 
 function action(step) {
+  if (step.diagram) return { verb: 'Show', what: 'the architecture picture (play the opening of the film, or show its still) and say the line' }
   const a = step.action
   if (a.type === 'goto') return { verb: 'Open', what: a.url }
   if (a.type === 'click') return { verb: 'Click', what: a.text ?? a.selector }
@@ -40,7 +41,7 @@ let runningSec = 0
 
 const acts = Object.entries(groups).map(([segment, segSteps]) => {
   const act = actMeta(segment)
-  const p = config.personas[personaOf(segment)]
+  const p = config.personas[personaOf(segment)] ?? DIAGRAM_SEAT
   // Demo pace, not video pace: four seconds a beat for the click and the pause.
   const actSec = segSteps.reduce((t, s) => t + secondsFor(s) + 4, 0)
   const startAt = runningSec

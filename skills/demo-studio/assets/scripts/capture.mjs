@@ -6,7 +6,7 @@
 //   ONLY=interviewer node scripts/capture.mjs
 import {
   config, BASES, SHOTS, BUILD, steps, bySegment, personaOf, contextOptions, seedContext,
-  launch, logTo, sleep, log, fs, path,
+  launch, logTo, sleep, log, fs, path, isDiagramAct,
 } from './config.mjs'
 import { runAction, clearOverlays, clearToasts, missingCues } from './lib.mjs'
 import { prepareAct } from './record-core.mjs'
@@ -20,6 +20,7 @@ const browser = await launch()
 // Walk act by act, not persona by persona: an act's staging has to run before its steps,
 // and a later act usually depends on what an earlier one did.
 for (const [segment, segmentSteps] of Object.entries(bySegment())) {
+  if (isDiagramAct(segment)) { log(`── act ${segment} is the architecture diagram (no screens): check it with node scripts/motion.mjs ──`); continue }
   const persona = personaOf(segment)
   if (only && !only.includes(persona) && !only.includes(segment)) continue
   const p = config.personas[persona]
@@ -30,6 +31,9 @@ for (const [segment, segmentSteps] of Object.entries(bySegment())) {
   const context = await browser.newContext(contextOptions(persona))
   await seedContext(context, persona)
   const page = await context.newPage()
+  // page errors go to the capture log, so a crash that only happens under the engine names itself
+  page.on('pageerror', (e) => console.log('    PAGE ERROR', String(e.stack || e).slice(0, 1500)))
+  page.on('console', (m) => { if (m.type() === 'error') console.log('    CONSOLE ERROR', m.text().slice(0, 1500)) })
   // Prime the session so the first action is not fighting the auth bootstrap.
   await page.goto(BASES[persona] + p.home, { waitUntil: 'domcontentloaded' })
   // a slow landing page (a graph canvas, a record web) must finish painting before the act is filmed:

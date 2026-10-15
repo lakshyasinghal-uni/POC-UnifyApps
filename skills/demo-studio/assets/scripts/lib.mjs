@@ -211,9 +211,13 @@ export async function toast(page, re, timeout = 120000) {
   return 'TIMEOUT'
 }
 
-/** Toasts outlive the action that caused them and land in the next screenshot. */
+/**
+ * Toasts outlive the action that caused them and land in the next screenshot. Hide them, never
+ * remove them: a toast is a node React owns, and when its timer later removes it React finds it
+ * already gone and the page crashes ("removeChild … not a child of this node").
+ */
 export async function clearToasts(page) {
-  await page.evaluate((sel) => document.querySelectorAll(sel).forEach((t) => t.remove()), TOAST).catch(() => {})
+  await page.evaluate((sel) => document.querySelectorAll(sel).forEach((t) => { t.style.display = 'none' }), TOAST).catch(() => {})
 }
 
 /** Wait for something the app does on its own — a push, a job finishing, a takeover screen. */
@@ -296,7 +300,9 @@ export async function runAction(page, action, base, step) {
   await runOne(page, action, base)
   // A saved conversation or a long report opens scrolled to the newest content, so a
   // `goto` alone lands on the wrong part of the page. `then` re-aims once it settles.
-  if (action.then) await runOne(page, action.then, base)
+  // (`nav` runs its own `then`; running it here too clicked every step of it twice and the
+  // second click hit the drawer the first one had opened)
+  if (action.then && action.type !== 'nav') await runOne(page, action.then, base)
 }
 
 // Actions that glow wait for their word after scrolling the element into view; everything

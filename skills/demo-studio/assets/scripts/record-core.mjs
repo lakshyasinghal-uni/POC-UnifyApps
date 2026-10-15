@@ -3,7 +3,7 @@
 // drawn into the page itself, so they are burned into the footage with no editor.
 import {
   config, BRAND, LOGO, RAW, BUILD, VIEW, steps, durations, bySegment, actMeta, personaOf,
-  contextOptions, seedContext, sleep, log, fs, path, words,
+  contextOptions, seedContext, sleep, log, fs, path, words, isDiagramAct,
 } from './config.mjs'
 import { runAction, clearOverlays, toolkit, setVoice, missingCues } from './lib.mjs'
 import { project } from './project.mjs'
@@ -16,18 +16,26 @@ const acts = Object.keys(bySegment())
 const LAST_ACT = acts[acts.length - 1]
 const { tailMs, openingHoldMs, actHoldMs, closingHoldMs } = config.pacing
 const PANEL = config.captions.style === 'panel'
+// With motion on, the cards are not filmed at all: build.py cross-fades the rendered ones in (scripts/motion.mjs).
+// Each act records which kind it holds, so a film recorded with the static cards is never given a second set.
+export const CARDS = config.motion ? 'film' : 'page'
+// build.py burns "Powered and built by UnifyApps" into the bottom strip of every frame; the panel sits above it
+const PANEL_BOTTOM = config.badge === false ? 20 : 58
 
 async function caption(page, step, index) {
+  // a framed persona (a phone-sized screen, "framed": true) carries no in-page caption: build.py places it in the
+  // side panel of the film frame, so nothing ever covers the phone's own screen
+  if (config.personas[personaOf(step.segment)]?.framed) return
   try {
-    await page.evaluate(({ kicker, title, narration, counter, brand, panel }) => {
+    await page.evaluate(({ kicker, title, narration, counter, brand, panel, panelBottom, rtl }) => {
       let el = document.getElementById('ds-cap')
       if (!el) {
         el = document.createElement('div')
         el.id = 'ds-cap'
-        el.setAttribute('dir', 'ltr')
+        el.setAttribute('dir', rtl ? 'rtl' : 'ltr')
         el.style.cssText = panel
           // The panel carries the spoken line, so the demo still reads with the sound off.
-          ? 'position:fixed; left:24px; right:24px; bottom:20px; z-index:2147483647; pointer-events:none;'
+          ? 'position:fixed; left:24px; right:24px; bottom:' + panelBottom + 'px; z-index:2147483647; pointer-events:none;'
             + 'border-radius:18px; padding:14px 20px 15px; background:' + brand.ink + 'ee;'
             + 'border:1px solid ' + brand.accent + '73; box-shadow:0 20px 50px -20px rgba(0,0,0,.7);'
             + 'backdrop-filter:blur(14px); font-family:' + brand.font + '; color:#fff;'
@@ -54,12 +62,14 @@ async function caption(page, step, index) {
           + '<span style="font-size:19px;font-weight:600;line-height:1.3">' + title + '</span>'
       el.style.opacity = '1'
     }, {
-      kicker: step.act ?? 'Act ' + actMeta(step.segment).n,
+      kicker: step.act ?? (config.actWord ?? 'Act') + ' ' + actMeta(step.segment).n,
       title: step.caption,
       narration: step.narration,
       counter: (index + 1) + '/' + total,
       brand: BRAND,
       panel: PANEL,
+      panelBottom: PANEL_BOTTOM,
+      rtl: !!config.captions?.rtl,
     })
   } catch { /* cosmetic */ }
 }
@@ -137,10 +147,12 @@ export async function playAct(page, base, segment, segmentSteps, videoStart) {
     const lost = missingCues(step)
     if (lost.length) log(`  CUE NOT IN THE LINE ${step.id}: ${lost.map((c) => '"' + c + '"').join(', ')} — these fire straight away`)
   }
-  if (segment === acts[0] && config.opening) {
+  if (CARDS === 'page' && segment === acts[0] && config.opening) {
     await titleCard(page, config.opening.heading, config.opening.sub, openingHoldMs)
   }
-  await titleCard(page, act.heading ?? act.title, null, actHoldMs, 'Act ' + act.n)
+  // an act may continue the previous chapter without a card ("card": false): used when a slow screen gets its own act
+  // only so that it loads before filming
+  if (CARDS === 'page' && act.card !== false) await titleCard(page, act.heading ?? act.title, null, actHoldMs, (config.actWord ?? 'Act') + ' ' + act.n)
 
   const timeline = []
   for (const step of segmentSteps) {
@@ -191,7 +203,7 @@ export async function playAct(page, base, segment, segmentSteps, videoStart) {
   }
 
   await clearCaption(page)
-  if (segment === LAST_ACT && config.closing) {
+  if (CARDS === 'page' && segment === LAST_ACT && config.closing) {
     await titleCard(page, config.closing.heading, config.closing.sub, closingHoldMs)
     // Hold on a clean colour field so the file does not end on a live UI frame.
     await page.evaluate((ink) => {
@@ -248,7 +260,20 @@ async function recordSegment(browser, segment, segmentSteps, storage) {
   await page.goto(p.base + p.home, { waitUntil: 'domcontentloaded' })
   // a slow landing page (a graph canvas, a record web) must finish painting before the act is filmed:
   // persona.homeWaitText waits for text that only appears once it has; persona.homeSettleMs replaces the settle
-  if (p.homeWaitText) await page.getByText(p.homeWaitText, { exact: false }).first().waitFor({ state: 'visible', timeout: 90000 }).catch(() => log('   home text "' + p.homeWaitText + '" never appeared'))
+  // A missing home text means the act would film something else (a platform error page, a half-loaded screen): the
+  // MCIT film recorded 52 s of "permission check is temporarily unavailable" this way. Reload once — those errors are
+  // transient — and if the text is still missing, stop the act rather than film it.
+  if (p.homeWaitText) {
+    const seen = () => page.getByText(p.homeWaitText, { exact: false }).first().waitFor({ state: 'visible', timeout: 90000 }).then(() => true, () => false)
+    if (!(await seen())) {
+      log('   home text "' + p.homeWaitText + '" never appeared; reloading once')
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      if (!(await seen())) {
+        await context.close()
+        throw new Error('Act ' + segment + ': home text "' + p.homeWaitText + '" never appeared (' + page.url() + '). Not filmed; re-run this act.')
+      }
+    }
+  }
   await sleep(p.homeSettleMs ?? 7000)
   if (p.auth && /\/(login|auth|sso)/.test(new URL(page.url()).pathname)) {
     await context.close()
@@ -272,7 +297,7 @@ async function recordSegment(browser, segment, segmentSteps, storage) {
   const video = page.video()
   await context.close()
   const syncMs = markAt ? videoStart - markAt : undefined
-  return { result: { segment, video: await video.path(), steps: timeline, activeMs, syncMs }, storage: nextStorage }
+  return { result: { segment, video: await video.path(), steps: timeline, activeMs, syncMs, cards: CARDS }, storage: nextStorage }
 }
 
 /** Merge freshly recorded acts into build/timeline.json, keeping the others. */
@@ -296,6 +321,10 @@ export async function recordWith(browser, wanted, storage) {
   for (const segment of wanted) {
     const segmentSteps = steps.filter((s) => s.segment === segment)
     if (!segmentSteps.length) continue
+    if (isDiagramAct(segment)) {
+      log('── act ' + segment + ' is the architecture diagram: motion.mjs draws it, nothing to record ──')
+      continue
+    }
     const persona = personaOf(segment)
     const from = carried[persona] ?? storage
     await prepareAct(browser, segment, from)

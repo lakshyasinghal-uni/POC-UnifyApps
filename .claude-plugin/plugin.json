@@ -1,6 +1,6 @@
 {
   "name": "poc-studio",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "POC Studio: UnifyApps POC delivery plugin (research, scoping, design system, build, collaterals) with human review gates. Based on Demo Studio 0.6.0 by Gourav Mahunta, with Maher's verified UnifyApps platform skills (unifyapps-helper, 28 Sep 2026) and the Design Language v3.4 design-system skill. A team of agents pulls client context from Slack, Gmail and Calendar, settles open decisions, generates or reuses the client's measured design system, asks Nebula (then the verified platform skills) instead of guessing, lets Nebula build the result (updating Nebula to the code-builder beta for code-first apps), rehearses and mechanically checks the demo, writes an explainer and runbook, and can render a narrated demo video. Requires the Nebula plugin.",
   "author": {
     "name": "Harshal"

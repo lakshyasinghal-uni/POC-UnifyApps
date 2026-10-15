@@ -34,8 +34,8 @@ saved `storageState` is reused by every later stage.
 
 ```bash
 node <skill-dir>/scaffold.mjs ./demo --title "AI Recruitment" --slug Acme_Recruitment_Demo
-cd demo && npm install                # playwright-core; needs real Chrome on the machine
-                                      # plus: pip install edge-tts imageio-ffmpeg
+cd demo && npm install                # playwright-core + HyperFrames; Node 22+, real Chrome
+                                      # plus: pip install edge-tts imageio-ffmpeg pillow
 ```
 
 Then, in order:
@@ -47,9 +47,10 @@ Then, in order:
 | 3 | `python scripts/narrate.py` | `build/audio/*.mp3`, `build/durations.json`, `build/words.json` |
 | 4 | `node scripts/capture.mjs` | `build/shots/*.jpg` + a pass/fail report per step |
 | 5 | `node scripts/recorder.mjs` | `build/raw/<act>/*.webm`, `build/timeline.json` |
-| 6 | `python scripts/build.py` | `out/<slug>.mp4`, `out/<slug>.srt` |
+| 6 | `python scripts/build.py` | `out/<slug>.mp4`, `out/<slug>.srt` (renders the animated title cards first) |
 | 7 | `node manual/build-runbook.mjs` | `out/<slug>_Runbook.pdf` |
 | 8 | `node manual/build-manual.mjs` | `out/<slug>_Manual.pdf` |
+| 8b | `node manual/build-playbook.mjs` | `out/<slug>_PG_Playbook.pdf` — the Pipeline Generation playbook from `manual/playbook.json` (`references/playbook.md`) |
 | 9 | `node scripts/export-shots.mjs` | `out/screenshots/` — named stills + contact sheet |
 
 Step 4 exists to fail cheaply. **Never record until capture reports every step clean** — a
@@ -124,6 +125,41 @@ changed costs an hour; re-generating the script costs seconds.
 - **`panel`** — the PlatformX card: act breadcrumb, headline, and the spoken sentence, with
   a scene counter. Use it when the video will be watched muted, sent round as a file, or
   played in a room with the sound down.
+
+## Motion graphics (default)
+
+The film's motion is rendered with **HyperFrames** (HeyGen's open-source HTML-to-video engine) by
+`scripts/motion.mjs`, its moves adapted from the HyperFrames registry: the opening and act cards
+**push** into each other and **focus-pull** into the act's real first screen (the film cuts onto live
+footage with no seam); the last screen pulls back into a **logo-outro** closing with an optional `cta`
+pill; a **lower third** names the seat when the film changes persona; and a step can carry a
+**`callout`** — a count-up stat card that lands on the word naming the figure. Built from `opening`,
+`acts`, `closing`, `brand` (give `brand.fontFile` for the customer's font) and the steps' `callout`s,
+cached, re-rendered only when one changes. The recorder no longer films cards, so a film recorded
+before this keeps its static ones until it is re-recorded; `"motion": false` brings the static cards
+back. Details: `references/config.md` → Title cards.
+
+## The architecture act (opening diagram)
+
+A film can open with **how the solution is built**. A narrated, animated diagram shows:
+
+- the UnifyApps building blocks the solution uses: Apps, Agents, Workflows and Data;
+- the customer's systems around them, marked as built and running, simulated today (and turned over to the live
+  system that replaces it at go-live), or connected at go-live;
+- one scenario token travelling across the picture.
+
+Then it cuts into the recorded demo. It is an act whose steps carry `"diagram"` cues instead of an action. It is
+drawn from `diagram.json` by `scripts/diagram.mjs` and rendered by HyperFrames; the recorder skips it. Iterate on it
+with `node scripts/motion.mjs --diagram`. Every node must be a fact from the build (README, platform export), and
+simulated stays simulated until it is not. Read `references/diagram.md` before drawing one.
+
+## The UnifyApps badge (always)
+
+Every film carries **"Powered and built by UnifyApps"** in its bottom-right corner, burned in by
+`build.py` on every frame (title cards included), on by default with no config. It belongs to
+the video, never to the app: do not add it to the customer's screens. With the `panel` caption
+the recorder lifts the panel so the badge has its own strip. Details and the opt-out
+(`"badge": false`, only on request): `references/config.md` → Look and sound.
 
 ## Before you record
 

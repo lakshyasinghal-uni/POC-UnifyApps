@@ -14,7 +14,8 @@ async function capture(browser, persona) {
   }
   const context = await browser.newContext({ viewport: VIEW })
   const page = await context.newPage()
-  await page.goto(persona.base + persona.login, { waitUntil: 'domcontentloaded' })
+  // a full address signs in somewhere else on the same host (e.g. the platform login in front of a builder preview)
+  await page.goto(/^https?:/.test(persona.login) ? persona.login : persona.base + persona.login, { waitUntil: 'domcontentloaded' })
 
   const who = `${persona.user}  (${persona.label})`
   console.log('')
@@ -25,8 +26,13 @@ async function capture(browser, persona) {
   console.log('  └────────────────────────────────────────────────────────┘')
   console.log('')
 
-  // Wait until we are off the login screen. No timeout: a person is typing.
-  await page.waitForURL((url) => !/\/(login|auth|sso)/.test(url.pathname), { timeout: 0 })
+  // Wait until we are back on the app's own site and off its login screen. No timeout: a person is typing.
+  // "Off the login path" alone is not enough: a sign-in that hands over to an identity provider (Google, Microsoft)
+  // leaves /login at once, and the session was saved before anyone had signed in (Herotel demo, 2026-09-29).
+  const host = new URL(persona.base).host
+  await page.waitForURL((url) => url.host === host && !/\/(login|auth|sso|oauth|signin)/i.test(url.pathname), { timeout: 0 })
+  // an app that names its session cookie: wait for it too (persona.sessionCookie, e.g. "_at")
+  while (persona.sessionCookie && !(await context.cookies()).some((c) => c.name === persona.sessionCookie)) await sleep(1000)
   await sleep(4000)
 
   fs.mkdirSync(AUTH_DIR, { recursive: true })
@@ -36,7 +42,8 @@ async function capture(browser, persona) {
 }
 
 const only = process.env.ONLY?.split(',')
-const wanted = Object.values(config.personas).filter((p) => p.auth && (!only || only.includes(p.id)))
+// a persona with `session` borrows another persona's saved sign-in and is not captured itself
+const wanted = Object.values(config.personas).filter((p) => p.auth && (!p.session || p.session === p.id) && (!only || only.includes(p.id)))
 
 if (!wanted.length) {
   log('Nothing to do — no persona in demo.config.json needs a login.')

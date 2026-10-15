@@ -12,9 +12,17 @@
     "runbook": "node manual/build-runbook.mjs",
     "script": "node manual/build-script.mjs",
     "docs": "node manual/build-script.mjs && node manual/build-runbook.mjs && node manual/build-manual.mjs",
-    "shots": "node scripts/export-shots.mjs"
+    "shots": "node scripts/export-shots.mjs",
+    "motion": "node scripts/motion.mjs"
   },
   "dependencies": {
-    "playwright-core": "^1.63.0"
+    "playwright-core": "^1.63.0",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "gsap": "^3.13.0",
+    "hyperframes": "^0.8.114"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
