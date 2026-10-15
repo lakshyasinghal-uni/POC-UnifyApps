@@ -6,6 +6,14 @@ Every change that is merged into `main` gets an entry here, and the version in
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.2.1 (2026-10-15)
+
+- Updated `demo-studio` to the latest version: HyperFrames motion graphics, an animated
+  architecture opening (`diagram.json`), the "Powered and built by UnifyApps" badge,
+  UnifyApps brand assets, and the PG (Pipeline Generation) playbook PDF.
+- The build's handoff now feeds it the demo script's beats, the design system's brand and
+  the entity table, and asks for narration approval before recording.
+
 ## 0.2.0 (2026-10-15)
 
 - Stage 1–2: added the `poc-research` skill (six-lens, cited web research into

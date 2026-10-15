@@ -10,13 +10,15 @@ fails in a second rather than in the middle of a take.
 |---|---|---|
 | `id` | yes | Unique, short (`a1`, `b3`). Names the audio clip (`build/audio/a1.mp3`), the screenshot (`build/shots/a1.jpg`) and any custom function in `actions.mjs`. Changing an id orphans all three. |
 | `segment` | yes | The act this scene belongs to (`A`, `B`, …). Acts are recorded, and re-recorded, as units. |
-| `persona` | yes | A key in `demo.config.json.personas`. Determines the browser session and the base URL. |
+| `persona` | yes (not in a diagram act) | A key in `demo.config.json.personas`. Determines the browser session and the base URL. |
 | `caption` | yes | The headline on screen. Six to nine words. A label, not a sentence. |
 | `narration` | yes | Spoken aloud; becomes the subtitle, the script and (in `panel` caption style) the on-screen text. |
 | `act` | no | The breadcrumb above the caption — "Command Centre · AI brief". Defaults to "Act II". Only visible in `panel` style, where it does real work: it tells the viewer whose screen this is. |
 | `key` | no | The one sentence that must land in this beat — the runbook's right-hand column. A little inline HTML (`<strong>`, `<em>`) is allowed. Without it the runbook falls back to the caption, which is usually too thin to present from. |
 | `action` | yes | What happens on screen. See below. |
+| `diagram` | instead of `action` | `{ cues: [...] }` — a step of the **architecture act**: the cues animate `diagram.json` on the narration's words (show, swap, focus, token, move, badge, camera, legend). No persona, nothing filmed; an act is either all diagram or all screen. See `references/diagram.md`. |
 | `clip` | no | `{ selector, pad }` — photograph one element instead of the whole viewport. This is how a phone frame or a single panel stays readable in a printed manual. Stills only; the video always films the viewport. |
+| `callout` | no | `{ value, label, caption?, max?, prefix?, suffix?, at?, ms? }` — an animated stat card over the footage (HyperFrames, `scripts/motion.mjs`): a number counts up from 0 (a string is revealed instead), `max` adds a progress track, `at` is the phrase of the narration it lands on (default 0.6 s into the line), `ms` its length (default 5000; it always ends with its scene). One or two per film, on the figures the story is about. |
 | `manual` | no | `{ do: [...], expect, recover }` — presenter instructions. May instead live in `manual/notes.json` keyed by id; inline wins. |
 
 An act's persona is inferred from its steps — the config never restates it. Keep one

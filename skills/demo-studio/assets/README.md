@@ -24,7 +24,7 @@ node manual/build-script.mjs   # the narration script — review the words BEFOR
 python scripts/narrate.py      # edge-tts → build/audio/*.mp3 + durations.json + words.json (for `at` cues)
 node scripts/capture.mjs       # dry run: validates every step, writes build/shots for the manual
 node scripts/recorder.mjs      # records build/raw/<act>/*.webm + build/timeline.json
-python scripts/build.py        # muxes narration, concatenates → out/<slug>.mp4 + .srt
+python scripts/build.py        # renders the animated title cards, muxes narration, concatenates → out/<slug>.mp4 + .srt
 node manual/build-runbook.mjs  # one-sheet runbook
 node manual/build-manual.mjs   # shots + script + notes → manual PDF
 node scripts/export-shots.mjs  # the screenshot library
@@ -36,6 +36,7 @@ Useful environment variables:
 - `SEGMENTS=C,D node scripts/recorder.mjs` — re-record specific acts; `timeline.json` merges
 - `ONLY=interviewer node scripts/capture.mjs` — re-shoot one persona's stills
 - `python scripts/narrate.py a3 b1` — re-voice single steps
+- `node scripts/motion.mjs` — render (or re-render) only the animated title cards, to look at them
 - `SEGMENTS=E PERSONA=candidate node scripts/live-record.mjs` — for a portal whose token
   will not survive being copied into a fresh browser context
 
@@ -55,5 +56,6 @@ out/               the deliverables
 
 ## Prerequisites
 
-- Node with `playwright-core` (`npm install`) and a real Chrome on the machine
-- Python with `edge-tts` and `imageio-ffmpeg` (`pip install edge-tts imageio-ffmpeg`)
+- Node 22+ with `playwright-core` and HyperFrames (`npm install`) and a real Chrome on the machine
+- Python with `edge-tts`, `imageio-ffmpeg` and `Pillow` (`pip install edge-tts imageio-ffmpeg pillow`); Pillow draws the UnifyApps badge
+- `brand/unifyapps-logo.png` in the project (the scaffold copies it from `assets/brand/`); the badge is on by default and the build stops without it

@@ -30,7 +30,7 @@ for (let i = 0; i < args.length; i++) {
 const target = path.resolve(positional[0] ?? 'demo')
 
 // Files that carry the story, not the machinery: never overwritten without --force.
-const STORY = new Set(['demo.config.json', 'steps.json', 'actions.mjs', 'manual/notes.json', 'README.md'])
+const STORY = new Set(['demo.config.json', 'steps.json', 'diagram.json', 'actions.mjs', 'manual/notes.json', 'README.md'])
 
 let copied = 0
 let kept = 0

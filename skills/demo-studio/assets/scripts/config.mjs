@@ -59,6 +59,9 @@ function load() {
   // spoken line, so the demo reads with the sound off.
   c.captions = { style: 'chip', ...(c.captions ?? {}) }
   c.opening ??= { heading: c.title, sub: c.subtitle }
+  // The title cards are animated motion graphics rendered by HyperFrames (scripts/motion.mjs) and cross-faded into
+  // the acts by build.py. `"motion": false` puts back the static cards the recorder draws into the page.
+  c.motion = c.motion === false ? false : { engine: 'hyperframes', ...(typeof c.motion === 'object' ? c.motion : {}) }
   c.closing ??= null
   c.manual ??= {}
   c.runbook ??= {}
@@ -97,6 +100,8 @@ export const LOGO = (() => {
   return `data:${mime};base64,${fs.readFileSync(file).toString('base64')}`
 })()
 export const VIEW = config.viewport
+/** Who "plays" the architecture act in the documents: nobody signs in; the presenter shows the picture. */
+export const DIAGRAM_SEAT = { id: 'diagram', label: 'The architecture picture', colour: config.brand.accent, window: 'The film (its opening) or the picture as a still', user: 'no sign-in' }
 export const BASES = Object.fromEntries(Object.entries(config.personas).map(([id, p]) => [id, p.base]))
 
 /** Replace {{personaId}} in any string with that persona's base URL. */
@@ -110,19 +115,42 @@ function loadSteps() {
   const seen = new Set()
   steps.forEach((s, i) => {
     const where = `steps.json[${i}]${s.id ? ` (id "${s.id}")` : ''}`
-    for (const key of ['id', 'segment', 'persona', 'caption', 'narration', 'action']) {
+    // a step of the architecture act carries "diagram" cues instead of an action, and no persona: nothing is filmed
+    const required = s.diagram ? ['id', 'segment', 'caption', 'narration'] : ['id', 'segment', 'persona', 'caption', 'narration', 'action']
+    for (const key of required) {
       if (!s[key]) throw new Error(`${where}: missing "${key}".`)
     }
     if (seen.has(s.id)) throw new Error(`${where}: duplicate id.`)
     seen.add(s.id)
+    if (s.diagram) return
     if (!config.personas[s.persona]) {
       throw new Error(`${where}: persona "${s.persona}" is not in demo.config.json (have: ${Object.keys(config.personas).join(', ')}).`)
     }
   })
+  // an act is either all diagram or all screen
+  for (const seg of new Set(steps.map((s) => s.segment))) {
+    const kinds = new Set(steps.filter((s) => s.segment === seg).map((s) => Boolean(s.diagram)))
+    if (kinds.size > 1) throw new Error(`steps.json: act "${seg}" mixes diagram steps with screen steps — give the diagram its own act.`)
+  }
   return steps
 }
 
 export const steps = loadSteps()
+
+/** The architecture act(s): drawn and voiced by motion.mjs from diagram.json, never recorded. */
+export const isDiagramAct = (segment) => steps.some((s) => s.segment === segment && s.diagram)
+
+/** diagram.json next to steps.json, or null when the film has no architecture act. */
+export const diagramSpec = (segment) => {
+  // an act may carry its own picture: diagram.<act>.json (e.g. diagram.S.json), else diagram.json
+  const own = segment ? path.join(ROOT, `diagram.${segment}.json`) : null
+  const file = own && fs.existsSync(own) ? own : path.join(ROOT, 'diagram.json')
+  if (!fs.existsSync(file)) {
+    if (steps.some((s) => s.diagram)) throw new Error('steps.json has diagram steps but there is no diagram.json next to it.')
+    return null
+  }
+  return readJson(file)
+}
 
 /** Steps grouped by act, in the order the acts first appear. */
 export function bySegment(list = steps) {
@@ -133,7 +161,7 @@ export function bySegment(list = steps) {
 export function personaOf(segment) {
   const step = steps.find((s) => s.segment === segment)
   if (!step) throw new Error(`No steps for act "${segment}".`)
-  return step.persona
+  return step.persona ?? null   // null: the architecture act, which no one signs in to
 }
 
 export function actMeta(segment) {
@@ -163,7 +191,8 @@ export const words = () => {
 export function storageFor(persona) {
   const p = config.personas[persona]
   if (!p.auth) return undefined
-  const file = path.join(AUTH_DIR, `${persona}.json`)
+  // `session` lets several personas share one saved sign-in (e.g. one build account that writes on camera)
+  const file = path.join(AUTH_DIR, `${p.session ?? persona}.json`)
   if (!fs.existsSync(file)) throw new Error(`No saved session for "${persona}". Run: node scripts/auth.mjs`)
   return file
 }
@@ -178,6 +207,9 @@ export function contextOptions(persona, extra = {}) {
   const p = config.personas[persona]
   const options = {
     viewport: p.viewport ?? VIEW,
+    // any other Playwright context option the persona needs: a position ("geolocation"), a phone ("isMobile", "hasTouch",
+    // "deviceScaleFactor"), a "locale" or "timezoneId" — passed through as given
+    ...(p.context ?? {}),
     ...(storageFor(persona) ? { storageState: storageFor(persona) } : {}),
     ...extra,
   }

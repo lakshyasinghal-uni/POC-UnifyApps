@@ -2,7 +2,7 @@
 // screenshot per scene. Written for someone who has never seen the application —
 // every step says what to type or click, what should appear, and what to do when it
 // doesn't. Run the capture pass first; the screenshots come from build/shots.
-import { steps, bySegment, actMeta, personaOf } from '../scripts/config.mjs'
+import { steps, bySegment, actMeta, personaOf, DIAGRAM_SEAT } from '../scripts/config.mjs'
 import { config, BRAND, esc, escAll, fill, notesFor, shot, today, css, renderPdf, fs, path, logoTag } from './doc-kit.mjs'
 
 // documentGuard — these documents go to customers: refuse to print template placeholders or a personal
@@ -31,7 +31,7 @@ const setup = m.setup ?? personaList.map((p, i) => ({
 let n = 0
 const sections = Object.entries(groups).map(([segment, segSteps]) => {
   const act = actMeta(segment)
-  const p = config.personas[personaOf(segment)]
+  const p = config.personas[personaOf(segment)] ?? DIAGRAM_SEAT
 
   const body = segSteps.map((step) => {
     n += 1
@@ -80,6 +80,7 @@ const sections = Object.entries(groups).map(([segment, segSteps]) => {
 }).join('')
 
 function describe(step) {
+  if (step.diagram) return 'show the architecture picture and say the line'
   const a = step.action
   if (a.type === 'goto') return `open ${a.url}`
   if (a.type === 'scroll') return 'scroll down the page'
@@ -177,7 +178,7 @@ const html = `<!doctype html>
     <tr><th>Act</th><th>Window</th><th>Signed in as</th><th>Steps</th></tr>
     ${Object.entries(groups).map(([seg, ss]) => {
       const act = actMeta(seg)
-      const p = config.personas[personaOf(seg)]
+      const p = config.personas[personaOf(seg)] ?? DIAGRAM_SEAT
       const first = steps.findIndex((s) => s.id === ss[0].id) + 1
       const last = steps.findIndex((s) => s.id === ss[ss.length - 1].id) + 1
       return `<tr><td>Act ${escAll(act.n)}</td><td>${escAll(p.window)}</td><td>${escAll(p.user)}</td><td>${first}–${last}</td></tr>`

@@ -20,7 +20,7 @@ description: >
   verified UnifyApps skills shipped in this plugin; mechanical checks run through ua-checker; and
   the handoff can add a narrated demo video through the demo-studio skill.
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
   requires: "nebula plugin 3.46.0 or later"
 ---
 
@@ -39,7 +39,8 @@ browser the way the presenter will. The person talks twice: once to start, once 
   connection that does not exist, a budget the Judge cannot meet by cutting; the design
   system's own two stops (a brand hue two credible sources disagree on by more than ~30°, and
   a logo that cannot be fetched as a real file); a Nebula update that needs a fresh session to
-  load; the research gate when the profile's `research gate` line is `review`; and, when the
+  load; the research gate when the profile's `research gate` line is `review`; the narration
+  approval before a demo video is recorded; and, when the
   profile's `mockups` line is a number, the choice of one UI mockup. Each is one
   AskUserQuestion asking for that alone.
 - **Nebula builds, Studio directs.** No write to the tenant happens outside Nebula's plan and
@@ -424,11 +425,18 @@ assistant, the pages, and one record's journey through the beats. Say `Explainer
    `Decisions taken for you` (every `STAND-IN`, `SLACK`, `JUDGE`, `DESIGNER`, `NEBULA` and
    `MODERATOR` row with the profile line that would have avoided it), the design system's
    folder and its type note, `checks.md`'s results, and what is unverified.
-2b. **The demo video**, when the profile's `video` line is `on`: load `poc-studio:demo-studio`
-   with the Skill tool and run it on the published app with the demo script's beats as its
-   steps. It writes the narrated video, the narration script, the live-demo runbook, the
-   presenter manual and the screenshot library under `studio/video/<client-slug>/`; link them
-   from the runbook. Say `Demo video rendered: <length>.` With `video: off`, skip it.
+2b. **The demo assets**, when the profile's `video` line is `on`: load `poc-studio:demo-studio`
+   with the Skill tool and scaffold it under `studio/video/<client-slug>/`. Its `steps.json`
+   comes from the demo script's beats and real record names; its `brand` from the design
+   system (`tokens.css`, the shipped font file); its architecture act's `diagram.json` from
+   the entity table and data-plan.md, every node a built fact and every system marked built,
+   simulated or connected at go-live as the data plan says. Sign-ins are asked up front by
+   username and typed by the person, never by you. Before recording, show the narration
+   script PDF and ask ONE AskUserQuestion, header `Narration`, `Approve the words before
+   recording?` (`Approve`, `I edited it`, `Skip the video`). Then run its pipeline to the
+   end: the narrated MP4 with subtitles, the live-demo runbook, the presenter manual, the PG
+   playbook, and the screenshot library. Link them from the runbook. Say
+   `Demo video rendered: <length>, <n> PDFs.` With `video: off`, skip it.
 3. Say five to eight lines: what exists, what was published or deployed, what is unverified,
    how many decisions were taken for the person, and the runbook's link. Offer `Next task`
    and `Save session`. `Next task` goes to the bridge's § Later task with the person's words.

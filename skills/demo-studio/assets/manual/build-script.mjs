@@ -5,7 +5,7 @@
 //
 // It works with or without build/durations.json: before narration exists, timings are
 // estimated from the word count; afterwards they are the real clip lengths.
-import { steps, bySegment, actMeta, personaOf, BUILD } from '../scripts/config.mjs'
+import { steps, bySegment, actMeta, personaOf, BUILD, DIAGRAM_SEAT } from '../scripts/config.mjs'
 import { config, BRAND, esc, escAll, fill, notesFor, shot, today, css, renderPdf, fs, path, logoTag } from './doc-kit.mjs'
 
 // documentGuard — customer documents: no template placeholders, no personal account (see build-manual.mjs)
@@ -22,6 +22,7 @@ const secondsFor = (step) => measured[step.id] ?? estimate(step.narration)
 const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
 
 function action(step) {
+  if (step.diagram) return 'The architecture picture builds as you speak'
   const a = step.action
   if (a.type === 'goto') return `Open ${a.url}`
   if (a.type === 'scroll') return 'Scroll down the page'
@@ -39,7 +40,7 @@ const words = steps.reduce((t, s) => t + s.narration.trim().split(/\s+/).length,
 
 const acts = Object.entries(bySegment()).map(([segment, segSteps]) => {
   const act = actMeta(segment)
-  const p = config.personas[personaOf(segment)]
+  const p = config.personas[personaOf(segment)] ?? DIAGRAM_SEAT
   const actSec = segSteps.reduce((t, s) => t + secondsFor(s), 0)
   const startAt = running
   running += actSec

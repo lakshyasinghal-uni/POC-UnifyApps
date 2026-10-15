@@ -25,7 +25,7 @@ request.
 - nebula: <latest-code | keep> · <latest-code updates Nebula to the code-builder beta at the start of a build when it is older; keep never updates>
 - research gate: <review | skip> · <review shows the cited research document and waits for the PM's approval before scoping; skip carries on and lists its open questions>
 - design system: <reuse | generate> · <reuse takes studio/design-systems/<client-slug>/ when it exists; generate runs the design-system skill>
-- video: <on | off> · <on renders a narrated demo video with its script, runbook and presenter manual at handoff>
+- video: <on | off> · <on renders the demo assets at handoff: narrated video with an architecture opening, subtitles, live-demo runbook, presenter manual, PG playbook and screenshot library>
 - frontend: <nebula | code | both> · <nebula builds the Config app; code builds it in the Code Builder from the Text2Code prompt; both does both>
 - innovate: <nebula | all | off> · <nebula admits platform-feature ideas Nebula can build; all admits ideas a browser agent could build from the operator skills; off skips the Innovator>
 - mockups: <3 | 4 | 5 | auto | off> · <a number draws that many UI mockups in Claude and asks you to choose one, the one question you asked for; auto takes the recommendation; off skips them>
