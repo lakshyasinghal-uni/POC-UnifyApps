@@ -29,9 +29,11 @@ sent ([orbit-records.md](orbit-records.md) § The write-back check).
   listed as `Not done`, or stop.
 - **Stop means stop.** `block`, `stop` and `hold` end the build at that gate with what exists
   saved to Orbit, the POC row set to `blocked`, `stopped` or `held`, and one line saying so.
-- **Unattended runs wait.** The gate is sent, the thread is checked on a schedule, one reminder
-  goes after `reminder_hours`, and the build carries on from the gate when an answer comes. A
-  gate is never skipped because nobody answered.
+- **Unattended runs wait, then expire.** The gate is sent, the thread is checked on a
+  schedule, one reminder goes after `reminder_hours`, and the build carries on from the gate
+  when an answer comes. After `gate_expiry_hours` (the owner's choice at setup) with no
+  answer, the gate expires to `held` and the POC is put on hold (gate-delivery.md § Reading the
+  answer). A gate is never skipped because nobody answered.
 - **Every answer is a record:** a `gate_decision` document and the gate's status on the POC
   row, written before the next phase starts. The runbook carries the table of gate answers.
 - **Edits win.** When the owner edits a document in Orbit (`edited` at G1, or a newer version
@@ -52,6 +54,11 @@ Researcher found, else `standard`):
 The profile's `gates` line overrides the tier (`full` or `merged`). A merged gate shows both
 packs and takes both gates' reply words (`approve` approves both; anything else names the
 gate it is about). It is still two `gate_decision` records.
+
+In a merged G1 and G2, phase 2 runs before G1 is answered. When the answer is `block` for G1,
+every document phase 2 made (scope, BRD, storyline, design system, mockups, and the working
+rulings and designs) is set to `superseded`, the POC goes to `status: blocked`, `run_state:
+abandoned`, and nothing is built.
 
 ## G1 · Path
 
