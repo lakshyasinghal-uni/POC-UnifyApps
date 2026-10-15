@@ -6,7 +6,9 @@
  *   "extraKnownMarketplaces": { "poc-unifyapps": { "source": {...}, "autoUpdate": true } }
  *
  * marketplace.json has no field for this, so it is set per person. Idempotent: an existing
- * entry keeps its source and only gains autoUpdate; every other setting is left as it is.
+ * entry keeps its source and only gains autoUpdate, except a source that still points at the
+ * plugin's old home (shubhankargarg-lang/POC-UnifyApps), which is moved to the current repo;
+ * every other setting is left as it is.
  * A settings file that is not plain JSON is never rewritten. Prints one JSON line.
  * Exit 0 on or already on, 2 skipped (not Claude Code on a machine, or unreadable settings).
  */
@@ -15,7 +17,8 @@ import os from "node:os";
 import path from "node:path";
 
 const NAME = "poc-unifyapps";
-const SOURCE = { source: "github", repo: "shubhankargarg-lang/POC-UnifyApps" };
+const SOURCE = { source: "github", repo: "lakshyasinghal-uni/POC-UnifyApps" };
+const OLD_REPOS = ["shubhankargarg-lang/poc-unifyapps"];
 const out = (o, code = 0) => { process.stdout.write(JSON.stringify(o) + "\n"); process.exit(code); };
 
 if (process.env.CLAUDE_CODE_REMOTE === "true") out({ ok: false, skipped: "Cloud session: auto-update is a Claude Code setting on your own machine." }, 2);
@@ -28,9 +31,10 @@ if (fs.existsSync(file)) {
 }
 settings.extraKnownMarketplaces ||= {};
 const entry = settings.extraKnownMarketplaces[NAME] || {};
-if (entry.autoUpdate === true && entry.source) out({ ok: true, alreadyOn: true, file });
-settings.extraKnownMarketplaces[NAME] = { ...entry, source: entry.source || SOURCE, autoUpdate: true };
+const oldSource = OLD_REPOS.includes(String(entry.source?.repo || "").toLowerCase());
+if (entry.autoUpdate === true && entry.source && !oldSource) out({ ok: true, alreadyOn: true, file });
+settings.extraKnownMarketplaces[NAME] = { ...entry, source: oldSource || !entry.source ? SOURCE : entry.source, autoUpdate: true };
 fs.mkdirSync(path.dirname(file), { recursive: true });
 if (fs.existsSync(file)) fs.copyFileSync(file, `${file}.bak-poc-studio`);
 fs.writeFileSync(file, JSON.stringify(settings, null, 2) + "\n");
-out({ ok: true, turnedOn: true, file, backup: fs.existsSync(`${file}.bak-poc-studio`) ? `${file}.bak-poc-studio` : null });
+out({ ok: true, turnedOn: true, ...(oldSource ? { movedFrom: entry.source.repo, movedTo: SOURCE.repo } : {}), file, backup: fs.existsSync(`${file}.bak-poc-studio`) ? `${file}.bak-poc-studio` : null });

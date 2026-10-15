@@ -1,7 +1,7 @@
 {
   "extraKnownMarketplaces": {
     "poc-unifyapps": {
-      "source": { "source": "github", "repo": "shubhankargarg-lang/POC-UnifyApps" },
+      "source": { "source": "github", "repo": "lakshyasinghal-uni/POC-UnifyApps" },
       "autoUpdate": true
     }
   }

@@ -14,7 +14,7 @@ its code builder.
 In Claude Code on your machine:
 
 ```
-claude plugin marketplace add shubhankargarg-lang/POC-UnifyApps
+claude plugin marketplace add lakshyasinghal-uni/POC-UnifyApps
 claude plugin install poc-studio@poc-unifyapps
 ```
 
@@ -25,7 +25,7 @@ background auto-update for the `poc-unifyapps` marketplace by adding this entry 
 ```json
 "extraKnownMarketplaces": {
   "poc-unifyapps": {
-    "source": { "source": "github", "repo": "shubhankargarg-lang/POC-UnifyApps" },
+    "source": { "source": "github", "repo": "lakshyasinghal-uni/POC-UnifyApps" },
     "autoUpdate": true
   }
 }
