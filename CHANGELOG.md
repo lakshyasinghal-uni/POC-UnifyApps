@@ -1,10 +1,55 @@
 # Changelog
 
-Every change that is merged into `main` gets an entry here, and the version in
-`.claude-plugin/plugin.json` goes up with it.
+Every release gets an entry here, and the version in `.claude-plugin/plugin.json` goes up
+with it.
 
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
+
+## 0.4.0 (2026-10-15)
+
+- **Orbit holds everything.** Three Orbit objects on orbit.uat (`poc_studio_poc`,
+  `poc_studio_document`, `poc_studio_feedback`; definitions in
+  `skills/build/references/orbit-objects.json`). Every document is saved with its full file,
+  versioned (a new version supersedes the old one; nothing is deleted), and its text kept
+  alongside up to ~1 MB.
+- **New `scripts/orbit-api.mjs`**, no browser: `check`, `schema`, `ensure-objects`, `get`,
+  `find`, `create`, `update` (read, merge, write the full record), `upload` (the Orbit UI's S3
+  multipart flow), `save-doc`, `readback`, `sync-counts` and `flush` (writes that could not
+  reach Orbit are queued and replayed in order). Session from `ORBIT_COOKIE`, or
+  `ORBIT_USERNAME` and `ORBIT_PASSWORD` for a local account, as environment secrets. The same
+  calls for a signed-in tab (`ps`, `psUpload`) are in `orbit-records.md`.
+- **New `/poc-studio:setup`**, run once and whenever a connection breaks: checks Slack,
+  Google Calendar and Google Drive (a connector card for any missing), connects Orbit by
+  direct API or a signed-in tab and warns when it is signed in as someone else, creates any
+  missing Orbit object, records approvers and the gate destination (DM, group DM or channel)
+  with resolved Slack IDs, runs one test gate end to end, and writes `poc-studio.yml` with no
+  secrets.
+- **The build runs in four phases**, each closed by a gate: phase 0 checks prerequisites
+  (Slack and Orbit before any research or write) and creates or resumes the POC row; phase 1
+  captures signals from Slack, Gmail, Calendar and Drive plus web research, then saves the
+  research, readiness assessment, context notes and data plan → **G1 Path**; phase 2 writes
+  the scope, storyline, a BRD sized to the tier (new `brd-template.md`), the design system and
+  mockups → **G2 Scope and BRD**; phase 3 builds the final app code-first with the latest
+  code-builder Nebula in Sonic mode, then rehearsal, checks and evidence → **G3 Final review**,
+  where the owner opens the app and accepts it or lists changes; phase 4 makes the
+  collaterals → **G4 Release**.
+- **Gates go to Slack and the chat at once** (new `gate-delivery.md`), with links to the
+  Orbit records and the reply words per gate. The first answer counts and the other place is
+  told; only approvers' replies count; unclear replies are asked back; silence or an emoji is
+  never a yes; one reminder after a set number of hours; each decision is saved to Orbit and on
+  the POC row.
+- **Write-back check before every human step:** flush the queue, read back every document
+  made so far, update the POC row; if anything did not reach Orbit, the user is asked to
+  reconnect and the gate waits.
+- **Feedback at any time** becomes a ticket (`FB-_1001`, …), is acknowledged with its number,
+  routed (owner or approver = an `OWNER` row that overrules the team; anyone else = a
+  `COMMENT` row), closed with what was done, and listed in the next gate message.
+- The Researcher also reads Google Drive. Profile: new `approvers` and `gate destination`
+  lines; `frontend` defaults to `code`; `nebula` defaults to `latest-code`.
+- GitHub is no longer part of the POC flow: no GitHub step, token or repository in setup,
+  gates, profile or docs. Skill feedback comes from Orbit tickets (category `skill`), so the
+  GitHub issue form is gone, and the copy of the helper's GitHub install notes is removed.
 
 ## 0.3.0 (2026-10-15)
 
@@ -43,7 +88,7 @@ Every change that is merged into `main` gets an entry here, and the version in
   brand, luminance preserved, audited in light and dark; ships a style guide, token block,
   logo kit and type note). The build reuses `studio/design-systems/<client>/` or generates
   it before the Designer, mockups and Coder, which now all follow its tokens.
-- Added Maher's verified UnifyApps platform skills from unifyapps-helper (28 Sep 2026):
+- Added Maher's verified UnifyApps platform skills (snapshot of 28 Sep 2026):
   `unifyapps-builder`, `-apps`, `-config-apps`, `-connectors`, `-context-graph`,
   `-governance`, `-backup-restore`, `-solution-playbook`, `atomic-agent-architecture`,
   `oracle-ebs-apis`, and `API-SPEC.md` at the plugin root. `ask-nebula.md` uses them as a
@@ -65,7 +110,7 @@ Every change that is merged into `main` gets an entry here, and the version in
 
 ## 0.1.0 (2026-10-15)
 
-- Started POC Studio from Demo Studio 0.6.0 (gouravUnifyapps/DemoStudio-UnifyApps).
+- Started POC Studio from Demo Studio 0.6.0 by Gourav Mahunta.
 - Renamed the plugin to `poc-studio` and the marketplace to `poc-unifyapps`, so it
   can be installed alongside Demo Studio without clashing.
-- Added a contributing guide, a skill feedback issue form and a pull request template.
+- Added a contributing guide.

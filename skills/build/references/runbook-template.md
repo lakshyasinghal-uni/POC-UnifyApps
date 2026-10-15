@@ -7,7 +7,7 @@ person needs to make the next run ask even less.
 ```markdown
 # <Client> Demo Runbook
 
-Built <date> on <host> · solution <name> · Nebula <version> · Demo Studio <version>
+Built <date> on <host> · solution <name> · Nebula <version> · POC Studio <version> · POC <poc_id>
 
 ## Open it
 - Live: <published URL>
@@ -46,8 +46,16 @@ Unverified: <what could not be proven, and the one check that would settle it.>
 
 ## Gates
 
-| Gate | Round | Asked | Answer | Owner's words | Next |
-(copied from the gate log; status line at the top of the runbook: `Demo-ready · released by <owner> on <date>`, `held`, or `stopped at <gate>`)
+| Gate | Round | Asked | Answered by | Where | Answer | Their words | Orbit record |
+(from the POC's `gate_decision` documents; status line at the top of the runbook: `Demo-ready · released by <name> on <date>`, `held`, or `stopped at <gate>`)
+
+## Feedback
+
+| Ticket | From | Words | Status | What was done |
+(every `poc_studio_feedback` row for this POC)
+
+## In Orbit
+POC <poc_id> · <Orbit link> · <n> documents (latest versions listed with links)
 
 ## Decisions taken for you
 <One line per STAND-IN, JUDGE, DESIGNER and MODERATOR ledger row:>

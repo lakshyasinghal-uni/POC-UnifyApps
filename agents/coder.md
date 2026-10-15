@@ -47,8 +47,9 @@ plan command, never type a password.
 
 Before Part 1 read the plugin's `skills/unifyapps-apps/references/code-apps.md` and
 `references/design-quality-pipeline.md`, and `skills/react-best-practices/SKILL.md`: they hold
-what code apps verified on real tenants need (the `/agent-api` contract, GitHub branches,
-publish read-back), and the prompt follows them. When the message names the design system's
+what code apps verified on real tenants need (the `/agent-api` contract, publish read-back),
+and the prompt follows them. POC Studio does not use GitHub: skip every GitHub-linking and
+branch step in those references. When the message names the design system's
 `tokens.css`, the prompt carries it verbatim as the app's theme.
 
 ## Part 1: the prompt (always)
@@ -69,7 +70,13 @@ publish read-back), and the prompt follows them. When the message names the desi
 3. If the profile's `frontend` line is `nebula`, stop here. Your last reply is the prompt's
    path and one line: how many objects, automations and agents it names.
 
-## Part 2: the Code Builder (frontend `code` or `both`)
+## Part 2: the code app (frontend `code`, the default, or `both`)
+
+With a code-builder Nebula (the message says `codeBuilder: true`), do not open a browser: return
+the prompt's path and the one-line summary; the moderator files the code app as Nebula's
+code-builder task with your prompt, and later sends you the Critic's lines to turn into one
+code-builder later task each. Without one, drive the Code Builder as below.
+
 
 Follow text2code.md § Driving the Code Builder step by step: open Applications, Create
 Application, the Code tab; paste the whole prompt, attach `design-reference.html` and its PNG

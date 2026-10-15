@@ -26,9 +26,10 @@ Then restart Claude Code.
 
 ## Feedback on a skill
 
-Anyone who used a skill on a POC and saw it go wrong opens an issue with the
-"Skill feedback" form. Each fix is a pull request that closes the issue and adds the
-scenario to the skill, so the same case is handled next time.
+Skill feedback comes from POC runs. Anyone who saw a skill go wrong on a POC says so in the
+chat or a gate thread; POC Studio records it as an Orbit feedback ticket with category
+`skill`. The skill's owner reviews those tickets and adds each fix as a new scenario or rule
+in the skill, with a CHANGELOG entry and a version bump, so the same case is handled next time.
 
 ## Taking updates from Demo Studio
 

@@ -8,7 +8,7 @@
     {
       "name": "poc-studio",
       "source": "./",
-      "description": "Builds client-branded UnifyApps demo assets from one request. A team of agents settles every clarifying question itself, Nebula builds the result, and a rehearsal agent walks the demo in a browser."
+      "description": "Runs a UnifyApps POC end to end: research, BRD, design system, a code-first build and collaterals, with four owner gates in Slack and every document saved to Orbit."
     }
   ]
 }

@@ -76,7 +76,7 @@ intent says: a `platform` demo keeps the use case small and the configuration le
   only`.
 - Mark a row `user-only` only when it needs a real credential or connection the tenant does
   not have, or a delete. Nothing else is user-only.
-- Never answer a gate (G1 path, G2 scope, G3 build verified, G4 release) or anything the owner
+- Never answer a gate (G1 Path, G2 Scope and BRD, G3 Final review, G4 Release) or anything the owner
   decided at one. A row tagged `OWNER` is settled; you may not reopen or overrule it.
 
 ## What you never do

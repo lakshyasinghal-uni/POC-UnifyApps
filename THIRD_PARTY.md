@@ -2,8 +2,8 @@
 
 | Path | Source | Licence |
 |---|---|---|
-| `skills/build`, `skills/profile`, most `agents/` | Demo Studio 0.6.0 by Gourav Mahunta (gouravUnifyapps/DemoStudio-UnifyApps) | internal |
-| `skills/unifyapps-*`, `atomic-agent-architecture`, `oracle-ebs-apis`, `demo-studio`, `agents/ua-*`, `hooks/no-delete-guard.py`, `API-SPEC.md` | unifyapps-helper by Maher (mmaheranwar/unifyapps-helper), snapshot 28 Sep 2026 | internal |
+| `skills/build`, `skills/profile`, most `agents/` | Demo Studio 0.6.0 by Gourav Mahunta | internal |
+| `skills/unifyapps-*`, `atomic-agent-architecture`, `oracle-ebs-apis`, `demo-studio`, `agents/ua-*`, `hooks/no-delete-guard.py`, `API-SPEC.md` | Maher's verified UnifyApps skills, snapshot 28 Sep 2026 | internal |
 | `skills/taste-skill`, `taste-skill-v1`, `redesign-skill`, `minimalist-skill`, `soft-skill`, `brutalist-skill`, `brandkit`, `output-skill`, `stitch-skill`, `gpt-tasteskill`, `image-to-code-skill`, `imagegen-frontend-*` | Leonxlnx/taste-skill | MIT |
 | `skills/design-skills` | bergside/awesome-design-skills | MIT |
 | `skills/frontend-design` | anthropics/skills | see its LICENSE.txt |
