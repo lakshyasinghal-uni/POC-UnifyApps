@@ -2,7 +2,8 @@
 /**
  * orbit-api.mjs — POC Studio's direct client for Orbit (UnifyApps), no browser.
  *
- * Auth (environment secrets, never pasted in chat, never printed):
+ * Auth (environment secrets, never pasted in chat, never printed) — or none at all when it runs inside
+ * a signed-in Orbit tab through scripts/orbit-tab.mjs, where the browser sends the session itself:
  *   ORBIT_COOKIE                      the whole Cookie header of a signed-in session, or
  *   ORBIT_USERNAME + ORBIT_PASSWORD   a LOCAL (non-SSO) account; logs in each run
  *   ORBIT_BASE      default https://orbit.uat.unifyapps.com
@@ -117,6 +118,9 @@ const readJsonArg = (s) => {
 };
 
 // ---------- session ----------
+// TAB: this file is running inside a signed-in Orbit tab (scripts/orbit-tab.mjs). The browser sends
+// the session cookie itself on same-origin calls, so there is no login and no Cookie header.
+const TAB = globalThis.__ORBIT_TAB__ === true;
 let cookie = process.env.ORBIT_COOKIE || "";
 class AuthError extends Error {}
 class NetError extends Error {}
@@ -141,19 +145,21 @@ async function login() {
 
 async function rawFetch(p, init = {}, withCookie = true) {
   const headers = { Accept: "application/json", ...(init.body && typeof init.body === "string" ? { "Content-Type": "application/json" } : {}), ...(init.headers || {}) };
-  if (withCookie && cookie) headers.Cookie = cookie;
+  if (withCookie && cookie && !TAB) headers.Cookie = cookie;
   try {
-    return await fetch(p.startsWith("http") ? p : BASE + p, { ...init, headers, redirect: "manual" });
+    return await fetch(p.startsWith("http") ? p : BASE + p, { ...init, headers, redirect: "manual", ...(TAB ? { credentials: "same-origin" } : {}) });
   } catch (e) {
     throw new NetError(`Orbit could not be reached: ${e.cause?.code || e.message}`);
   }
 }
 
 async function api(p, init = {}, retried = false) {
-  if (!cookie) await login();
+  if (!cookie && !TAB) await login();
   const r = await rawFetch(p, init);
   const ct = r.headers.get("content-type") || "";
-  if (r.status === 401 || (r.status >= 300 && r.status < 400) || ct.includes("text/html")) {
+  // status 0 is a redirect the browser hid (redirect: "manual"), i.e. the login page
+  if (r.status === 401 || r.status === 0 || (r.status >= 300 && r.status < 400) || ct.includes("text/html")) {
+    if (TAB) throw new AuthError("The Orbit tab is not signed in. Sign in to Orbit in the browser tab, then run the command again.");
     if (!retried && process.env.ORBIT_USERNAME) { cookie = ""; await login(); return api(p, init, true); }
     throw new AuthError("The Orbit session has expired or is not signed in. Sign in again (or refresh ORBIT_COOKIE).");
   }
@@ -376,7 +382,8 @@ async function upload(file, name, mime) {
   for (let n = 1, off = 0; off < buf.length || n === 1; n++, off += PART) {
     const slice = buf.subarray(off, Math.min(off + PART, buf.length));
     const signed = await api(`/api/uploads/s3/multipart/${encodeURIComponent(uploadId)}/${n}?key=${encodeURIComponent(key)}`, { headers: h });
-    const put = await fetch(signed.url, { method: "PUT", body: slice, headers: { "Content-Type": mime } }).catch((e) => { throw new NetError(`Upload part ${n} failed: ${e.message}`); });
+    // From a tab the PUT goes cross-origin to storage: no extra header, so there is no CORS preflight (as the Orbit UI does).
+    const put = await fetch(signed.url, { method: "PUT", body: slice, ...(TAB ? {} : { headers: { "Content-Type": mime } }) }).catch((e) => { throw new NetError(`Upload part ${n} failed: ${e.message}`); });
     if (!put.ok) throw new Error(`Upload part ${n} → ${put.status}`);
     parts.push({ PartNumber: n, ETag: put.headers.get("etag") });
     if (off + PART >= buf.length) break;

@@ -11,9 +11,10 @@ gates. Everything it makes is saved to Orbit.
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
   and Orbit; asks who approves gates and where gate messages go; and runs one test gate.
-- For Orbit, set `ORBIT_COOKIE`, or `ORBIT_USERNAME` and `ORBIT_PASSWORD` for a local account,
-  as environment secrets. Never paste them into the chat. Without them it uses an Orbit tab
-  you are signed in to.
+- For Orbit, sign in to Orbit in the browser tab it opens. Every Orbit write then runs inside
+  that tab, so your session never leaves the browser. (Optional: `ORBIT_COOKIE`, or
+  `ORBIT_USERNAME` and `ORBIT_PASSWORD` for a local account, as environment secrets, lets it
+  write without a browser. Never paste them into the chat.)
 
 ## Step by step
 
