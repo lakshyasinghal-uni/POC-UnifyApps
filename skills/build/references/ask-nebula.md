@@ -3,7 +3,8 @@
 Any role can hit a question about the platform: can a table's search fire an event, how does
 an AI agent get a tool's arguments, what does a picklist store, which block shows rows grouped
 under headings, can a page call an automation that is not deployed. Nobody guesses. The
-question goes to Nebula, which holds the answer in one of five places. The Scout owns this
+question goes to Nebula, which holds the answer in one of five places, with the plugin's
+verified UnifyApps skills as a sixth. The Scout owns this
 during discovery and the capability check; the moderator does it itself for a question that
 arrives mid-build; any other role asks the moderator.
 
@@ -34,6 +35,16 @@ count, and a decision built on it is reopened.
 5. **The tenant itself**, through Nebula's Ask path (`NEBULA/skills/sonic-routing/SKILL.md`
    § 2 Ask): cache first with `entity context` and the `cache …` views, live only on `miss`
    or `stale` or for what the cache never holds. Never write anything for a question.
+
+6. **The verified UnifyApps skills in this plugin**, when Nebula's five places do not settle
+   it, or to check an answer they give: `unifyapps-connectors` (what a connector can do,
+   its auth form, which connections the tenant holds), `unifyapps-config-apps` (every config
+   component, event, action and data source), `unifyapps-apps` (code apps, `/agent-api`,
+   objects, connections), `unifyapps-builder` (automations, agents, tools),
+   `unifyapps-context-graph`, `unifyapps-governance`, and `API-SPEC.md` at the plugin root.
+   Each finding carries an evidence level, a tenant and a date: only `✅ verified` settles a
+   row; `👁 observed` or `⚠️ partial` settles it marked `Check this`; `⛔ does not work` is a
+   `no tool` answer. Log the source as `NEBULA platform-skill <skill> <section>`.
 
 Stop at the first place that settles it.
 
@@ -67,7 +78,7 @@ Stop at the first place that settles it.
 
 1. Write the question as one ledger row: `platform question · <subject.decision>: <the
    question>`, raised by the role that hit it.
-2. Answer it through the five places above, in order, stopping at the first that settles it.
+2. Answer it through the six places above, in order, stopping at the first that settles it.
 3. Record the answer in the ledger as `Key | Answer | Source: NEBULA <skill, sheet id or read>
    | settled`, so nobody asks twice and the runbook can show where it came from.
 4. "No tool does this" is an answer, and a finding: name the nearest thing the platform can

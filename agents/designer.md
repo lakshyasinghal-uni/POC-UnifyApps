@@ -52,8 +52,11 @@ direction from the industry and the profile.
 Read, from `NEBULA`: `skills/app-craft/references/app-look.md` § Decide it,
 `skills/app-craft/references/default-looks.md`, `skills/app-page-planner/SKILL.md`, and
 `skills/app-craft/references/kit.md` § Contents. Load `nebula:agentic-editing-designer` with
-the Skill tool for the direction and how far to push a demo. Then follow brand-to-look.md
-§ Phase look:
+the Skill tool for the direction and how far to push a demo. When the message names the
+design system's `tokens.css`, `style-guide.html` and `port-note.md`, they win over anything
+you would derive: `code-design.md` takes its palette, type scale, radii, glass tiers and
+components from them, and its fonts are the shipped substitutes the type note names. Then
+follow brand-to-look.md § Phase look:
 
 1. Answer the 17 questions in order from `brand.md`, `context-notes.md` (brand hints and
    vocabulary, when it exists), the chosen storyline and the profile, with `use demo`, the

@@ -1,0 +1,51 @@
+html, body { margin: 0; background: transparent; }
+.pm-root { height: 440px; box-sizing: border-box; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
+  font: 13px/1.35 Inter, system-ui, sans-serif; color: #f4efe6; user-select: none;
+  background: radial-gradient(120% 90% at 20% 0%, #3a0f1d 0%, #1b0a10 55%, #120709 100%); border-radius: 14px; }
+.pm-empty { align-items: center; justify-content: center; color: #b9aea0; }
+.pm-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pm-title { font-weight: 600; letter-spacing: .02em; }
+.pm-legend { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #cdbfae; white-space: nowrap; }
+.pm-legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-left: 6px; }
+.pm-body { flex: 1; min-height: 0; display: flex; gap: 12px; align-items: stretch; }
+.pm-svg { height: 100%; width: auto; max-width: 60%; flex: 0 1 auto; overflow: visible; }
+
+/* municipalities */
+.pm-area { stroke: #1b0a10; stroke-width: .9; stroke-linejoin: round; opacity: .9; cursor: pointer; outline: none;
+  transition: opacity .15s, filter .15s; }
+.pm-area:hover, .pm-area:focus-visible { opacity: 1; filter: brightness(1.12); }
+.pm-land:has(.pm-area.on) .pm-area:not(.on) { opacity: .78; }
+.pm-sel { fill: none; stroke: #fff; stroke-width: 2; stroke-linejoin: round; pointer-events: none; }
+
+/* labels inside large municipalities */
+.pm-val { fill: #fff; font-size: 13px; font-weight: 700; text-anchor: middle; paint-order: stroke;
+  stroke: rgba(27, 10, 16, .55); stroke-width: 2.5px; }
+.pm-name { fill: #fff; font-size: 9px; font-weight: 600; text-anchor: middle; letter-spacing: .02em; paint-order: stroke;
+  stroke: rgba(27, 10, 16, .6); stroke-width: 2.5px; }
+
+/* callouts for small municipalities */
+.pm-call { cursor: pointer; outline: none; }
+.pm-lead { fill: none; stroke: rgba(244, 239, 230, .55); stroke-width: .8; }
+.pm-pin { fill: #f4efe6; }
+.pm-chip { fill: rgba(255, 255, 255, .08); stroke: rgba(255, 255, 255, .18); stroke-width: .8; }
+.pm-call:hover .pm-chip, .pm-call:focus-visible .pm-chip { fill: rgba(255, 255, 255, .16); }
+.pm-call.on .pm-chip { fill: rgba(255, 255, 255, .2); stroke: #fff; stroke-width: 1.4; }
+.pm-cname { fill: #efe6d8; font-size: 9.5px; font-weight: 500; }
+.pm-cval { fill: #fff; font-size: 10px; font-weight: 700; text-anchor: end; }
+
+/* ranked list */
+.pm-list { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 3px; overflow-y: auto; padding-top: 2px; }
+.pm-lhead { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #b9aea0; margin-bottom: 3px; }
+.pm-row { all: unset; box-sizing: border-box; display: grid; grid-template-columns: minmax(84px, 1.25fr) minmax(40px, 1fr) 42px; align-items: center;
+  gap: 8px; padding: 5px 8px; border-radius: 8px; cursor: pointer; font-size: 12px; color: #efe6d8; }
+.pm-row:hover, .pm-row:focus-visible { background: rgba(255, 255, 255, .07); }
+.pm-row.on { background: rgba(255, 255, 255, .13); box-shadow: inset 2px 0 0 #f4efe6; }
+.pm-rname { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pm-track { position: relative; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .1); }
+.pm-track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+.pm-track b { position: absolute; top: -3px; bottom: -3px; width: 1.5px; background: rgba(244, 239, 230, .8); }
+.pm-rval { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+.pm-foot { min-height: 34px; font-size: 12px; color: #e9dfd0; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.pm-foot span { color: #b9aea0; }
+.pm-foot .pm-credit { font-size: 9.5px; color: #8f8478; white-space: nowrap; }

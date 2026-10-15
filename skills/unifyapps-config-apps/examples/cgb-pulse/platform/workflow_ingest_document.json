@@ -1,0 +1,353 @@
+{
+ "id": "6ab396bdf83e366af1297dae",
+ "name": "cgbp_ingest_document",
+ "description": "CGB Pulse: create a cgbp_document record for an uploaded file, read it with the OCR/LLM extraction interface, store summary, key points, metrics, risks and recommendations.",
+ "nodes": [
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3109,
+    "resourceName": "callables_from_automation"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_in",
+   "index": 0,
+   "inputs": {
+    "setup": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "file_source",
+      "file_name"
+     ],
+     "properties": {
+      "title": {
+       "type": "string",
+       "title": "title"
+      },
+      "entity_code": {
+       "type": "string",
+       "title": "entity_code"
+      },
+      "file_source": {
+       "type": "string",
+       "title": "file_source",
+       "description": "Storage key of the uploaded file (FileUpload block: files[0].source)."
+      },
+      "file_name": {
+       "type": "string",
+       "title": "file_name"
+      },
+      "mime_type": {
+       "type": "string",
+       "title": "mime_type"
+      },
+      "file_url": {
+       "type": "string",
+       "title": "file_url"
+      },
+      "uploaded_by": {
+       "type": "string",
+       "title": "uploaded_by"
+      }
+     }
+    }
+   },
+   "skip": false,
+   "title": "Input",
+   "trigger": {
+    "type": "CALLABLE"
+   },
+   "type": "START"
+  },
+  {
+   "context": {
+    "appName": "code_by_unifyapps",
+    "resourceVersion": 2609,
+    "resourceName": "code_by_unifyapps_groovy",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_prep",
+   "index": 1,
+   "inputs": {
+    "output": {
+     "type": "object",
+     "required": [],
+     "properties": {}
+    },
+    "input": {
+     "type": "object",
+     "required": [],
+     "properties": {
+      "title": {
+       "type": "string",
+       "title": "title"
+      },
+      "entity_code": {
+       "type": "string",
+       "title": "entity_code"
+      },
+      "file_source": {
+       "type": "string",
+       "title": "file_source"
+      },
+      "file_name": {
+       "type": "string",
+       "title": "file_name"
+      },
+      "mime_type": {
+       "type": "string",
+       "title": "mime_type"
+      },
+      "file_url": {
+       "type": "string",
+       "title": "file_url"
+      },
+      "uploaded_by": {
+       "type": "string",
+       "title": "uploaded_by"
+      }
+     }
+    },
+    "code": "def p = { String k -> binding.hasVariable(k) ? binding.getVariable(k) : null }\ndef s = { String k -> (p(k) ?: '').toString() }\ndef code = 'DOC-' + System.currentTimeMillis()\ndef name = s('file_name')\ndef ext = name.contains('.') ? name.substring(name.lastIndexOf('.') + 1).toLowerCase() : 'pdf'\ndef now = new java.sql.Timestamp(System.currentTimeMillis()).toString()\ndef payload = [doc_code: code, title: (s('title') ?: name), entity_code: s('entity_code'), file_name: name, mime_type: s('mime_type'),\n  file_source: s('file_source'), file_url: s('file_url'), uploaded_by: s('uploaded_by'), uploaded_at: now, status: 'ANALYSING']\ndef files = [[fileObject: [source: s('file_source'), sourceType: 'CLOUD_STORAGE', name: name, fileType: ext], mimeType: (s('mime_type') ?: 'application/pdf')]]\nreturn [code: code, payload: payload, files: files]",
+    "compile_static": false,
+    "captureStdOutput": false,
+    "parameters": {
+     "title": "{{ n_in.outputs.title }}",
+     "entity_code": "{{ n_in.outputs.entity_code }}",
+     "file_source": "{{ n_in.outputs.file_source }}",
+     "file_name": "{{ n_in.outputs.file_name }}",
+     "mime_type": "{{ n_in.outputs.mime_type }}",
+     "file_url": "{{ n_in.outputs.file_url }}",
+     "uploaded_by": "{{ n_in.outputs.uploaded_by }}"
+    }
+   },
+   "skip": false,
+   "subTitle": "Groovy",
+   "title": "Prepare record and file reference",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16416,
+    "resourceName": "storage_by_unifyapps_create_record",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_create",
+   "index": 2,
+   "inputs": {
+    "useRawPayload": true,
+    "writeThroughSessionVariables": false,
+    "rawPayload": "{{ n_prep.outputs.result.payload }}",
+    "object_type": "cgbp_document"
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Create the document record",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "conv_ai_by_unifyapps",
+    "resourceVersion": 2416,
+    "resourceName": "conv_ai_by_unifyapps_ocr_document_details_extraction"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_ocr",
+   "index": 3,
+   "inputs": {
+    "callableInterfaceId": "__ua__call_ocr_extraction",
+    "parameters": {
+     "files": "{{ n_prep.outputs.result.files }}",
+     "modelId": "e_69b41a443d6f1815768c245f",
+     "response_format": "json_object",
+     "systemPrompt": "You analyse government service documents uploaded to CGB Pulse, a performance command centre for Qatar government services. Use only what the document says. Never invent a figure. Return ONLY a JSON object.",
+     "prompt": "Read the attached document and return JSON with exactly these keys: {\"doc_type\": \"report|memo|letter|complaint|policy|other\", \"title\": \"the document title\", \"summary\": \"2-3 sentences with the most important facts and figures\", \"key_points\": [\"max 5 short points, each with a number if the document has one\"], \"metrics\": [{\"name\": \"\", \"value\": \"\", \"period\": \"\"}], \"risks\": [\"max 3\"], \"recommendations\": [{\"action\": \"\", \"owner\": \"\"}], \"entities_mentioned\": [\"codes from HEALTH, EDUCATION, MUNICIPAL, TRANSPORT, LABOUR, JUSTICE, INTERIOR, COMMERCE, HOUSING, SOCIAL, CUSTOMS, DIGITAL that the document is about\"], \"regions_mentioned\": [\"names\"], \"sentiment\": \"positive|neutral|negative\", \"full_text\": \"the document text, up to 3000 characters\"}"
+    }
+   },
+   "skip": false,
+   "subTitle": "UnifyApps OCR + LLM",
+   "title": "Read and analyse the document",
+   "type": "CALL_INTERFACE_WORKFLOW"
+  },
+  {
+   "context": {
+    "appName": "code_by_unifyapps",
+    "resourceVersion": 2609,
+    "resourceName": "code_by_unifyapps_groovy",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_parse",
+   "index": 4,
+   "inputs": {
+    "output": {
+     "type": "object",
+     "required": [],
+     "properties": {}
+    },
+    "input": {
+     "type": "object",
+     "required": [],
+     "properties": {
+      "code": {
+       "type": "string",
+       "title": "code"
+      },
+      "output": {
+       "type": "string",
+       "title": "output"
+      },
+      "status": {
+       "type": "string",
+       "title": "status"
+      },
+      "errMsg": {
+       "type": "string",
+       "title": "errMsg"
+      }
+     }
+    },
+    "code": "def p = { String k -> binding.hasVariable(k) ? binding.getVariable(k) : null }\ndef raw = (p('output') ?: '').toString().trim()\nif (raw.startsWith('```')) { raw = raw.replaceAll('^```[a-zA-Z]*', '').replaceAll('```$', '').trim() }\ndef j = null\ntry { j = new groovy.json.JsonSlurper().parseText(raw) } catch (e) { j = null }\ndef J = { v -> groovy.json.JsonOutput.toJson(v ?: []) }\ndef now = new java.sql.Timestamp(System.currentTimeMillis()).toString()\ndef f = [:]\nif (j instanceof Map) {\n  f.status = 'ANALYSED'; f.doc_type = (j.doc_type ?: 'other').toString(); f.summary = (j.summary ?: '').toString()\n  f.key_points_json = J(j.key_points); f.metrics_json = J(j.metrics); f.risks_json = J(j.risks); f.recommendations_json = J(j.recommendations)\n  f.entities_json = J([entities: j.entities_mentioned ?: [], regions: j.regions_mentioned ?: []]); f.sentiment = (j.sentiment ?: 'neutral').toString()\n  def t = (j.full_text ?: '').toString(); f.extracted_text = t.length() > 6000 ? t.substring(0, 6000) : t; f.error = ''\n} else {\n  f.status = 'FAILED'; f.error = ('Could not read the analysis. status=' + (p('status') ?: '') + ' ' + (p('errMsg') ?: '') + ' raw=' + raw.take(500)).toString()\n}\nf.analysed_at = now\nreturn [updates: [[id: p('code').toString(), updateFields: f.collect { k, v -> [fieldName: k, actionType: 'SET', setValue: v] }]], status: f.status, summary: (f.summary ?: f.error)]",
+    "compile_static": false,
+    "captureStdOutput": false,
+    "parameters": {
+     "code": "{{ n_prep.outputs.result.code }}",
+     "output": "{{ n_ocr.outputs.output }}",
+     "status": "{{ n_ocr.outputs.status }}",
+     "errMsg": "{{ n_ocr.outputs.errMsg }}"
+    }
+   },
+   "skip": false,
+   "subTitle": "Groovy",
+   "title": "Parse the analysis",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "storage_by_unifyapps",
+    "resourceVersion": 16331,
+    "resourceName": "storage_by_unifyapps_bulk_upsert_records_by_id",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_upd",
+   "index": 5,
+   "inputs": {
+    "skipIfBlank": false,
+    "object_type": "cgbp_document",
+    "skipSchemaValidation": false,
+    "updates": "{{ n_parse.outputs.result.updates }}",
+    "unsetIfNull": false
+   },
+   "skip": false,
+   "subTitle": "Objects",
+   "title": "Write the analysis",
+   "type": "ACTION"
+  },
+  {
+   "context": {
+    "appName": "callables",
+    "resourceVersion": 3111,
+    "resourceName": "callables_return_to_automation",
+    "type": "APPLICATION"
+   },
+   "debug": false,
+   "dirty": false,
+   "fallbackMode": "STOP",
+   "groupId": "g1",
+   "id": "n_out",
+   "index": 6,
+   "inputs": {
+    "result": {
+     "doc_code": "{{ n_prep.outputs.result.code }}",
+     "status": "{{ n_parse.outputs.result.status }}",
+     "summary": "{{ n_parse.outputs.result.summary }}"
+    }
+   },
+   "skip": false,
+   "title": "Response",
+   "type": "STOP"
+  }
+ ],
+ "edges": [
+  {
+   "fromNodeId": "n_in",
+   "id": "next@n_in@n_prep",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_prep",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_prep",
+   "id": "next@n_prep@n_create",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_create",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_create",
+   "id": "next@n_create@n_ocr",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_ocr",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_ocr",
+   "id": "next@n_ocr@n_parse",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_parse",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_parse",
+   "id": "next@n_parse@n_upd",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_upd",
+   "type": "next"
+  },
+  {
+   "fromNodeId": "n_upd",
+   "id": "next@n_upd@n_out",
+   "priority": 0,
+   "skip": false,
+   "toNodeId": "n_out",
+   "type": "next"
+  }
+ ],
+ "settings": {
+  "enableNodeLevelLogging": true,
+  "enableRunLogging": true,
+  "enableVariableLogging": true,
+  "route": {
+   "default": false,
+   "tierName": "global"
+  }
+ }
+}

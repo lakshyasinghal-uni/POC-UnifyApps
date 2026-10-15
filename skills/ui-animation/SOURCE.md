@@ -1,0 +1,1 @@
+Installed 2026-09-24 from https://github.com/mblode/agent-skills (skills/ui-animation, MIT; equivalent of `npx skills add mblode/agent-skills@ui-animation`). Sibling skills in that repo it refers to (ui-design, product-design, ui-verification, typography-audit) are NOT installed. Update: re-clone and copy over.

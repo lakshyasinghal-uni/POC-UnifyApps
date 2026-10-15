@@ -1,0 +1,8 @@
+{
+  "name": "Pulse Gauge",
+  "type": "PulseGauge",
+  "main": "pulse-gauge.es.js",
+  "style": "pulse-gauge.css",
+  "icon": "https://assets.unifyapps.com/user-uploads/theme/unify.svg",
+  "keywords": "gauge kpi dial target radial meter satisfaction"
+}

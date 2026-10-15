@@ -1,0 +1,77 @@
+{
+ "APP": "cgb-pulse",
+ "THEME": "e_6ab37b2f04beb12b38934d14",
+ "PG": {
+  "command": "e_6ab37b4ec9518d7218a827c8",
+  "entities": "e_6ab37b4e04beb12b389352af",
+  "entity": "e_6ab37b4e04beb12b389352b2",
+  "voices": "e_6ab37b4ec9518d7218a827cd",
+  "control": "e_6ab37b4e04beb12b389352b9",
+  "analyst": "e_6ab37b4ec9518d7218a827d1",
+  "studio": "e_6ab39792c9518d7218ad9a2b",
+  "documents": "e_6ab39792c9518d7218ad9a30"
+ },
+ "DS": {
+  "entities": "e_6ab37b81c9518d7218a82e50",
+  "regions": "e_6ab37bb1c9518d7218a833d6",
+  "trend": "e_6ab37bb1223be332a6b5c997",
+  "scenarios": "e_6ab37bb1c9518d7218a833dc",
+  "weather": "e_6ab37bb2c9518d7218a833df",
+  "doha_weather": "e_6ab37bb2c9518d7218a833df",
+  "national_trend": "e_6ab37bb1223be332a6b5c997"
+ },
+ "AGENT": "e_6ab37d3ec9518d7218a84fc1",
+ "CC": {
+  "id": "e_6ab37d11223be332a6b5e2ad",
+  "type": "PulseMap"
+ },
+ "WF": {
+  "query": "6ab379b19d7b054555499814",
+  "insights": "6ab379b1e1138510acd4e0f5",
+  "scenario": "6ab379c8aa76b93f75099cc9",
+  "ingest": "6ab396bdf83e366af1297dae"
+ },
+ "PAGE_DS": {
+  "cc_insights": "e_6ab37e6004beb12b3893955c",
+  "entity_one": "e_6ab37e6004beb12b3893956a",
+  "entity_trend": "e_6ab37e60223be332a6b6044f",
+  "entity_voices": "e_6ab37e60223be332a6b60452",
+  "entity_actions": "e_6ab37e61223be332a6b60455",
+  "create_action": "e_6ab37e61c9518d7218a86806",
+  "voices_ds": "e_6ab37e61223be332a6b60458",
+  "apply_ds": "e_6ab37e61c9518d7218a86811"
+ },
+ "OBJECTS": [
+  "cgbp_entity",
+  "cgbp_region",
+  "cgbp_voice",
+  "cgbp_kpi",
+  "cgbp_scenario",
+  "cgbp_action",
+  "cgbp_document"
+ ],
+ "HOSTS": {
+  "published": "https://cgb-pulse-orbit.matrix-uat.unifyapps.com",
+  "preview": "https://orbit.uat.unifyapps.com/p/0/interfaces/cgb-pulse/preview/command-centre",
+  "builder": "https://orbit.uat.unifyapps.com/p/0/interfaces/cgb-pulse/builder/command-centre"
+ },
+ "CC_V2": {
+  "gauge": {
+   "id": "e_6ab3960204beb12b3897b07c",
+   "type": "PulseGauge"
+  },
+  "heatmap": {
+   "id": "e_6ab3965dc9518d7218ad7e4d",
+   "type": "PulseHeatmap"
+  }
+ },
+ "PAGE_DS_V2": {
+  "studio_kpis": "e_6ab3989f223be332a6ba3d2f",
+  "studio_voices": "e_6ab3989f04beb12b3897f465",
+  "studio_actions": "e_6ab3989f223be332a6ba3d50",
+  "documents": "e_6ab398a0223be332a6ba3d6e",
+  "ingest_document": "e_6ab398a0223be332a6ba3d78",
+  "doc_action": "e_6ab398a1c9518d7218adb9a7"
+ },
+ "OCR_MODEL": "e_69b41a443d6f1815768c245f"
+}

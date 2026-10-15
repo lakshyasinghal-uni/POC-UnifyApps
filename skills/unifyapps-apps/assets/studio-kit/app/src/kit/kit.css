@@ -1,0 +1,21 @@
+/* UnifyApps Studio app kit: the two surfaces the theme tokens do not cover. */
+
+/* The dark band every screen opens with: the brand colour taken down to near-ink, with a soft light. */
+.kit-band {
+  background:
+    radial-gradient(120% 140% at 100% 0%, color-mix(in oklch, var(--primary) 55%, transparent) 0%, transparent 60%),
+    linear-gradient(135deg, color-mix(in oklch, var(--primary) 38%, black) 0%, color-mix(in oklch, var(--primary) 22%, black) 100%);
+}
+
+/* KPI tiles on the band: frosted, with a solid fallback where transparency is reduced. */
+.kit-glass {
+  background: color-mix(in oklch, white 9%, transparent);
+  border: 1px solid color-mix(in oklch, white 14%, transparent);
+  backdrop-filter: blur(10px);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .kit-glass {
+    background: color-mix(in oklch, var(--primary) 30%, black);
+    backdrop-filter: none;
+  }
+}

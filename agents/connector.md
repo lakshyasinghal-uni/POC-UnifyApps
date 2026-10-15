@@ -40,7 +40,9 @@ data question. Load `unifyapps-operator:connector-catalogue` when the session li
 
 1. Load your tools in ONE ToolSearch. Inventory the tenant's connections with their `active`
    status, and the connectors for the systems the client runs (`list_apps`,
-   `search_operations`).
+   `search_operations`). Check each candidate against the plugin's `unifyapps-connectors`
+   catalogue (`skills/unifyapps-connectors/catalogue/`) for the actions, triggers and agent
+   tools the connector exposes and its auth form; the tenant's own reads still decide.
 2. Propose one to three external beats in the reference's shape, each joined to a storyline
    beat, preferring the one that sharpens the lean-forward moment and preferring `existing`
    over `sandbox` over `client`. Respect the profile's `external` line: with `existing`,

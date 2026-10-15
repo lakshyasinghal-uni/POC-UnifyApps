@@ -1,0 +1,1033 @@
+{
+ "cgbp_entity": {
+  "name": "CGB Pulse Entity",
+  "pluralName": "CGB Pulse Entities",
+  "description": "Government entities — CGB Pulse config-app sample (cloned from Sharek).",
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "entity_code"
+   ],
+   "properties": {
+    "entity_code": {
+     "title": "Entity Code",
+     "type": "string",
+     "primaryKey": true,
+     "nameField": true,
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "name_en": {
+     "title": "Name (EN)",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "name_ar": {
+     "title": "Name (AR)",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "cluster": {
+     "title": "Cluster",
+     "type": "string",
+     "format": "single-select",
+     "filterable": true,
+     "sortable": true,
+     "oneOf": [
+      {
+       "const": "SECURITY_JUSTICE",
+       "title": "SECURITY JUSTICE"
+      },
+      {
+       "const": "HEALTH_EDUCATION",
+       "title": "HEALTH EDUCATION"
+      },
+      {
+       "const": "ECONOMY_LABOUR",
+       "title": "ECONOMY LABOUR"
+      },
+      {
+       "const": "MUNICIPAL_TRANSPORT",
+       "title": "MUNICIPAL TRANSPORT"
+      },
+      {
+       "const": "GOVERNMENT_SERVICES",
+       "title": "GOVERNMENT SERVICES"
+      }
+     ]
+    },
+    "period": {
+     "title": "Period",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "health_score": {
+     "title": "Health Score",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "satisfaction": {
+     "title": "Satisfaction %",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "completion": {
+     "title": "Completion %",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "resolution": {
+     "title": "Resolution %",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "employee_quality": {
+     "title": "Employee Quality",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "sentiment": {
+     "title": "Net Sentiment",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "digital_adoption": {
+     "title": "Digital Adoption %",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "accessibility": {
+     "title": "Accessibility",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "response_hours": {
+     "title": "First Response (h)",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "monthly_volume": {
+     "title": "Services / Month",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "assessments": {
+     "title": "Assessments",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "risk_band": {
+     "title": "Risk Band",
+     "type": "string",
+     "format": "single-select",
+     "filterable": true,
+     "sortable": true,
+     "oneOf": [
+      {
+       "const": "LOW",
+       "title": "LOW"
+      },
+      {
+       "const": "MEDIUM",
+       "title": "MEDIUM"
+      },
+      {
+       "const": "HIGH",
+       "title": "HIGH"
+      }
+     ]
+    },
+    "rank": {
+     "title": "Rank",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "narrative_en": {
+     "title": "Narrative (EN)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "narrative_ar": {
+     "title": "Narrative (AR)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "opportunity_en": {
+     "title": "Improvement Opportunity (EN)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "opportunity_ar": {
+     "title": "Improvement Opportunity (AR)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "baseline_json": {
+     "title": "Baseline snapshot (JSON)",
+     "type": "string",
+     "format": "textarea"
+    }
+   }
+  },
+  "order": [
+   "entity_code",
+   "name_en",
+   "name_ar",
+   "cluster",
+   "period",
+   "health_score",
+   "satisfaction",
+   "completion",
+   "resolution",
+   "employee_quality",
+   "sentiment",
+   "digital_adoption",
+   "accessibility",
+   "response_hours",
+   "monthly_volume",
+   "assessments",
+   "risk_band",
+   "rank",
+   "narrative_en",
+   "narrative_ar",
+   "opportunity_en",
+   "opportunity_ar",
+   "baseline_json"
+  ]
+ },
+ "cgbp_region": {
+  "name": "CGB Pulse Region",
+  "pluralName": "CGB Pulse Regions",
+  "description": "Municipal regions with lat/lon — CGB Pulse sample.",
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "region_code"
+   ],
+   "properties": {
+    "region_code": {
+     "title": "Region Code",
+     "type": "string",
+     "primaryKey": true,
+     "nameField": true,
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "name_en": {
+     "title": "Name (EN)",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "name_ar": {
+     "title": "Name (AR)",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "lat": {
+     "title": "Latitude",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "lon": {
+     "title": "Longitude",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "centers": {
+     "title": "Service Centres",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "population": {
+     "title": "Population (est.)",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "period": {
+     "title": "Period",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "satisfaction": {
+     "title": "Satisfaction %",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "employee_quality": {
+     "title": "Employee Quality",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "sentiment": {
+     "title": "Net Sentiment",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "response_ratio": {
+     "title": "Response vs National (x)",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "risk_score": {
+     "title": "Risk Score",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "digital_adoption": {
+     "title": "Digital Adoption %",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "service_volume": {
+     "title": "Services / Month",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "assessments": {
+     "title": "Assessments",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "issue_volume": {
+     "title": "Open Issues",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "note_en": {
+     "title": "Context (EN)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "note_ar": {
+     "title": "Context (AR)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "action_en": {
+     "title": "Recommended Action (EN)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "action_ar": {
+     "title": "Recommended Action (AR)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "baseline_json": {
+     "title": "Baseline snapshot (JSON)",
+     "type": "string",
+     "format": "textarea"
+    }
+   }
+  },
+  "order": [
+   "region_code",
+   "name_en",
+   "name_ar",
+   "lat",
+   "lon",
+   "centers",
+   "population",
+   "period",
+   "satisfaction",
+   "employee_quality",
+   "sentiment",
+   "response_ratio",
+   "risk_score",
+   "digital_adoption",
+   "service_volume",
+   "assessments",
+   "issue_volume",
+   "note_en",
+   "note_ar",
+   "action_en",
+   "action_ar",
+   "baseline_json"
+  ]
+ },
+ "cgbp_voice": {
+  "name": "CGB Pulse Citizen Voice",
+  "pluralName": "CGB Pulse Citizen Voices",
+  "description": "Citizen comments — CGB Pulse sample.",
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "voice_code"
+   ],
+   "properties": {
+    "voice_code": {
+     "title": "Voice Code",
+     "type": "string",
+     "primaryKey": true,
+     "nameField": true,
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "text_ar": {
+     "title": "Comment (AR)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "text_en": {
+     "title": "Comment (EN)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "channel_code": {
+     "title": "Channel",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "topic_code": {
+     "title": "Topic",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "sentiment": {
+     "title": "Sentiment",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "posted_days_ago": {
+     "title": "Posted (days ago)",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "entity_code": {
+     "title": "Entity",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "region_code": {
+     "title": "Region",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "center_code": {
+     "title": "Service Centre",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "category_code": {
+     "title": "Service Category",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "period": {
+     "title": "Period",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "kind": {
+     "title": "Kind",
+     "type": "string",
+     "enum": [
+      "COMPLAINT",
+      "PRAISE",
+      "QUESTION",
+      "SUGGESTION"
+     ],
+     "sortable": true,
+     "filterable": true
+    },
+    "rating": {
+     "title": "Service Rating (1–5)",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "resolved": {
+     "title": "Resolved",
+     "type": "boolean",
+     "sortable": true,
+     "filterable": true
+    }
+   }
+  },
+  "order": [
+   "voice_code",
+   "text_ar",
+   "text_en",
+   "channel_code",
+   "topic_code",
+   "sentiment",
+   "posted_days_ago",
+   "entity_code",
+   "region_code",
+   "center_code",
+   "category_code",
+   "period",
+   "kind",
+   "rating",
+   "resolved"
+  ]
+ },
+ "cgbp_kpi": {
+  "name": "CGB Pulse KPI Snapshot",
+  "pluralName": "CGB Pulse KPI Snapshots",
+  "description": "Monthly KPI history — CGB Pulse sample.",
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "snapshot_code"
+   ],
+   "properties": {
+    "snapshot_code": {
+     "title": "Snapshot Code",
+     "type": "string",
+     "primaryKey": true,
+     "nameField": true,
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "period": {
+     "title": "Period",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "scope_type": {
+     "title": "Scope",
+     "type": "string",
+     "format": "single-select",
+     "filterable": true,
+     "sortable": true,
+     "oneOf": [
+      {
+       "const": "NATIONAL",
+       "title": "NATIONAL"
+      },
+      {
+       "const": "ENTITY",
+       "title": "ENTITY"
+      },
+      {
+       "const": "REGION",
+       "title": "REGION"
+      },
+      {
+       "const": "CATEGORY",
+       "title": "CATEGORY"
+      },
+      {
+       "const": "CHANNEL",
+       "title": "CHANNEL"
+      }
+     ]
+    },
+    "scope_code": {
+     "title": "Scope Code",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "metric": {
+     "title": "Metric",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "value": {
+     "title": "Value",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "target": {
+     "title": "Target",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "delta": {
+     "title": "Change vs Previous",
+     "type": "number",
+     "sortable": true,
+     "filterable": true
+    },
+    "sort_order": {
+     "title": "Order",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    },
+    "baseline_value": {
+     "type": "number",
+     "title": "Baseline Value",
+     "sortable": true,
+     "filterable": true
+    },
+    "baseline_delta": {
+     "type": "number",
+     "title": "Baseline Change",
+     "sortable": true,
+     "filterable": true
+    }
+   }
+  },
+  "order": [
+   "snapshot_code",
+   "period",
+   "scope_type",
+   "scope_code",
+   "metric",
+   "value",
+   "target",
+   "delta",
+   "sort_order",
+   "baseline_value",
+   "baseline_delta"
+  ]
+ },
+ "cgbp_scenario": {
+  "name": "CGB Pulse Scenario",
+  "pluralName": "CGB Pulse Scenarios",
+  "description": "Control-room scenarios — CGB Pulse sample.",
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "scenario_code"
+   ],
+   "properties": {
+    "scenario_code": {
+     "title": "Scenario Code",
+     "type": "string",
+     "primaryKey": true,
+     "nameField": true,
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "name_en": {
+     "title": "Name (EN)",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "name_ar": {
+     "title": "Name (AR)",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "description_en": {
+     "title": "Description (EN)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "description_ar": {
+     "title": "Description (AR)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "family": {
+     "title": "Family",
+     "type": "string",
+     "format": "single-select",
+     "filterable": true,
+     "sortable": true,
+     "oneOf": [
+      {
+       "const": "ESCALATION",
+       "title": "ESCALATION"
+      },
+      {
+       "const": "RECOVERY",
+       "title": "RECOVERY"
+      },
+      {
+       "const": "SEASONAL",
+       "title": "SEASONAL"
+      },
+      {
+       "const": "LAUNCH",
+       "title": "LAUNCH"
+      },
+      {
+       "const": "BASELINE",
+       "title": "BASELINE"
+      }
+     ]
+    },
+    "icon": {
+     "title": "Icon",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "payload_json": {
+     "title": "Deltas (JSON)",
+     "type": "string",
+     "format": "textarea"
+    },
+    "is_active": {
+     "title": "Applied",
+     "type": "boolean",
+     "filterable": true
+    },
+    "applied_at": {
+     "title": "Applied At",
+     "type": "string",
+     "format": "text",
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "sort_order": {
+     "title": "Order",
+     "type": "integer",
+     "sortable": true,
+     "filterable": true
+    }
+   }
+  },
+  "order": [
+   "scenario_code",
+   "name_en",
+   "name_ar",
+   "description_en",
+   "description_ar",
+   "family",
+   "icon",
+   "payload_json",
+   "is_active",
+   "applied_at",
+   "sort_order"
+  ]
+ },
+ "cgbp_action": {
+  "name": "CGB Pulse Action",
+  "pluralName": "CGB Pulse Actions",
+  "description": "Follow-up actions raised from the CGB Pulse app.",
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "action_code",
+    "title"
+   ],
+   "properties": {
+    "action_code": {
+     "type": "string",
+     "title": "Action Code",
+     "primaryKey": true,
+     "nameField": true,
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "title": {
+     "type": "string",
+     "title": "Title",
+     "searchable": true,
+     "filterable": true
+    },
+    "entity_code": {
+     "type": "string",
+     "title": "Entity Code",
+     "filterable": true,
+     "sortable": true
+    },
+    "owner": {
+     "type": "string",
+     "title": "Owner",
+     "filterable": true
+    },
+    "priority": {
+     "type": "string",
+     "format": "single-select",
+     "title": "Priority",
+     "oneOf": [
+      {
+       "const": "HIGH",
+       "title": "High"
+      },
+      {
+       "const": "MEDIUM",
+       "title": "Medium"
+      },
+      {
+       "const": "LOW",
+       "title": "Low"
+      }
+     ],
+     "filterable": true
+    },
+    "status": {
+     "type": "string",
+     "format": "single-select",
+     "title": "Status",
+     "default": "OPEN",
+     "oneOf": [
+      {
+       "const": "OPEN",
+       "title": "Open"
+      },
+      {
+       "const": "IN_PROGRESS",
+       "title": "In progress"
+      },
+      {
+       "const": "DONE",
+       "title": "Done"
+      }
+     ],
+     "filterable": true
+    },
+    "source": {
+     "type": "string",
+     "title": "Source",
+     "filterable": true
+    },
+    "notes": {
+     "type": "string",
+     "title": "Notes"
+    },
+    "due_days": {
+     "type": "number",
+     "title": "Due in (days)",
+     "sortable": true
+    },
+    "created_by": {
+     "type": "string",
+     "title": "Created by"
+    }
+   }
+  },
+  "order": [
+   "action_code",
+   "title",
+   "entity_code",
+   "owner",
+   "priority",
+   "status",
+   "source",
+   "notes",
+   "due_days",
+   "created_by"
+  ]
+ },
+ "cgbp_document": {
+  "name": "CGB Pulse Document",
+  "pluralName": "CGB Pulse Documents",
+  "description": "Documents uploaded from the CGB Pulse app and analysed by cgbp_ingest_document.",
+  "schema": {
+   "additionalProperties": false,
+   "type": "object",
+   "required": [
+    "doc_code"
+   ],
+   "properties": {
+    "doc_code": {
+     "type": "string",
+     "title": "Document Code",
+     "primaryKey": true,
+     "nameField": true,
+     "searchable": true,
+     "sortable": true,
+     "filterable": true
+    },
+    "title": {
+     "type": "string",
+     "title": "Title",
+     "searchable": true,
+     "filterable": true
+    },
+    "entity_code": {
+     "type": "string",
+     "title": "Entity",
+     "filterable": true,
+     "sortable": true
+    },
+    "file_name": {
+     "type": "string",
+     "title": "File name"
+    },
+    "mime_type": {
+     "type": "string",
+     "title": "MIME type"
+    },
+    "file_source": {
+     "type": "string",
+     "title": "Storage key"
+    },
+    "file_url": {
+     "type": "string",
+     "title": "File URL"
+    },
+    "uploaded_by": {
+     "type": "string",
+     "title": "Uploaded by",
+     "filterable": true
+    },
+    "uploaded_at": {
+     "type": "string",
+     "title": "Uploaded at",
+     "sortable": true
+    },
+    "status": {
+     "type": "string",
+     "format": "single-select",
+     "title": "Status",
+     "oneOf": [
+      {
+       "const": "ANALYSING",
+       "title": "Analysing"
+      },
+      {
+       "const": "ANALYSED",
+       "title": "Analysed"
+      },
+      {
+       "const": "FAILED",
+       "title": "Failed"
+      }
+     ],
+     "filterable": true
+    },
+    "doc_type": {
+     "type": "string",
+     "title": "Document type",
+     "filterable": true
+    },
+    "sentiment": {
+     "type": "string",
+     "title": "Sentiment",
+     "filterable": true
+    },
+    "summary": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Summary"
+    },
+    "key_points_json": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Key points (JSON)"
+    },
+    "metrics_json": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Metrics (JSON)"
+    },
+    "risks_json": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Risks (JSON)"
+    },
+    "recommendations_json": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Recommendations (JSON)"
+    },
+    "entities_json": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Entities mentioned (JSON)"
+    },
+    "extracted_text": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Extracted text"
+    },
+    "error": {
+     "type": "string",
+     "format": "textarea",
+     "title": "Error"
+    },
+    "analysed_at": {
+     "type": "string",
+     "title": "Analysed at",
+     "sortable": true
+    }
+   }
+  }
+ }
+}
