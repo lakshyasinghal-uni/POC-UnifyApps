@@ -75,13 +75,16 @@ When it finishes, it gives you a link to `<Client> Demo Runbook.md`. That is you
 
 ## When it will stop and ask you
 
-Only for these things:
+At four gates, where you (the owner) decide:
 
-1. Which mockup to follow (the one question you asked for; `mockups: auto` skips it).
-2. Signing in, when your login has expired.
-3. Deleting anything.
-4. One credential, when a bonus step needs a connection the tenant does not have yet (only if your profile allows `external: sandbox` or `client`).
-5. A demo too big for the budget, when it cannot cut it down.
+1. **G1 · Path**: approve the research and choose proceed, proceed partial, or block.
+2. **G2 · Scope**: pick a mockup and approve what gets built. Nothing is built before this.
+3. **G3 · Build verified**: walk the demo script once, then freeze the build or send fixes.
+4. **G4 · Release**: release the demo and its collaterals to the field, or hold.
+
+With three days or fewer to the demo, they come in pairs (G1+G2, G3+G4). Between gates it
+only asks for a sign-in, a delete, a credential, a budget it cannot meet, a risky fix, the
+design system's two stops, a Nebula restart, and narration approval before a video.
 
 ## Giving it your data
 

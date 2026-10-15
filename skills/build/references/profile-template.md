@@ -17,18 +17,20 @@ request.
 - status: <confirmed | drafted by Studio on <date>>
 - client: <name> · site <https://…> · industry <one line>
 - audience: <who watches> · <n> minutes · <in person | call | recorded> · <projector | laptop | phone>
+- owner: <who approves the four gates: G1 path, G2 scope, G3 build verified, G4 release>
+- demo date: <YYYY-MM-DD> · <sets the tier: 3 days or fewer sprint (gates merged in pairs), 4 to 10 standard, more full>
+- gates: <by tier | full | merged> · <full asks all four separately; merged asks G1 with G2 and G3 with G4; never fewer>
 - presenter: <who> · tells the story from <whose seat>
 - show off: <the two or three things the demo must make obvious>
 - intent: <use-case | platform | both | find out> · <why, in the client's words when known>
 - sources: <slack gmail calendar, any subset, or none> · <what to look for, when known>
 - slack: <channels to read, such as #acme-deal #sales-emea, or "find them">
 - nebula: <latest-code | keep> · <latest-code updates Nebula to the code-builder beta at the start of a build when it is older; keep never updates>
-- research gate: <review | skip> · <review shows the cited research document and waits for the PM's approval before scoping; skip carries on and lists its open questions>
 - design system: <reuse | generate> · <reuse takes studio/design-systems/<client-slug>/ when it exists; generate runs the design-system skill>
 - video: <on | off> · <on renders the demo assets at handoff: narrated video with an architecture opening, subtitles, live-demo runbook, presenter manual, PG playbook and screenshot library>
 - frontend: <nebula | code | both> · <nebula builds the Config app; code builds it in the Code Builder from the Text2Code prompt; both does both>
 - innovate: <nebula | all | off> · <nebula admits platform-feature ideas Nebula can build; all admits ideas a browser agent could build from the operator skills; off skips the Innovator>
-- mockups: <3 | 4 | 5 | auto | off> · <a number draws that many UI mockups in Claude and asks you to choose one, the one question you asked for; auto takes the recommendation; off skips them>
+- mockups: <3 | 4 | 5 | auto | off> · <a number draws that many UI mockups and asks you to choose one at G2; auto takes the recommendation; off skips them>
 - avoid: <what must not appear or happen>
 - tenant: <host> · solution: <name> (create if missing)
 - release: <publish and deploy without asking | leave unpublished> · visibility <PRIVATE | shareable>
@@ -46,18 +48,20 @@ request.
 | Line | Default |
 |---|---|
 | audience | a senior operations leader · 20 minutes · in person · projector |
+| owner | the person who started the build |
+| demo date | the demo event the Researcher found; else none, tier `standard` |
+| gates | `by tier` |
 | presenter | the person who asked · from the seat of the client's team lead |
 | show off | the request's own nouns; else approvals that route by a rule, an AI assistant over live data, clean tables |
 | intent | `find out`: the Researcher's Slack signals and the request decide; when neither does, `both`, marked `Check this` |
 | sources | `slack gmail calendar`: whichever is connected is read; a missing one is noted and skipped |
 | slack | `find them`: the Researcher searches channels by the client's name, domain and the demo words |
 | nebula | `latest-code`: updated to the code-builder beta when older |
-| research gate | `review` |
 | design system | `reuse` when the client's folder exists, else `generate` |
 | video | `off` |
 | frontend | `nebula`; the Text2Code prompt is written in every case |
 | innovate | `nebula`: the Innovator runs, and the Judge admits at most two ideas Nebula can build |
-| mockups | `4`: four directions drawn, shown, and one chosen by you before anything is built |
+| mockups | `4`: four directions drawn and one chosen by the owner at G2 |
 | avoid | deletes · anything needing a connection the tenant lacks · more pages than the budget |
 | tenant | the host of a builder link in the request; else the folder's Nebula solution; else the most recent tenant Nebula's `state next` lists |
 | solution | `<Client> Demo` |
