@@ -62,8 +62,8 @@ It checks and connects, in this order:
    in to. It warns you if Orbit is signed in as someone else.
 3. **The three Orbit objects** POC Studio writes to: `poc_studio_poc`, `poc_studio_document`
    and `poc_studio_feedback`. Any that is missing is created; none is ever changed or deleted.
-4. **Who approves gates** (just you, you and your manager, or others) and **where gate
-   messages go** (a DM to you by default, a group DM with the approvers, or a channel).
+4. **Your personal Slack chat** for the four gate approvals (your own DM, posted as you
+   through your Slack connection), and how long a gate may wait before the POC goes on hold.
 5. **Nebula**: its version, and whether it can build code apps. The first build updates it
    to the code-builder version if needed.
 6. **One test gate**, end to end: a test POC row and document in Orbit, a test gate in Slack
@@ -99,15 +99,15 @@ asks before taking over.
 Optional, once per client, so later runs need fewer decisions:
 
 ```
-/poc-studio:profile Acme Logistics · site acmelogistics.com · owner Harshal · approvers Harshal,
-Rohit · audience COO, 20 minutes · demo date 2026-10-23
+/poc-studio:profile Acme Logistics · site acmelogistics.com · owner Harshal · audience COO,
+20 minutes · demo date 2026-10-23
 ```
 
 ## What happens
 
 | Phase | Produces, saved to Orbit | Ends with |
 |---|---|---|
-| **0 · Kickoff** | prerequisites checked (Slack and Orbit before anything else), the profile, the POC row in Orbit with owner, approvers and tier | — |
+| **0 · Kickoff** | prerequisites checked (Slack and Orbit before anything else), the profile, the POC row in Orbit with owner and tier | — |
 | **1 · Signals and research** | **the research document**: cited web research on the client, the process, the rules, the market and realistic data, plus what the client and team said in Slack, Gmail, Calendar and Drive, and a readiness verdict | **G1 · Path** |
 | **2 · Scope, BRD and design** | **the BRD**, sized to the tier, then **the design system** made from it | **G2 · Scope and BRD** |
 | **3 · Build** | **the app**, built code-first by the code-builder Nebula (in Sonic or Zen, as chosen) from the approved BRD and design system, then rehearsed in a browser and checked | **G3 · Final review** |
@@ -120,10 +120,11 @@ Orbit as working documents so any chat can resume the POC; they are never sent a
 
 ## The four gates
 
-Each gate is sent to Slack, in the POC's thread, with links to the Orbit records and the
-feedback raised since the last gate, and shown in the chat at the same time. The owner or an
-approver answers in either place with the gate's reply words; the first answer counts and the
-other place is told.
+The four gate approvals are the only messages that go to Slack. Each is posted in **your
+personal Slack chat** (your own DM, posted as you through your Slack connection), in the POC's
+thread there, with links to the Orbit records and the feedback raised since the last gate, and
+shown in the Claude chat at the same time. Answer in either place with the gate's reply words;
+the first answer counts and the other place is told.
 
 | Gate | You decide | Reply with |
 |---|---|---|
@@ -132,11 +133,10 @@ other place is told.
 | **G3 · Final review** | you open the app and accept it, or list the changes; each becomes a ticket, the BRD gets a new version when a requirement changes, every check runs again | `approve` · `changes: …` · `stop` |
 | **G4 · Release** | the demo and its collaterals go to the field | `approve` · `changes: …` · `hold` |
 
-- Only approvers' replies count. Anyone else's reply is logged as a comment.
 - Silence or an emoji is never a yes. An unclear reply is asked back.
 - One reminder goes after 24 hours (or what setup recorded). An unattended run waits at the
   gate; it never passes it. After the expiry you chose at setup (3 days by default), the POC
-  goes on hold until someone answers or resumes it.
+  goes on hold until you answer or resume it.
 - With three days or fewer to the demo date, the gates come in pairs (G1 with G2, G3 with G4).
 - Before any gate is sent, every document made so far is read back from Orbit. If something
   did not save, you are asked to reconnect, and the gate waits.
@@ -145,15 +145,14 @@ other place is told.
 
 Say it in the chat or in a gate thread, whenever. Each piece of feedback becomes a ticket in
 Orbit (`FB-_1001`, `FB-_1002`, …) with your exact words, is acknowledged with its number, and is
-closed with what was done. Feedback from the owner or an approver overrules any decision the
-team made; anyone else's is weighed and shown at the next gate.
+closed with what was done. Your feedback overrules any decision the team made; something you
+pass on from someone else is weighed and shown at the next gate, unless you say to act on it.
 
-Between gates, in Sonic, only these reach you: a missing required connection, an expired
-sign-in, a delete, a credential for a new connection, a budget that cannot be met, a risky fix
-during the build, a failed build, the design system's two stops, a Nebula update that needs a
-fresh session, and the narration approval before a video is recorded. In Zen, clarifying
-questions reach you too. All of them come to Slack and the chat like a gate, except a sign-in
-and a credential, which stay in the chat.
+Every other question is asked in the Claude chat only, never in Slack: in Sonic, a missing
+required connection, an expired sign-in, a delete, a credential for a new connection, a budget
+that cannot be met, a risky fix during the build, a failed build, the design system's two
+stops, a Nebula update that needs a fresh session, and the narration approval before a video;
+in Zen, clarifying questions too.
 
 ## If a build stops or fails
 
@@ -201,7 +200,7 @@ that reaches you.
 ```
 poc-studio/
   .claude-plugin/plugin.json
-  skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, Orbit, approvers, a test gate
+  skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, Orbit, your Slack chat, a test gate
   skills/update/SKILL.md           check for and install the latest version; auto-update on
   skills/build/SKILL.md            the four phases and their gates
   skills/build/references/         gates, gate-delivery, run-control, orbit-records, orbit-objects.json,

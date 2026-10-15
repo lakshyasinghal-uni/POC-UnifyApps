@@ -21,7 +21,7 @@ description: >
   settles what it can between gates and asks Nebula and the verified UnifyApps skills rather
   than guessing. Needs /poc-studio:setup once first.
 metadata:
-  version: "0.4.3"
+  version: "0.4.4"
   requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; Orbit"
 ---
 
@@ -38,7 +38,7 @@ lives in Orbit, and one POC is one row there however many sessions work on it
 
 | Phase | Stages of the flow | Produces (saved to Orbit) | Ends with |
 |---|---|---|---|
-| 0 · Kickoff | 0 · Kickoff | prerequisites checked, profile, POC row, owner, approvers, tier | — |
+| 0 · Kickoff | 0 · Kickoff | prerequisites checked, profile, POC row, owner, tier | — |
 | 1 · Signals and research | 1 · Signal capture, 2 · Research, assess | the research document (with what the client said and the readiness verdict) | **G1 · Path** |
 | 2 · Scope and design | 3 · Scope the demo, 4 · Design system | the BRD, then the design system made from it | **G2 · Scope and BRD** |
 | 3 · Build | 5 · Build in phases, 6 · Finalize | the code-first app, rehearsed and checked | **G3 · Final review** |
@@ -60,7 +60,7 @@ earliest gate whose pack it changes is asked again.
 
 ## Rules that never bend
 
-- **The owner and approvers decide at the four gates,** as gates.md says: never answered by an
+- **The owner decides at the four gates,** as gates.md says: never answered by an
   agent, never skipped, never assumed from silence or an emoji. On a short timeline the tier
   merges them in pairs; it never removes one.
 - **Orbit is the record.** Every document is saved to Orbit with its full file
@@ -82,9 +82,10 @@ earliest gate whose pack it changes is asked again.
   build, the design system's own two stops (a brand hue two credible sources disagree on by
   more than ~30°, and a logo that cannot be fetched as a real file), a Nebula update that needs
   a fresh session to load, and the narration approval before a demo video is recorded.
-- **Every question goes out like a gate:** to Slack and the chat at once, after the write-back
-  check, as gate-delivery.md § Questions between gates says. Two exceptions stay in the chat
-  only: a sign-in, and a credential, whose values never go to Slack.
+- **Only the four gates go to Slack,** to the owner's personal Slack chat and the Claude chat
+  at once (gate-delivery.md). Every other question, Zen questions and every stop above, is
+  asked in the Claude chat only, after the write-back check (gate-delivery.md § Questions in
+  the Claude chat).
 - **One row per POC, kept current.** A new build always creates a new row; a resume is asked
   for by name and confirmed. `run_state`, `resume_from`, `stall_reason`, `active_session` and
   `last_heartbeat_at` are kept current at every write-back check, and every working file is
@@ -205,12 +206,12 @@ bridge exactly as Nebula's `start` skill does, once per session.
 
 **11. The POC row.** For a new build, create it with `new-poc` as run-control.md § Creating
 the row says: Orbit generates the `poc_id`; read it from the output and use it everywhere.
-The owner, approvers and gate destination come from the profile's lines, else the person's
-settings; the tier from gates.md § Merged gates; the build mode from step 1b. Then `claim` it
+The owner is the person running this session, and the Slack chat for gates is their personal
+chat from their settings; the tier from gates.md § Merged gates; the build mode from step 1b. Then `claim` it
 for this session and save the profile as the `working-profile` document.
 
-Say one line: `POC <poc_id> (<poc_name>): <Sonic | Zen>, owner <name>, approvers <names>, tier
-<tier>, demo <date or "no date">, gates to <DM | group DM | #channel>.`
+Say one line: `POC <poc_id> (<poc_name>): <Sonic | Zen>, owner <name>, tier <tier>, demo
+<date or "no date">, gates to your personal Slack chat and here.`
 
 ## Phase 1 · Signals and research → G1 Path
 
@@ -357,8 +358,7 @@ assumptions (§ 12). Every requirement traces to a source and a beat. Save it to
   its three deliverables and its notes under `studio/design-systems/<client-slug>/`:
   `style-guide.html`, `tokens.css` (the token block, ratios printed), `logo-kit/`, and
   `port-note.md` (the type note, the port note with max |ΔY|, and its three hand-over
-  answers). Its two stops are the only questions it may ask, and each goes out as a question
-between gates (gate-delivery.md). Say
+  answers). Its two stops are the only questions it may ask, asked in the Claude chat. Say
   `Design system generated: <swatch>, <shipped face>, max ΔY <n>.`
 
 Then start `poc-studio:designer` → `designer-2.md` with `phase: look`: `brand.md`, `context-notes.md`
@@ -414,8 +414,8 @@ two questionnaire documents Nebula expects under
 `$STUDIO/questionnaires/<slug>/round-1.md` and `round-2.md`, in the shape of
 `NEBULA/skills/zen-brainstorming/references/questionnaire-template.md`, with the ledger's rows
 as questions and `Source: READ | REQUEST | PROFILE | STAND-IN | SCOUT | DESIGNER | JUDGE`.
-In Zen, the open questions of each round go to the person instead, as questions between gates,
-with the Stand-in's draft beside each; their answers fill the questionnaire, tagged `OWNER`.
+In Zen, the open questions of each round go to the person instead, in the Claude chat, with the
+Stand-in's draft beside each; their answers fill the questionnaire, tagged `OWNER`.
 Write the brief at `$STUDIO/<brief-slug>.md` and run `fast brief` as the bridge says. A
 refusal goes to the Designer once by a fresh `designer-3.md` with `phase: fix` and the exact
 error; a second refusal is fixed by this skill with the nearest passing value and logged in
@@ -438,7 +438,7 @@ overrides, and keep `resume_from` at the plan and task being run (`5_build · <p
   title, entity and question, and is logged `STAND-IN`. Either answer is saved with
   `plan task <planId> <taskId> --answer "<answer>" --json`. In Sonic, only a question the
   Stand-in marks `user-only` reaches the person; in Zen, every client decision goes to the
-  person as a question between gates, with the Stand-in's draft.
+  person in the Claude chat, with the Stand-in's draft.
 - A task that names what it deletes waits for a yes. Ask the person; never answer it yourself.
 - `Blocked by auto mode:` is Claude Code's own permission check. Ask the person as the run
   loop says, and the first time in a session add the one line about the auto-mode
@@ -518,8 +518,8 @@ A fix is a later task, and every fix is classed before it runs:
   smallest brief and runs the plan with no questions.
 - **Risky**: a schema change, a new or removed object, automation, page or agent, a change
   to a beat or to the scope approved at G2, a write to an external system, anything past the
-  budget. List the risky fixes and ask, as a question between gates (gate-delivery.md), header
-  `Risky fix`, reply words `apply all` · `safe only` · `changes: …`. Only approved ones run.
+  budget. List the risky fixes and ask in the Claude chat (gate-delivery.md § Questions in the
+  Claude chat), header `Risky fix`. Only approved ones run.
 
 After any fix, run Rehearsal again with `rehearsal-2.md` carrying the earlier findings, and
 ua-checker again on everything, not only what changed. Two rounds at most; a beat still
@@ -580,8 +580,8 @@ the profile asks for them, and the field note.
    the entity table and data-plan.md, every node a built fact and every system marked built,
    simulated or connected at go-live as the data plan says. Sign-ins are asked up front by
    username and typed by the person, never by you. Before recording, save the narration
-   script PDF to Orbit, run the write-back check, then ask as a question between gates
-   (gate-delivery.md), header `Narration`, reply words `approve` · `edited` · `skip video`.
+   script PDF to Orbit, run the write-back check, then ask in the Claude chat, header
+   `Narration` (gate-delivery.md § Questions in the Claude chat).
    Then run its pipeline to the end: the narrated MP4 with subtitles, the live-demo runbook, the presenter manual, the PG
    playbook, and the screenshot library. Save each to Orbit (`--stage 7_collaterals`, types
    `video` and `pdf`) and link them from the runbook. Say `Demo video rendered: <length>, <n>
@@ -612,9 +612,10 @@ feedback, not just answers at gates.
    category and a severity.
 2. Acknowledge it where it was given, with its ticket number: `Logged as FB-_1012. <what will
    happen>.`
-3. Route it. From the owner or an approver it is an `OWNER` ledger row: it overrules any team
-   decision, and the Stand-in may not reopen it. From anyone else it is a `COMMENT` row: the
-   Stand-in weighs it, and the owner sees it at the next gate.
+3. Route it. From the owner it is an `OWNER` ledger row: it overrules any team decision, and
+   the Stand-in may not reopen it. What the owner passes on from someone else (a client, a
+   colleague) is a `COMMENT` row unless the owner says to act on it: the Stand-in weighs it,
+   and the owner sees it at the next gate.
 4. Close it when it is done or decided against: `status: done` or `wont_do`, and one line in
    `resolution` saying what was done. Then `sync-counts`.
 

@@ -164,7 +164,7 @@ Nebula's to define: `zen-brainstorming` (scoping by questionnaire, two rounds, i
 its `questionnaire-template.md`) and `zen-routing` (the plan and its `run-loop.md`, which the
 Sonic path also uses). What Studio changes:
 
-- Each questionnaire round goes to the person as questions between gates (gate-delivery.md),
+- Each questionnaire round goes to the person in the Claude chat (gate-delivery.md),
   with the Stand-in's draft as the suggested answer; their answers are the questionnaire's.
 - The brief carries the person's answers as `OWNER` assumptions.
 - A builder's `needs_confirmation` that is a client decision goes to the person, with the

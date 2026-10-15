@@ -41,15 +41,16 @@ never asks again. Gates, the write-back check and feedback tickets work the same
 | A builder's `needs_confirmation` | client decisions to the Stand-in | client decisions to the person, with the Stand-in's draft |
 | Deploys and publishes | do not wait (`## Ready when` is the yes) | as Nebula's Zen run loop asks |
 
-Every Zen question goes through the same Slack-plus-chat delivery as a gate
-(gate-delivery.md § Questions between gates). Group questions that arrive together into one
-message, up to four.
+Every Zen question is asked in the Claude chat only (gate-delivery.md § Questions in the
+Claude chat); only the four gates go to Slack. Group questions that arrive together into one
+AskUserQuestion call, up to four.
 
 ## Creating the row (new builds)
 
 `new-poc @<file>` with: `client`, `client_slug`, `use_case`, `use_case_slug`, `poc_name`
-(`<Client> · <use case in a few words>`), `owner`, `started_by`, `approvers`,
-`gate_destination`, `tier`, `demo_date`, `build_mode`, `stage: 0_kickoff`, `status: running`,
+(`<Client> · <use case in a few words>`), `owner` and `started_by` (the person running this
+session, with their Slack ID), `approvers` (the same person), `gate_destination` and
+`slack_channel` (their personal Slack chat, from their settings), `tier`, `demo_date`, `build_mode`, `stage: 0_kickoff`, `status: running`,
 `run_state: running`, `current_gate: none`, all four gate statuses `not_started`, and
 `active_session` (this session's link). **Never pass `poc_id`**: Orbit generates it
 (`POC-_1001`, `POC-_1002`, …). Read it from the command's output and use it everywhere,
@@ -70,7 +71,7 @@ ID, find the row with `find-poc` before trying again; never create a second one.
    system into the working folder. A working document Orbit does not have is rebuilt from the
    approved documents, and a ticket says so.
 5. **Check the open gate's Slack thread** (`slack_thread_ts` on the row) for an answer given
-   while no session was running, and take the first approver's reply as gate-delivery.md says.
+   while no session was running, and take the owner's reply as gate-delivery.md says.
 6. Use the row's `build_mode`. Carry on from `resume_from`. Say one line: `Resuming
    <poc_id> (<name>) in <Sonic | Zen> from <resume_from>.`
 
@@ -132,7 +133,8 @@ it (when-something-fails.md):
    each option below would do. Nothing on the tenant is deleted; partial entities are kept for
    reuse or listed for the owner to remove by hand.
 3. `heartbeat --run-state failed --resume-from "<step>" --stall-reason "<one line>"`, run the
-   write-back check, then ask through gate-delivery.md § Questions between gates, header
+   write-back check, then ask in the Claude chat (gate-delivery.md § Questions in the Claude
+   chat), header
    `Build failed`: `retry` (run the failed task again, once), `back to G2` (reopen G2 with
    a smaller scope; the BRD gets a new version), `stop` (`run_state: abandoned`, `status:
-   stopped`). Wait for the owner or an approver.
+   stopped`). Wait for the owner.

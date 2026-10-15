@@ -6,6 +6,18 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.4 (2026-10-15)
+
+- **Only the four gate approvals go to Slack,** and they go to the person's own personal Slack
+  chat (their direct-message conversation, posted as them through their Slack connection),
+  as well as the Claude chat. The first answer from either place counts.
+- **Every other question stays in the Claude chat:** Zen questions, risky fixes, a failed
+  build, the design system's two stops, narration approval, deletes, budget, Nebula restart,
+  sign-ins and credentials. They have no Slack reminder or expiry; they wait in the chat.
+- **No approvers or destination choices:** the person running POC Studio is the gate owner.
+  Setup finds their Slack user and personal chat instead of asking who approves and where
+  messages go; the profile's `approvers` and `gate destination` lines are gone.
+
 ## 0.4.3 (2026-10-15)
 
 - **Only five things are produced for review, in this order:** the research document, the
