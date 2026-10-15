@@ -17,9 +17,7 @@ request.
 - status: <confirmed | drafted by Studio on <date>>
 - client: <name> · site <https://…> · industry <one line>
 - audience: <who watches> · <n> minutes · <in person | call | recorded> · <projector | laptop | phone>
-- owner: <who owns the POC and approves the four gates: G1 Path, G2 Scope and BRD, G3 Final review, G4 Release> · <Slack name or ID>
-- approvers: <others whose gate replies count, such as the manager; or "owner only"> · <Slack names or IDs>
-- gate destination: <dm | group dm | channel #name> · <where gate messages go; default from poc-studio.yml, else a DM to the owner>
+- owner: <who owns the POC: the person who runs POC Studio for it and answers the four gates>
 - demo date: <YYYY-MM-DD> · <sets the tier: 3 days or fewer sprint (gates merged in pairs), 4 to 10 standard, more full>
 - gates: <by tier | full | merged> · <full asks all four separately; merged asks G1 with G2 and G3 with G4; never fewer>
 - presenter: <who> · tells the story from <whose seat>
@@ -50,8 +48,6 @@ request.
 |---|---|
 | audience | a senior operations leader · 20 minutes · in person · projector |
 | owner | the owner in `poc-studio.yml`, else the person who started the build |
-| approvers | the approvers in `poc-studio.yml`, else owner only |
-| gate destination | the destination in `poc-studio.yml`, else a DM to the owner |
 | demo date | the demo event the Researcher found; else none, tier `standard` |
 | gates | `by tier` |
 | presenter | the person who asked · from the seat of the client's team lead |

@@ -6,11 +6,11 @@ description: >
   whenever a build reports that Slack, Orbit, Calendar or Drive is not connected. Run once per
   person, and again whenever a connection breaks. It checks the Slack, Google Calendar and
   Google Drive connectors, connects Orbit by direct API or a signed-in browser tab, creates any
-  missing Orbit object, records who approves gates and where gate messages go, runs one test
+  missing Orbit object, finds your personal Slack chat for gate messages, runs one test
   gate end to end, and saves the settings (no secrets) in Orbit with a local copy in
   poc-studio.yml, so a new chat does not need setup again.
 metadata:
-  version: "0.4.3"
+  version: "0.4.4"
 ---
 
 # POC Studio: setup
@@ -18,8 +18,8 @@ metadata:
 Make every connection the build needs, once, and prove it with one test gate. The build
 refuses to start research or write anything until Slack and Orbit pass here.
 
-Say one line at the start: `Setting up POC Studio: connectors, Orbit, approvers, then one test
-gate.` Keep a task list with the steps below.
+Say one line at the start: `Setting up POC Studio: connectors, Orbit, your Slack chat, then one
+test gate.` Keep a task list with the steps below.
 
 ## 0. Latest version, and auto-update
 
@@ -69,22 +69,20 @@ Then `orbit-api.mjs ensure-objects` (or the same calls from the tab). It creates
 `skills/build/references/orbit-objects.json`, and never alters one that exists. Report which
 existed and which were created.
 
-## 3. Approvers and where gate messages go
+## 3. Your personal Slack chat for gates
 
-Ask once, with one AskUserQuestion (three questions):
+Only the four gate approvals go to Slack, and they go to **your personal Slack chat**: your own
+direct-message conversation, posted as you through the Slack connection you set up. Every other
+question stays in the Claude chat. Nothing is asked about approvers or channels: the person
+running POC Studio is the gate owner.
 
-1. `Who approves gates?` Options: `Just me`, `Me and my manager`, `Me and others` (free text:
-   names). Their replies are the only ones that count at a gate.
-2. `Where should gate messages go?` Options: `DM to me` (the default), `Group DM with the
-   approvers`, `A channel` (free text: the channel name).
-3. `If nobody answers a gate, put the POC on hold after?` Options: `3 days` (the default),
-   `1 day`, `7 days`, `Never` (free text for another number of hours). This is
-   `gate_expiry_hours`.
-
-Resolve every person to a Slack user ID with the Slack user search, and a channel name to its
-ID. A name that matches more than one person is asked back with the matches; never guess one.
-Ask also `Remind after how many hours without an answer?` only when the user brings it up;
-the default is 24.
+1. Find your own Slack user with the Slack user search (by your email or name) and keep its
+   user ID. If more than one user matches, ask which one is you; never guess.
+2. The test gate in step 5 posts to that user ID, which opens your personal chat; keep the
+   conversation ID the post returns as the gate chat.
+3. Ask one question, `If you don't answer a gate, put the POC on hold after?` Options: `3 days`
+   (the default), `1 day`, `7 days`, `Never` (free text for another number of hours). This is
+   `gate_expiry_hours`. The reminder goes after 24 hours unless you ask for another time.
 
 ## 4. Nebula
 
@@ -106,8 +104,9 @@ not need it, the build does.
    `gate_pack`).
 3. Run the write-back check from orbit-records.md.
 4. Send a test gate exactly as [gate-delivery.md](../build/references/gate-delivery.md) says,
-   header `Test gate`, to the destination chosen, and ask in the chat at the same time. The
-   reply words are `approve` or `stop`.
+   header `Test gate`, to your personal Slack chat, and ask in the Claude chat at the same
+   time. The reply words are `approve` or `stop`. Save the conversation ID the Slack post
+   returns as your gate chat.
 5. Take the first answer from either place, tell the other place, save the decision as a
    `gate_decision` document (a new version on each run), set the row's status to `stopped`,
    `run_state: done`, use case `Connection test passed <date>`, and run the write-back check
@@ -136,8 +135,7 @@ orbit:
   objects: [poc_studio_poc, poc_studio_document, poc_studio_feedback]
 slack:
   owner: { name: <name>, id: <U…> }
-  approvers: [{ name: <name>, id: <U…> }]
-  gate_destination: { type: dm | group_dm | channel, id: <D… | C… | G…> }
+  gate_chat: { type: personal, id: <D…> }    # your own direct-message conversation
   reminder_hours: 24
   gate_expiry_hours: 72 | <n> | never
 connectors: { slack: ok, calendar: ok | missing, drive: ok | missing }
@@ -146,12 +144,13 @@ poc_studio: { version: <v>, auto_update: on | off | not applicable }
 test_gate: { poc: <setup row>, answered_in: chat | slack, at: <ISO> }
 ```
 
-Finish with five lines at most: what is connected, what is missing and what that costs, who
-approves, where gates go, and that `/poc-studio:build <request>` is ready.
+Finish with five lines at most: what is connected, what is missing and what that costs, that
+gates will come to your personal Slack chat and here, and that `/poc-studio:build <request>`
+is ready.
 
 ## When to run it again
 
 Whenever the build's write-back check cannot reach Orbit, a Slack post fails, or the user
-changes approvers, the gate destination or the expiry. Re-running keeps everything that still
+changes Slack accounts or the expiry. Re-running keeps everything that still
 passes and redoes only what fails; it never creates a second copy of an object or a second
 setup row.

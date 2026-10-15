@@ -2,7 +2,7 @@
 
 A POC moves through four owner gates. Each gate closes a phase; the answer starts the next.
 Between gates the team decides, logs and moves on. At a gate it stops, shows the owner what it
-made, and waits. Nothing past a gate starts until the owner or an approver answers it.
+made, and waits. Nothing past a gate starts until the owner answers it.
 
 | Gate | Closes | Decides | What the owner reviews |
 |---|---|---|---|
@@ -16,17 +16,16 @@ the way (the decision ledger, storylines, the data plan, design notes, the Nebul
 entity table, rehearsal and check results, the Text2Code prompt) is a working document: saved to
 Orbit so a resume can carry on, never sent as a gate document.
 
-Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: to Slack with links to
-the Orbit records and in the chat at the same time, answered with the gate's reply words,
+Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: to the owner's personal
+Slack chat with links to the Orbit records and in the Claude chat at the same time, answered with the gate's reply words,
 first answer counts. Every pack document is saved to Orbit and read back before the gate is
 sent ([orbit-records.md](orbit-records.md) § The write-back check).
 
 ## Rules for every gate
 
-- **Only the owner or an approver answers a gate.** The Stand-in, the Judge and the moderator
-  never answer one, never treat silence or an emoji as a yes, and never pre-fill an answer.
-  The owner and approvers are the profile's `owner` and `approvers` lines, else
-  `poc-studio.yml`, else the person who started the build.
+- **Only the owner answers a gate:** the person running POC Studio, in their personal Slack
+  chat or the Claude chat. The Stand-in, the Judge and the moderator never answer one, never
+  treat silence or an emoji as a yes, and never pre-fill an answer.
 - **One question per gate,** in both places at once, with the gate's reply words.
 - **Changes loop back, twice at most.** A `changes: …` answer becomes feedback tickets tagged
   `OWNER`, goes back to the phase that owns them, and the same gate is asked again. After the
