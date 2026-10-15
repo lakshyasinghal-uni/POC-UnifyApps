@@ -197,10 +197,10 @@ Go through the document once more and fix anything that fails:
 ## Inside a POC Studio build
 
 When `poc-studio:build` runs this skill, the Researcher agent does it in discovery and the
-build owns the gate: the profile's `research gate` line decides whether the PM approves the
-draft before the storylines are judged (`review`, the default) or the build carries on and
-lists the document's open questions in the runbook (`skip`). Either way the document is
-written to `research/<poc-slug>-research.md`, and its *Open questions* become ledger rows.
+build owns the gate: the document is the main part of G1 · Path, where the owner approves or
+edits it, together with the readiness assessment, before scoping starts. G1 is never
+skipped. The document is written to `research/<poc-slug>-research.md`, and its *Open
+questions* become ledger rows.
 
 ## Step 6 — Hand over to the research gate
 

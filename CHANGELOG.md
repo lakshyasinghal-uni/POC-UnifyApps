@@ -6,6 +6,24 @@ Every change that is merged into `main` gets an entry here, and the version in
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.3.0 (2026-10-15)
+
+- The owner now decides at four gates placed as in the POC Studio flow, defined in
+  `skills/build/references/gates.md`: **G1 · Path** after research and assessment (new
+  readiness assessment: proceed, proceed partial or block), **G2 · Scope** after the design
+  system (one-page scope summary, style guide and mockup choice; no tenant write before it),
+  **G3 · Build verified** after a new finalize stage (evidence pack, owner dry run, freeze),
+  and **G4 · Release** after the collaterals (field note; release or hold).
+- Gates are never answered by an agent, never skipped and never assumed from silence;
+  unattended runs wait at them. With three days or fewer to the demo, they merge in pairs.
+- Build fixes are classed safe or risky; risky ones need the owner's yes, and every fix
+  re-runs rehearsal and all checks.
+- The build skill opens with a stage-to-act map of the flow; new client input re-enters at
+  Stage 1 and marks what is stale.
+- Profile: new `owner`, `demo date` and `gates` lines; the `research gate` line is gone (G1
+  always runs). The Stand-in may not answer a gate or overrule an `OWNER` row. The runbook
+  carries the gate log.
+
 ## 0.2.1 (2026-10-15)
 
 - Updated `demo-studio` to the latest version: HyperFrames motion graphics, an animated

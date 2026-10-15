@@ -44,6 +44,11 @@ Built <date> on <host> · solution <name> · Nebula <version> · Demo Studio <ve
 <n> of <n> beats pass. <For each fix: beat, what was wrong, what changed.>
 Unverified: <what could not be proven, and the one check that would settle it.>
 
+## Gates
+
+| Gate | Round | Asked | Answer | Owner's words | Next |
+(copied from the gate log; status line at the top of the runbook: `Demo-ready · released by <owner> on <date>`, `held`, or `stopped at <gate>`)
+
 ## Decisions taken for you
 <One line per STAND-IN, JUDGE, DESIGNER and MODERATOR ledger row:>
 - <key>: <decision> · <source> · to settle it next time add to the profile: `<line>`

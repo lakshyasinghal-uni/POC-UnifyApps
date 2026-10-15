@@ -76,12 +76,27 @@ that reaches you.
   the real ids, and the code app itself when the profile asks for it.
 - `studio/profiles/<client>.md`: the profile, ready for the next demo.
 
-## What still reaches you
+## The four gates, and what else reaches you
 
-An expired sign-in, a delete, a budget the Judge cannot meet, one credential when an external
-beat needs a connection the tenant does not hold (only with `external: sandbox` or `client`
-in the profile), and one question you asked for: which of the UI mockups the demo should
-follow (`mockups: auto` removes even that). Nothing else.
+The owner (the profile's `owner` line, else you) decides at four gates, each one stop with
+its pack shown and one question (`skills/build/references/gates.md`):
+
+- **G1 · Path**, after research: the cited research document and a readiness score; proceed,
+  proceed partial, or block.
+- **G2 · Scope**, after the design system: the one-page scope, the style guide and the
+  mockups; pick a mockup and approve the scope. Nothing touches the tenant before this.
+- **G3 · Build verified**, after finalize: the evidence pack; you walk the demo script once
+  as the dry run, then freeze the build or send fixes back.
+- **G4 · Release**, after the collaterals: runbook, explainer, video, field note; release or
+  hold.
+
+With three days or fewer to the demo date the gates are asked in pairs (G1 with G2, G3 with
+G4); none is ever skipped, and an unattended run waits at a gate rather than passing it.
+
+Between gates only these reach you: an expired sign-in, a delete, a budget the Judge cannot
+meet, one credential when an external beat needs a connection the tenant does not hold, a
+risky fix during the build, the design system's two stops, a Nebula update that needs a fresh
+session, and the narration approval before a video is recorded.
 
 ## Files
 
@@ -101,7 +116,7 @@ poc-studio/
   scripts/explainer-html.mjs       turns the explainer's Markdown into one HTML page
   scripts/nebula-root.mjs          finds the installed Nebula, checks its version and whether
                                    it can build code-first apps
-  skills/poc-research/             Stages 1–2: cited web research, approved at the research gate
+  skills/poc-research/             Stages 1–2: cited web research, approved by the owner at G1
   skills/design-system/            Stage 4: the client's measured design system (DL v3.4)
   skills/unifyapps-*/              verified UnifyApps platform skills (builder, apps, config
                                    apps, connectors, context graph, governance, backup and
