@@ -1,6 +1,6 @@
 {
   "name": "poc-studio",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "POC Studio: runs a UnifyApps POC end to end in four phases, each closed by an owner gate sent to Slack and shown in the chat: signals and web research (G1 Path), the BRD and then the design system (G2 Scope and BRD), a code-first build with the code-builder Nebula plus rehearsal and checks (G3 Final review), and collaterals (G4 Release). Each new build asks Sonic (no questions between gates) or Zen (clarifying questions any time); one Orbit row per POC tracks its run state so any chat can resume it. Every document, decision and feedback ticket is saved to Orbit and read back before any human step. Includes /poc-studio:setup to connect Slack, Calendar, Drive and Orbit once, the verified UnifyApps platform skills, the design-system and research skills, and the demo video skill. Based on Demo Studio 0.6.0 by Gourav Mahunta. Requires the Nebula plugin.",
   "author": {
     "name": "Harshal"

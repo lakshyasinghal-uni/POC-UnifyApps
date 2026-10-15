@@ -36,12 +36,10 @@ turn it on), so this is where it lives. This repository's own `.claude/settings.
 the same entry for anyone working inside it. To turn it off, set `"autoUpdate": false` there,
 or use `/plugin` → Marketplaces → poc-unifyapps.
 
-**Every run checks first.** `/poc-studio:build` and `/poc-studio:setup` compare the installed
-version with GitHub main before doing anything. When yours is older, in Claude Code they update
-the marketplace and the plugin themselves, then ask you to start a fresh session (or run
-`/reload-plugins`) and stop, so nothing runs on an old version. In the Claude app they show the
-newer version and how to update, then ask whether to stop or carry on. `/poc-studio:update`
-runs the same check on its own.
+**Checking by hand.** Build and setup do not contact GitHub; auto-update keeps the plugin
+current. To check now, run `/poc-studio:update`: it compares the installed version with
+GitHub main and, in Claude Code, updates the marketplace and the plugin, then asks you to start
+a fresh session (or run `/reload-plugins`).
 
 ## Before your first build: connect once
 

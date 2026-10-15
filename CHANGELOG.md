@@ -6,6 +6,13 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.6 (2026-10-15)
+
+- **No GitHub call at the start of build or setup.** The version check ran before every build
+  and setup and could stall for a minute when GitHub was slow. Auto-update keeps the plugin
+  current, so the check now runs only when the person types `/poc-studio:update`. Setup still
+  turns auto-update on, which only edits the local Claude settings file.
+
 ## 0.4.5 (2026-10-15)
 
 - **Gates are approved in the Claude chat.** Slack only notifies: when a gate is ready, a

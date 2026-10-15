@@ -22,7 +22,7 @@ description: >
   settles what it can between gates and asks Nebula and the verified UnifyApps skills rather
   than guessing. Needs /poc-studio:setup once first.
 metadata:
-  version: "0.4.5"
+  version: "0.4.6"
   requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; Orbit"
 ---
 
@@ -114,12 +114,6 @@ earliest gate whose pack it changes is asked again.
   any storyline is chosen. Everything downstream follows it (demo-defaults.md § Demo intent).
 
 ## Phase 0 · Kickoff
-
-**0. Latest version first.** Before anything else, run the check in
-[../update/SKILL.md](../update/SKILL.md) § The check (`scripts/version-check.mjs`). Current:
-carry on. Behind in Claude Code: update as that skill says, tell the person to start a fresh
-session, and stop. Behind in the Claude app: show the newer version and how to update, and ask
-whether to stop or carry on.
 
 **1. Prerequisites, before any research or write.** Load the person's settings: `orbit-api.mjs
 check` for who is signed in, then the `settings` document on that person's setup row in Orbit
