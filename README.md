@@ -72,7 +72,21 @@ with every field name and single-select value POC Studio writes. If anything dif
 (and every build, which runs the same check first) stops with the exact list and writes
 nothing. POC Studio never changes the Orbit objects.
 
-To test the Orbit connection end to end on the real tenant:
+Every value POC Studio writes to an Orbit dropdown goes through one mapping table,
+`skills/build/references/orbit-contract.json` (for example the internal stage
+`1_signal_capture` is written as `1_signal`). Before any create or update the whole record is
+checked against the live schema; anything wrong stops the write with a list.
+
+To prove the whole contract on the real tenant (setup runs this once per version):
+
+```
+node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" contract-test
+```
+
+It writes every value the plugin can produce to `[TEST]` rows, reads each back, and prints a
+pass list; nothing is deleted.
+
+For a quicker end-to-end check:
 
 ```
 node "${CLAUDE_PLUGIN_ROOT}/scripts/orbit-api.mjs" selftest

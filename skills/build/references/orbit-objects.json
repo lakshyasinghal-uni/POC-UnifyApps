@@ -1,5 +1,5 @@
 {
-  "_about": "POC Studio's three Orbit objects on orbit.uat.unifyapps.com. Field names are the live tenant's, as read on 2026-10-15. Field types and single-select options here are the plugin's best knowledge until `node scripts/orbit-api.mjs refresh-schemas` replaces every schema with the live definition. The plugin never changes an existing object; `schema-check` compares the live schema with what the plugin writes and stops on any difference.",
+  "_about": "POC Studio's three Orbit objects on orbit.uat.unifyapps.com: field names, required fields and single-select options as read from the live tenant on 2026-10-15 (the same as orbit-contract.json). `ensure-objects` only creates an object that is missing and never changes one; `refresh-schemas` replaces these with the exact live definitions.",
   "tenant": "https://orbit.uat.unifyapps.com",
   "objects": [
     {
@@ -78,6 +78,8 @@
             "type": "string",
             "format": "single-select",
             "title": "Build mode",
+            "filterable": true,
+            "description": "Asked once when a new build starts; a resume uses it",
             "oneOf": [
               {
                 "const": "sonic",
@@ -87,14 +89,13 @@
                 "const": "zen",
                 "title": "zen"
               }
-            ],
-            "filterable": true,
-            "description": "Asked once when a new build starts; a resume uses it"
+            ]
           },
           "run_state": {
             "type": "string",
             "format": "single-select",
             "title": "Run state",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "running",
@@ -120,8 +121,7 @@
                 "const": "abandoned",
                 "title": "abandoned"
               }
-            ],
-            "filterable": true
+            ]
           },
           "resume_from": {
             "type": "string",
@@ -159,21 +159,21 @@
             "type": "string",
             "format": "single-select",
             "title": "Tier",
+            "filterable": true,
             "oneOf": [
-              {
-                "const": "sprint",
-                "title": "sprint"
-              },
               {
                 "const": "standard",
                 "title": "standard"
               },
               {
+                "const": "sprint",
+                "title": "sprint"
+              },
+              {
                 "const": "full",
                 "title": "full"
               }
-            ],
-            "filterable": true
+            ]
           },
           "demo_date": {
             "type": "integer",
@@ -187,26 +187,27 @@
             "type": "string",
             "format": "single-select",
             "title": "Stage",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "0_kickoff",
                 "title": "0 kickoff"
               },
               {
-                "const": "1_signal_capture",
-                "title": "1 signal capture"
+                "const": "1_signal",
+                "title": "1 signal"
               },
               {
-                "const": "2_research_assess",
-                "title": "2 research assess"
+                "const": "2_research",
+                "title": "2 research"
               },
               {
                 "const": "3_scope",
                 "title": "3 scope"
               },
               {
-                "const": "4_design_system",
-                "title": "4 design system"
+                "const": "4_design",
+                "title": "4 design"
               },
               {
                 "const": "5_build",
@@ -224,25 +225,21 @@
                 "const": "demo_ready",
                 "title": "demo ready"
               }
-            ],
-            "filterable": true
+            ]
           },
           "status": {
             "type": "string",
             "format": "single-select",
             "title": "Status",
+            "filterable": true,
             "oneOf": [
               {
-                "const": "running",
-                "title": "running"
+                "const": "active",
+                "title": "active"
               },
               {
-                "const": "waiting_on_gate",
-                "title": "waiting on gate"
-              },
-              {
-                "const": "waiting_on_reconnect",
-                "title": "waiting on reconnect"
+                "const": "waiting_gate",
+                "title": "waiting gate"
               },
               {
                 "const": "blocked",
@@ -260,13 +257,13 @@
                 "const": "released",
                 "title": "released"
               }
-            ],
-            "filterable": true
+            ]
           },
           "current_gate": {
             "type": "string",
             "format": "single-select",
             "title": "Current gate",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "none",
@@ -288,200 +285,135 @@
                 "const": "G4",
                 "title": "G4"
               }
-            ],
-            "filterable": true
+            ]
           },
           "g1_status": {
             "type": "string",
             "format": "single-select",
             "title": "G1 Path",
+            "filterable": true,
             "oneOf": [
               {
-                "const": "not_started",
-                "title": "not started"
+                "const": "pending",
+                "title": "pending"
               },
               {
-                "const": "asked",
-                "title": "asked"
+                "const": "waiting",
+                "title": "waiting"
               },
               {
                 "const": "approved",
                 "title": "approved"
               },
               {
-                "const": "approved_partial",
-                "title": "approved partial"
-              },
-              {
-                "const": "approved_with_changes",
-                "title": "approved with changes"
-              },
-              {
-                "const": "changes_requested",
-                "title": "changes requested"
-              },
-              {
-                "const": "blocked",
-                "title": "blocked"
+                "const": "changes",
+                "title": "changes"
               },
               {
                 "const": "stopped",
                 "title": "stopped"
               },
               {
-                "const": "held",
-                "title": "held"
-              },
-              {
-                "const": "released",
-                "title": "released"
+                "const": "skipped_merged",
+                "title": "skipped merged"
               }
-            ],
-            "filterable": true
+            ]
           },
           "g2_status": {
             "type": "string",
             "format": "single-select",
             "title": "G2 Scope and BRD",
+            "filterable": true,
             "oneOf": [
               {
-                "const": "not_started",
-                "title": "not started"
+                "const": "pending",
+                "title": "pending"
               },
               {
-                "const": "asked",
-                "title": "asked"
+                "const": "waiting",
+                "title": "waiting"
               },
               {
                 "const": "approved",
                 "title": "approved"
               },
               {
-                "const": "approved_partial",
-                "title": "approved partial"
-              },
-              {
-                "const": "approved_with_changes",
-                "title": "approved with changes"
-              },
-              {
-                "const": "changes_requested",
-                "title": "changes requested"
-              },
-              {
-                "const": "blocked",
-                "title": "blocked"
+                "const": "changes",
+                "title": "changes"
               },
               {
                 "const": "stopped",
                 "title": "stopped"
               },
               {
-                "const": "held",
-                "title": "held"
-              },
-              {
-                "const": "released",
-                "title": "released"
+                "const": "skipped_merged",
+                "title": "skipped merged"
               }
-            ],
-            "filterable": true
+            ]
           },
           "g3_status": {
             "type": "string",
             "format": "single-select",
             "title": "G3 Final review",
+            "filterable": true,
             "oneOf": [
               {
-                "const": "not_started",
-                "title": "not started"
+                "const": "pending",
+                "title": "pending"
               },
               {
-                "const": "asked",
-                "title": "asked"
+                "const": "waiting",
+                "title": "waiting"
               },
               {
                 "const": "approved",
                 "title": "approved"
               },
               {
-                "const": "approved_partial",
-                "title": "approved partial"
-              },
-              {
-                "const": "approved_with_changes",
-                "title": "approved with changes"
-              },
-              {
-                "const": "changes_requested",
-                "title": "changes requested"
-              },
-              {
-                "const": "blocked",
-                "title": "blocked"
+                "const": "changes",
+                "title": "changes"
               },
               {
                 "const": "stopped",
                 "title": "stopped"
               },
               {
-                "const": "held",
-                "title": "held"
-              },
-              {
-                "const": "released",
-                "title": "released"
+                "const": "skipped_merged",
+                "title": "skipped merged"
               }
-            ],
-            "filterable": true
+            ]
           },
           "g4_status": {
             "type": "string",
             "format": "single-select",
             "title": "G4 Release",
+            "filterable": true,
             "oneOf": [
               {
-                "const": "not_started",
-                "title": "not started"
+                "const": "pending",
+                "title": "pending"
               },
               {
-                "const": "asked",
-                "title": "asked"
+                "const": "waiting",
+                "title": "waiting"
               },
               {
                 "const": "approved",
                 "title": "approved"
               },
               {
-                "const": "approved_partial",
-                "title": "approved partial"
-              },
-              {
-                "const": "approved_with_changes",
-                "title": "approved with changes"
-              },
-              {
-                "const": "changes_requested",
-                "title": "changes requested"
-              },
-              {
-                "const": "blocked",
-                "title": "blocked"
+                "const": "changes",
+                "title": "changes"
               },
               {
                 "const": "stopped",
                 "title": "stopped"
               },
               {
-                "const": "held",
-                "title": "held"
-              },
-              {
-                "const": "released",
-                "title": "released"
+                "const": "skipped_merged",
+                "title": "skipped merged"
               }
-            ],
-            "filterable": true
+            ]
           },
           "slack_destination": {
             "type": "string",
@@ -603,32 +535,33 @@
             "format": "single-select",
             "title": "POC",
             "filterable": true,
-            "description": "Reference to a poc_studio_poc record. The tenant's own definition (and the value it stores) replaces this when refresh-schemas runs."
+            "description": "Foreign key to poc_studio_poc."
           },
           "stage": {
             "type": "string",
             "format": "single-select",
             "title": "Stage",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "0_kickoff",
                 "title": "0 kickoff"
               },
               {
-                "const": "1_signal_capture",
-                "title": "1 signal capture"
+                "const": "1_signal",
+                "title": "1 signal"
               },
               {
-                "const": "2_research_assess",
-                "title": "2 research assess"
+                "const": "2_research",
+                "title": "2 research"
               },
               {
                 "const": "3_scope",
                 "title": "3 scope"
               },
               {
-                "const": "4_design_system",
-                "title": "4 design system"
+                "const": "4_design",
+                "title": "4 design"
               },
               {
                 "const": "5_build",
@@ -643,11 +576,10 @@
                 "title": "7 collaterals"
               },
               {
-                "const": "demo_ready",
-                "title": "demo ready"
+                "const": "gates",
+                "title": "gates"
               }
-            ],
-            "filterable": true
+            ]
           },
           "version": {
             "type": "integer",
@@ -659,90 +591,47 @@
             "type": "string",
             "format": "single-select",
             "title": "Type",
+            "filterable": true,
             "oneOf": [
               {
-                "const": "research",
-                "title": "research"
+                "const": "markdown",
+                "title": "markdown"
               },
               {
-                "const": "assessment",
-                "title": "assessment"
+                "const": "html",
+                "title": "html"
               },
               {
-                "const": "context_notes",
-                "title": "context notes"
+                "const": "json",
+                "title": "json"
               },
               {
-                "const": "data_plan",
-                "title": "data plan"
-              },
-              {
-                "const": "scope",
-                "title": "scope"
-              },
-              {
-                "const": "brd",
-                "title": "brd"
-              },
-              {
-                "const": "design_system",
-                "title": "design system"
-              },
-              {
-                "const": "evidence",
-                "title": "evidence"
-              },
-              {
-                "const": "rehearsal",
-                "title": "rehearsal"
-              },
-              {
-                "const": "checks",
-                "title": "checks"
-              },
-              {
-                "const": "runbook",
-                "title": "runbook"
-              },
-              {
-                "const": "explainer",
-                "title": "explainer"
-              },
-              {
-                "const": "video",
-                "title": "video"
+                "const": "csv",
+                "title": "csv"
               },
               {
                 "const": "pdf",
                 "title": "pdf"
               },
               {
-                "const": "field_note",
-                "title": "field note"
+                "const": "image",
+                "title": "image"
               },
               {
-                "const": "gate_pack",
-                "title": "gate pack"
-              },
-              {
-                "const": "gate_decision",
-                "title": "gate decision"
-              },
-              {
-                "const": "text2code_prompt",
-                "title": "text2code prompt"
+                "const": "video",
+                "title": "video"
               },
               {
                 "const": "other",
                 "title": "other"
               }
-            ],
-            "filterable": true
+            ]
           },
           "gate": {
             "type": "string",
             "format": "single-select",
             "title": "Gate",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "none",
@@ -764,13 +653,13 @@
                 "const": "G4",
                 "title": "G4"
               }
-            ],
-            "filterable": true
+            ]
           },
           "status": {
             "type": "string",
             "format": "single-select",
             "title": "Status",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "draft",
@@ -788,8 +677,7 @@
                 "const": "superseded",
                 "title": "superseded"
               }
-            ],
-            "filterable": true
+            ]
           },
           "file": {
             "type": "object",
@@ -887,14 +775,14 @@
             "format": "single-select",
             "title": "POC",
             "filterable": true,
-            "description": "Reference to a poc_studio_poc record. The tenant's own definition (and the value it stores) replaces this when refresh-schemas runs."
+            "description": "Foreign key to poc_studio_poc."
           },
           "related_document": {
             "type": "string",
             "format": "single-select",
             "title": "Related document",
             "filterable": true,
-            "description": "Reference to a poc_studio_document record. The tenant's own definition (and the value it stores) replaces this when refresh-schemas runs."
+            "description": "Foreign key to poc_studio_document."
           },
           "feedback": {
             "type": "string",
@@ -913,38 +801,43 @@
             "type": "string",
             "format": "single-select",
             "title": "Where",
+            "filterable": true,
             "oneOf": [
               {
-                "const": "chat",
-                "title": "chat"
+                "const": "session",
+                "title": "session"
+              },
+              {
+                "const": "slack",
+                "title": "slack"
               }
-            ],
-            "filterable": true
+            ]
           },
           "poc_stage": {
             "type": "string",
             "format": "single-select",
             "title": "Poc stage",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "0_kickoff",
                 "title": "0 kickoff"
               },
               {
-                "const": "1_signal_capture",
-                "title": "1 signal capture"
+                "const": "1_signal",
+                "title": "1 signal"
               },
               {
-                "const": "2_research_assess",
-                "title": "2 research assess"
+                "const": "2_research",
+                "title": "2 research"
               },
               {
                 "const": "3_scope",
                 "title": "3 scope"
               },
               {
-                "const": "4_design_system",
-                "title": "4 design system"
+                "const": "4_design",
+                "title": "4 design"
               },
               {
                 "const": "5_build",
@@ -962,13 +855,13 @@
                 "const": "demo_ready",
                 "title": "demo ready"
               }
-            ],
-            "filterable": true
+            ]
           },
           "gate": {
             "type": "string",
             "format": "single-select",
             "title": "Gate",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "none",
@@ -990,21 +883,17 @@
                 "const": "G4",
                 "title": "G4"
               }
-            ],
-            "filterable": true
+            ]
           },
           "category": {
             "type": "string",
             "format": "single-select",
             "title": "Category",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "scope",
                 "title": "scope"
-              },
-              {
-                "const": "requirement",
-                "title": "requirement"
               },
               {
                 "const": "design",
@@ -1015,32 +904,28 @@
                 "title": "data"
               },
               {
-                "const": "build_defect",
-                "title": "build defect"
+                "const": "bug",
+                "title": "bug"
               },
               {
                 "const": "content",
                 "title": "content"
               },
               {
-                "const": "collateral",
-                "title": "collateral"
-              },
-              {
                 "const": "process",
                 "title": "process"
               },
               {
-                "const": "skill",
-                "title": "skill"
+                "const": "other",
+                "title": "other"
               }
-            ],
-            "filterable": true
+            ]
           },
           "severity": {
             "type": "string",
             "format": "single-select",
             "title": "Severity",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "low",
@@ -1053,41 +938,32 @@
               {
                 "const": "high",
                 "title": "high"
-              },
-              {
-                "const": "blocker",
-                "title": "blocker"
               }
-            ],
-            "filterable": true
+            ]
           },
           "status": {
             "type": "string",
             "format": "single-select",
             "title": "Status",
+            "filterable": true,
             "oneOf": [
               {
                 "const": "open",
                 "title": "open"
               },
               {
-                "const": "acknowledged",
-                "title": "acknowledged"
-              },
-              {
                 "const": "in_progress",
                 "title": "in progress"
               },
               {
-                "const": "done",
-                "title": "done"
+                "const": "resolved",
+                "title": "resolved"
               },
               {
-                "const": "wont_do",
-                "title": "wont do"
+                "const": "wont_fix",
+                "title": "wont fix"
               }
-            ],
-            "filterable": true
+            ]
           },
           "action_taken": {
             "type": "string",
