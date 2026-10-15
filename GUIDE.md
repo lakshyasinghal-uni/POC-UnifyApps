@@ -2,19 +2,19 @@
 
 POC Studio runs a UnifyApps POC from the first client signal to a released demo. You type what
 you want; it researches, scopes, designs, builds and documents it, and stops for you at four
-gates. Everything it makes is saved to Orbit.
+gates. Everything it makes is saved to the Orbit Studio objects on your tenant.
 
 ## Before you start
 
-- The **POC Studio** plugin, version 0.4.9 or later (auto-update keeps it current;
+- The **POC Studio** plugin, version 0.5.0 or later (auto-update keeps it current;
   `/poc-studio:update` checks by hand), and the **Nebula** plugin (the first build updates
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
-  and Orbit; asks who approves gates and where gate messages go; and runs one test gate.
-- For Orbit, sign in to Orbit in the browser tab it opens. Every Orbit write then runs inside
-  that tab, so your session never leaves the browser. (Optional: `ORBIT_COOKIE`, or
-  `ORBIT_USERNAME` and `ORBIT_PASSWORD` for a local account, as environment secrets, lets it
-  write without a browser. Never paste them into the chat.)
+  and the four Orbit Studio objects; finds your Slack chat for gate messages; and runs one
+  test gate.
+- Orbit write-back goes through the Orbit Studio API hosted on Orbit, which needs no token or
+  sign-in. `/poc-studio:connect` checks it works; if Orbit cannot be reached, records are kept
+  in your working folder.
 
 ## Step by step
 

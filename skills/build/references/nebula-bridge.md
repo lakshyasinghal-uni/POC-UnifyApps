@@ -170,7 +170,7 @@ Sonic path also uses). What Studio changes:
 - A builder's `needs_confirmation` that is a client decision goes to the person, with the
   Stand-in's draft; a platform question is still answered through ask-nebula.md.
 - Deploys and publishes wait where Nebula's Zen run loop says they wait, as a question.
-- Gates, the write-back check, run state and feedback tickets are the same as in Sonic.
+- Gates, the save check, run state and feedback tickets are the same as in Sonic.
 
 If a Zen skill or command named here is missing from the installed Nebula, say so in one line
 and run that step the Sonic way, asking the person each open question as a Zen question.

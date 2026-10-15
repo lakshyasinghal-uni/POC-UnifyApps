@@ -14,12 +14,12 @@ made, and waits. Nothing past a gate starts until the owner answers it.
 These are the only documents a POC produces for review. Everything else the team writes along
 the way (the decision ledger, storylines, the data plan, design notes, the Nebula brief, the
 entity table, rehearsal and check results, the Text2Code prompt) is a working document: saved to
-Orbit so a resume can carry on, never sent as a gate document.
+the objects so a resume can carry on, never sent as a gate document.
 
-Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: a notification with the
-Orbit links in the owner's personal Slack chat, and the approval itself in the Claude chat,
-with the gate's reply words. Every pack document is saved to Orbit and read back before the gate is
-sent ([orbit-records.md](orbit-records.md) § The write-back check).
+Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: a notification with links to
+the records in the owner's personal Slack chat, and the approval itself in the Claude chat,
+with the gate's reply words. Every pack document is saved and read back before the gate is
+sent ([objects.md](objects.md) § The save check).
 
 ## Rules for every gate
 
@@ -31,13 +31,15 @@ sent ([orbit-records.md](orbit-records.md) § The write-back check).
   second round of changes, the third answer can only approve, approve with the open tickets
   listed as `Not done`, or stop.
 - **Stop means stop.** `block`, `stop` and `hold` end the build at that gate with what exists
-  saved to Orbit, the POC row set to `blocked`, `stopped` or `held`, and one line saying so.
+  saved, the POC row set to `status: blocked` (with `blocked_on: held · <reason>` for `hold`) or
+  `stopped`, a `gate_decided` activity, and one line saying so.
 - **Gates wait.** A gate waits in the Claude chat until the owner answers. If the session ends
-  first, the POC row keeps `run_state: waiting_gate` and the next resume shows the gate again.
+  first, the latest activity keeps `run_state: waiting_gate` and the next resume shows the gate
+  again.
   A gate is never skipped because nobody answered.
-- **Every answer is a record:** a `gate_decision` document and the gate's status on the POC
+- **Every answer is a record:** a `gate_decided` activity and the gate's status on the POC
   row, written before the next phase starts. The runbook carries the table of gate answers.
-- **Edits win.** When the owner edits a document in Orbit (`edited` at G1, or a newer version
+- **Edits win.** When the owner edits a document in the tenant (`edited` at G1, or a newer version
   at any gate), read the latest version back; it is the source of truth for every later phase.
 - **Feedback since the last gate** is listed in every gate message by ticket number and status.
 
@@ -48,22 +50,22 @@ Researcher found, else `standard`):
 
 | Days to the demo | Tier | Gates |
 |---|---|---|
-| 3 or fewer | `sprint` | G1 and G2 asked together at G2's place; G3 and G4 asked together at G4's place |
+| 3 or fewer | `express` | G1 and G2 asked together at G2's place; G3 and G4 asked together at G4's place |
 | 4 to 10 | `standard` | all four, separately |
 | more than 10 | `full` | all four, separately |
 
 The profile's `gates` line overrides the tier (`full` or `merged`). A merged gate shows both
 packs and takes both gates' reply words (`approve` approves both; anything else names the
-gate it is about). It is still two `gate_decision` records. On the POC row the first gate's
-status carries the answer and the second gate's status is `merged` (Orbit: `skipped_merged`).
+gate it is about). It is still two `gate_decided` activities, and both gates' statuses on the
+POC row carry the answer.
 
 In a merged G1 and G2, phase 2 runs before G1 is answered. When the answer is `block` for G1,
-the BRD, the design system and every working document phase 2 made are set to `superseded`, the POC goes to `status: blocked`, `run_state:
-abandoned`, and nothing is built.
+the BRD, the design system and every working document phase 2 made are set to `superseded`, the POC goes to `status: stopped`, run state
+`abandoned`, and nothing is built.
 
 ## G1 · Path
 
-**When:** at the end of phase 1, once the research document is written and saved to Orbit.
+**When:** at the end of phase 1, once the research document is written and saved.
 
 **Pack:** the research document (status `in_review`). Besides the web research, it carries two
 sections the moderator adds from the phase's working documents: **What the client and team
@@ -74,7 +76,7 @@ the data plan and the Scout's tenant map:
 ```markdown
 ## Readiness
 
-Recommendation: <proceed | proceed partial | block> · tier <sprint | standard | full>
+Recommendation: <proceed | proceed partial | block> · tier <express | standard | full>
 
 | Area | Score 1–5 | Why, with its source |
 |---|---|---|
@@ -124,7 +126,7 @@ BRD and design system say.
 
 **Pack:** the app's link. The gate message itself says, in a few lines, how many beats passed
 rehearsal and how many checks passed, and lists anything unverified; the rehearsal and check
-results are working documents in Orbit for anyone who wants the detail.
+results are working documents in the objects for anyone who wants the detail.
 
 **Reply words:** `approve` · `changes: …` · `stop`.
 
@@ -137,7 +139,7 @@ reopens G3. It starts phase 4.
 
 ## G4 · Release
 
-**When:** at the end of phase 4, once the collaterals are made and saved to Orbit.
+**When:** at the end of phase 4, once the collaterals are made and saved.
 
 **Pack:** the collaterals: the runbook, the explainer, the video and its PDFs when made, and the
 field note: five lines for the field team (what the demo shows, the link, how long it
@@ -147,4 +149,5 @@ for the owner to send.
 **Reply words:** `approve` · `changes: …` · `hold`.
 
 **After:** `approve` marks the runbook `Demo-ready · released by <name> on <date>`, the POC row
-`released`, stage `demo_ready`. `hold` keeps everything as it is, `held`, with the reason.
+`status: demo_ready`, stage `8_demo_ready`. `hold` keeps everything as it is, with `status:
+blocked` and `blocked_on: held · <reason>`.

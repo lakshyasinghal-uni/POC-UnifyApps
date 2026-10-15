@@ -8,7 +8,7 @@
     {
       "name": "poc-studio",
       "source": "./",
-      "description": "Runs a UnifyApps POC end to end: research, BRD, design system, a code-first build and collaterals, with four owner gates in Slack and every document saved to Orbit."
+      "description": "Runs a UnifyApps POC end to end: research, BRD, design system, a code-first build and collaterals, with four owner gates in Slack and every record written to the Orbit Studio objects through an API hosted on Orbit."
     }
   ]
 }

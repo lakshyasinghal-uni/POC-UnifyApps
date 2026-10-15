@@ -6,6 +6,37 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.5.0 (2026-10-16)
+
+- **The Orbit write-back starts afresh.** The old path is removed: `scripts/orbit-api.mjs`, the
+  signed-in tab transport (`scripts/orbit-tab.mjs` and its bundle), the mapping contract
+  (`orbit-contract.json`), `orbit-objects.json`, `orbit-records.md`, the schema check, the
+  contract test, the self-test, the write queue and `flush`, session claims and heartbeats, and
+  the settings document on the setup row. POC Studio no longer signs in to Orbit at all: no
+  cookie, no password, no browser tab.
+- **New targets: the four Orbit Studio objects** on orbit.uat: `orbit_studio_poc`,
+  `orbit_studio_document`, `orbit_studio_feedback` and `orbit_studio_activity`, with their live
+  fields and options recorded in `skills/build/references/objects.md`. Skills write the
+  objects' own values (stages `1_signal_capture` … `8_demo_ready`, gates `g1` … `g4`, tier
+  `express` in place of `sprint`, POC status `running | waiting | blocked | stopped |
+  demo_ready`) and build every key: `POC-<client-slug>-<YYYYMMDD>`,
+  `<poc_id>__<stage>__<slug>__v<n>`, `FB-<n>`, `ACT-<n>`.
+- **The activity log carries the run.** Gate posts and decisions, documents saved, tickets
+  raised and closed, stage starts and ends, stops and restarts are `orbit_studio_activity`
+  rows; each note carries the run state, resume point and build mode, which a resume reads
+  from the latest one. Gate decisions are `gate_decided` activities instead of documents.
+- **Write-back goes through the Orbit Studio API**: automations hosted on Orbit and published
+  in API Manager under the group `orbit-studio`, with a No Auth access profile, so no token,
+  cookie or password is needed. The first endpoint, `log-activity`, is live and writes
+  `orbit_studio_activity` rows; the POC, document and feedback endpoints are being built.
+  Until an endpoint is live, or when Orbit refuses or cannot be reached, records are kept as
+  JSON files under `$STUDIO/objects/` and setup and the build say so in one line.
+- **`/poc-studio:connect`**, a new skill: checks that the API accepts calls (writing nothing),
+  says what to fix when it does not, and sets out the guardrails every write-back follows:
+  only POC Studio's own steps write, only to the POC in hand, only listed endpoints, fields and
+  values, never a delete, tests marked `[TEST]`, no secrets in any field. Setup runs it.
+- **`scripts/studio-api.mjs`**: `status`, `check` and `call <endpoint> @file [--debug]`.
+
 ## 0.4.11 (2026-10-15)
 
 - **The plugin's home is now `lakshyasinghal-uni/POC-UnifyApps`.** The install commands
