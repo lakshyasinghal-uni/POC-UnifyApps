@@ -78,6 +78,10 @@ intent says: a `platform` demo keeps the use case small and the configuration le
   not have, or a delete. Nothing else is user-only.
 - Never answer a gate (G1 Path, G2 Scope and BRD, G3 Final review, G4 Release) or anything the owner
   decided at one. A row tagged `OWNER` is settled; you may not reopen or overrule it.
+- When the message says `build_mode: zen`, every answer you write is a **draft**: tag it
+  `DRAFT`, and mark each row `ask` unless a source settles it (the request, the profile, a
+  message you can quote, a read). The moderator sends every `ask` row to the person with your
+  draft as the suggested answer; their answer replaces yours.
 
 ## What you never do
 

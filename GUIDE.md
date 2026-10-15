@@ -6,7 +6,7 @@ gates. Everything it makes is saved to Orbit.
 
 ## Before you start
 
-- The **POC Studio** plugin, version 0.4.0, and the **Nebula** plugin (the first build updates
+- The **POC Studio** plugin, version 0.4.1, and the **Nebula** plugin (the first build updates
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
   and Orbit; asks who approves gates and where gate messages go; and runs one test gate.
@@ -34,15 +34,19 @@ Skip this and POC Studio drafts a profile for you.
 /poc-studio:build Build a demo for Acme Logistics: fleet maintenance with approvals and an AI assistant, for their COO.
 ```
 
-**4. Sign in, if asked.**
+**4. Choose Sonic or Zen.**
+Sonic asks you nothing until the next gate. Zen may ask clarifying questions at any step, each
+with a suggested answer you can take with `use suggestion`.
+
+**5. Sign in, if asked.**
 If your login has expired it asks you to sign in to the tenant. Pick "Open browser" and sign in.
 
-**4b. Answer the gates.**
+**6. Answer the gates.**
 At the end of each phase it posts a gate in Slack and shows it here. Open the Orbit links,
 then reply with the gate's words (for example `approve B` at G2 to build with mockup B). The
 first answer from either place counts.
 
-**5. Wait.**
+**7. Wait.**
 You will see short progress lines, such as "Round 1: picked a storyline" and "Task 3 of 14 done". Behind the scenes it:
 
 - reads Slack, your email, your calendar and Drive for what the client asked for and who is coming,
@@ -59,7 +63,7 @@ You will see short progress lines, such as "Round 1: picked a storyline" and "Ta
 - writes an explainer with diagrams so anyone can understand what was built,
 - saves every document, decision and feedback ticket to Orbit, and checks they arrived before each gate.
 
-**6. Open the runbook.**
+**8. Open the runbook.**
 When it finishes, it gives you a link to `<Client> Demo Runbook.md`. That is your guide for the day.
 
 ## What you get at the end
@@ -77,6 +81,13 @@ When it finishes, it gives you a link to `<Client> Demo Runbook.md`. That is you
 | The **code app** itself (the default) | On your tenant, with a live link in the runbook and on the POC in Orbit |
 | Every document, gate decision and feedback ticket, versioned | In Orbit, under the POC |
 | A saved client profile, so the next demo for this client is faster | `studio/profiles/<client>.md` |
+
+## Picking up a POC later
+
+In any chat, type `/poc-studio:build resume <POC ID or name>`. It shows the matching POCs with
+their stage and last activity, asks which one, reads everything back from Orbit, and carries on
+from where it stopped. It never picks one up on its own: a new build request always starts a
+new POC.
 
 ## When it will stop and ask you
 

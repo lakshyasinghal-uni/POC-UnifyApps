@@ -9,12 +9,22 @@
  *   ORBIT_IDP       local identity provider id (UAT default 65d2f4cf672d16da08efc3d0)
  *   ORBIT_BUCKET    upload bucket (default uat-uploads.unifyapps.com)
  *   ORBIT_EXPECT    the Orbit user (email or username) setup recorded; `check` warns on a mismatch
- *   ORBIT_QUEUE     queued-writes file (default studio/.orbit-queue.jsonl)
+ *   ORBIT_QUEUE     queued-writes file (default studio/.orbit-queue.jsonl); writes that can never be
+ *                   replayed move to the same path with .dead.jsonl, each with a feedback ticket
+ *   ORBIT_TAKEOVER_HOURS   a heartbeat younger than this belongs to a live session (default 2)
  *
- * Commands (every result is one JSON line on stdout; exit 0 ok, 1 error, 3 queued for later):
+ * Commands (every result is one JSON line on stdout; exit 0 ok, 1 error, 3 queued for later,
+ * 4 another session holds the POC):
  *   check                                      who is signed in, and whether the three objects exist
  *   schema   <objectId>                        the live object definition
+ *   refresh-schemas [--file <orbit-objects.json>]  write the live schemas of the three objects into the file
  *   ensure-objects [--file <orbit-objects.json>]   create any missing object, never alter one
+ *   new-poc  <json | @file>                    create a POC row; Orbit generates poc_id (POC-_1001 …), returned
+ *   find-poc <text> [--limit n]                POCs whose id, name, client or use case match, newest first
+ *   claim    --poc <id> --session <link> [--force]   take the row for this session; exit 4 if another
+ *                                              session's heartbeat is younger than ORBIT_TAKEOVER_HOURS
+ *   heartbeat --poc <id> --session <link> [--run-state s] [--resume-from r] [--stall-reason r]
+ *            [--stage s] [--current-gate g]    keep the run fields current
  *   get      <objectId> <recordId>
  *   find     <objectId> [--field f --value v]... [--in f=v1,v2] [--limit n] [--sort f:desc]
  *   create   <objectId> <json | @file>
@@ -22,9 +32,12 @@
  *   upload   <path> [--name n] [--mime m]      returns the File-field value
  *   save-doc --poc <pocId> --stage <stage> --slug <slug> --title <t> --type <docType> --file <path>
  *            [--status draft|in_review|approved] [--gate G1..G4] [--by <name>]
+ *   fetch-doc --poc <pocId> --slug <slug> --out <path>   the latest version's text (or file) to a local path
  *   readback --poc <pocId>                     every latest document: file uploaded, version, status
  *   sync-counts --poc <pocId>                  recompute document_count and open_feedback_count on the POC row
- *   flush                                      replay queued writes in order
+ *   flush                                      replay queued writes in order; one that can never succeed
+ *                                              (its local file is gone, or Orbit rejects it) is skipped
+ *                                              and becomes a feedback ticket
  *
  * It never deletes: there is no delete command, and superseding a document is a status change.
  */
@@ -34,7 +47,9 @@ import path from "node:path";
 const BASE = (process.env.ORBIT_BASE || "https://orbit.uat.unifyapps.com").replace(/\/$/, "");
 const IDP = process.env.ORBIT_IDP || "65d2f4cf672d16da08efc3d0";
 const BUCKET = process.env.ORBIT_BUCKET || "uat-uploads.unifyapps.com";
-const QUEUE = process.env.ORBIT_QUEUE || path.join("studio", ".orbit-queue.jsonl");
+const QUEUE = path.resolve(process.env.ORBIT_QUEUE || path.join("studio", ".orbit-queue.jsonl"));
+const DEAD = QUEUE.replace(/\.jsonl$/, "") + ".dead.jsonl";
+const TAKEOVER_MS = Number(process.env.ORBIT_TAKEOVER_HOURS || 2) * 3600_000;
 const OBJ = { poc: "poc_studio_poc", doc: "poc_studio_document", fb: "poc_studio_feedback" };
 const TEXT_MAX = 1_000_000;
 const PART = 8 * 1024 * 1024;
@@ -129,6 +144,22 @@ async function updateRecord(obj, id, patch) {
   return api("/api/entity/update", { method: "POST", body: JSON.stringify({ id: cur.id, entityType: obj, properties, version: cur.version }) });
 }
 
+const OPEN_RUN = new Set(["running", "waiting_gate"]);
+function pocSummary(r) {
+  const p = r.properties || {};
+  return { poc_id: p.poc_id || r.id, poc_name: p.poc_name || null, client: p.client || null, use_case: p.use_case || null,
+    stage: p.stage || null, run_state: p.run_state || null, build_mode: p.build_mode || null, current_gate: p.current_gate || null,
+    resume_from: p.resume_from || null, stall_reason: p.stall_reason || null, active_session: p.active_session || null,
+    last_activity: p.last_heartbeat_at || p.updated_at || null };
+}
+async function downloadFile(file) {
+  const fileDetails = { fileType: file.mimeType || file.fileType, name: file.name, size: file.size, source: file.source, sourceType: "CLOUD_STORAGE", "ua:type": "FILE" };
+  const signed = await api("/api/file/signed-url?preview=true&expiryTime=1", { method: "POST", body: JSON.stringify({ fileDetails }) });
+  const r = await rawFetch(`${signed.url}&isPublic=false&preview=true`);
+  if (!r.ok) throw new Error(`File download → ${r.status}`);
+  return Buffer.from(await r.arrayBuffer());
+}
+
 // ---------- upload (Uppy S3 multipart, as the Orbit UI does) ----------
 async function userContext() { return api("/api/user-context?includeRoles=true"); }
 async function upload(file, name, mime) {
@@ -202,8 +233,9 @@ async function readback(pocId) {
     fileUploaded: Boolean(p.file?.source) && (p.file?.size ?? 0) > 0 && (p.size_bytes ? p.file.size === p.size_bytes : true),
   }));
   const queued = fs.existsSync(QUEUE) ? fs.readFileSync(QUEUE, "utf8").split("\n").filter(Boolean).length : 0;
+  const skippedWrites = fs.existsSync(DEAD) ? fs.readFileSync(DEAD, "utf8").split("\n").filter(Boolean).length : 0;
   const bad = rows.filter((r) => !r.fileUploaded || r.status === "superseded");
-  return { poc: pocId, documents: rows.length, queued, problems: bad, ok: bad.length === 0 && queued === 0, rows };
+  return { poc: pocId, documents: rows.length, queued, skippedWrites, problems: bad, ok: bad.length === 0 && queued === 0, rows };
 }
 
 // ---------- queue ----------
@@ -212,20 +244,33 @@ function enqueue(entry) {
   fs.appendFileSync(QUEUE, JSON.stringify({ ...entry, queuedAt: new Date().toISOString() }) + "\n");
 }
 async function flush() {
-  if (!fs.existsSync(QUEUE)) return { replayed: 0, remaining: 0 };
+  if (!fs.existsSync(QUEUE)) return { replayed: 0, remaining: 0, skipped: [] };
   const lines = fs.readFileSync(QUEUE, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l));
-  const left = []; let done = 0; const results = [];
+  const left = []; let done = 0; const results = []; const skipped = [];
   for (const e of lines) {
-    if (left.length) { left.push(e); continue; } // keep order: stop replaying at the first failure
+    if (left.length) { left.push(e); continue; } // keep order: stop replaying at the first write that may still succeed later
     try { results.push(await run(e.cmd, e.args, e.flags, false)); done++; }
-    catch (err) { left.push(e); results.push({ failed: e.cmd, error: err.message }); }
+    catch (err) {
+      if (err instanceof NetError || err instanceof AuthError) { left.push(e); results.push({ failed: e.cmd, error: err.message }); continue; }
+      // This write can never succeed as queued (its local file is gone, or Orbit rejects it): skip it and raise a ticket.
+      const poc = (e.flags?.poc || [])[0] || e.args?.find?.((a) => a && typeof a === "object" && a.poc_id)?.poc_id || e.args?.[1];
+      const words = `A queued Orbit write could not be replayed and was skipped: ${e.cmd} ${(e.flags?.slug || [""])[0] || ""} (queued ${e.queuedAt}). Reason: ${err.message}`.slice(0, 2000);
+      let ticket = null;
+      try {
+        const r = await createRecord(OBJ.fb, { poc_id: poc, summary: "Queued write skipped", words, given_by: "POC Studio", giver_role: "other", ledger_tag: "COMMENT",
+          channel: "chat", category: "process", severity: "high", status: "open", created_at: Date.now() });
+        ticket = r?.id || r?.properties?.ticket || null;
+      } catch (te) { if (te instanceof NetError || te instanceof AuthError) { left.push(e); results.push({ failed: e.cmd, error: te.message }); continue; } }
+      fs.appendFileSync(DEAD, JSON.stringify({ ...e, skippedAt: new Date().toISOString(), reason: err.message, ticket }) + "\n");
+      skipped.push({ cmd: e.cmd, reason: err.message, ticket });
+    }
   }
   fs.writeFileSync(QUEUE, left.map((l) => JSON.stringify(l)).join("\n") + (left.length ? "\n" : ""));
-  return { replayed: done, remaining: left.length, results };
+  return { replayed: done, remaining: left.length, skipped, results };
 }
 
 // ---------- commands ----------
-const WRITES = new Set(["create", "update", "save-doc"]);
+const WRITES = new Set(["create", "update", "save-doc", "heartbeat", "new-poc"]);
 async function run(c, p, f, canQueue = true) {
   const F = (k, d) => (f[k] ? f[k][f[k].length - 1] : d);
   try {
@@ -253,6 +298,84 @@ async function run(c, p, f, canQueue = true) {
         }
         return { objects: report };
       }
+      case "refresh-schemas": {
+        const file = F("file", path.join(path.dirname(new URL(import.meta.url).pathname), "..", "skills", "build", "references", "orbit-objects.json"));
+        const spec = JSON.parse(fs.readFileSync(file, "utf8"));
+        const changed = [];
+        for (const o of spec.objects) {
+          const live = await getObject(o.id);
+          if (!live) { changed.push({ id: o.id, action: "not on the tenant, left as written" }); continue; }
+          const s = live.schema?.schema || live.input?.schema;
+          if (s) o.schema = s;
+          const order = live.input?.layout?.["ui:order"] || live.layout?.["ui:order"];
+          if (order) o.layout = { "ui:order": order };
+          changed.push({ id: o.id, action: "replaced with the live schema", fields: Object.keys(o.schema?.properties || {}).length });
+        }
+        spec._about = `POC Studio's three Orbit objects, read from ${BASE} on ${new Date().toISOString().slice(0, 10)} with refresh-schemas.`;
+        fs.writeFileSync(file, JSON.stringify(spec, null, 2) + "\n");
+        return { file, objects: changed };
+      }
+      case "new-poc": {
+        const props = { ...(typeof p[0] === "object" ? p[0] : readJsonArg(p[0])) };
+        delete props.poc_id; // Orbit generates it
+        const now = Date.now();
+        props.created_at ??= now; props.updated_at = now; props.last_heartbeat_at ??= now; props.run_state ??= "running";
+        const r = await createRecord(OBJ.poc, props);
+        const id = r?.properties?.poc_id || r?.id;
+        if (!id) throw new Error("Orbit created the POC row but returned no poc_id; find it with find-poc before retrying, never create a second one.");
+        return { poc_id: id, version: r?.version };
+      }
+      case "find-poc": {
+        const q = (p.join(" ") || "").toLowerCase().trim();
+        const exact = q ? await getRecord(OBJ.poc, p.join(" ").trim()) : null;
+        const recent = await findRecords(OBJ.poc, [], Number(F("scan", 300)), "updated_at:desc");
+        const hits = recent.filter((r) => { const x = r.properties || {};
+          return !q || [x.poc_id, x.poc_name, x.client, x.client_slug, x.use_case, x.use_case_slug].filter(Boolean).some((v) => String(v).toLowerCase().includes(q)); });
+        const rows = [exact, ...hits].filter(Boolean).filter((r, i, a) => a.findIndex((s) => (s.properties?.poc_id || s.id) === (r.properties?.poc_id || r.id)) === i);
+        return { count: rows.length, matches: rows.slice(0, Number(F("limit", 10))).map(pocSummary) };
+      }
+      case "claim": {
+        const id = F("poc"), session = F("session");
+        if (!id || !session) throw new Error("claim needs --poc and --session");
+        const r = await getRecord(OBJ.poc, id); if (!r) throw new Error(`POC ${id} not found`);
+        const x = r.properties || {};
+        const age = Date.now() - (x.last_heartbeat_at || 0);
+        const other = x.active_session && x.active_session !== session;
+        if (other && OPEN_RUN.has(x.run_state) && age < TAKEOVER_MS && F("force") !== "true") {
+          const e = new Error(`Another session is working on ${id}: ${x.active_session}, last heartbeat ${Math.round(age / 60000)} min ago. Ask before taking over.`);
+          e.code = 4; e.extra = { busy: true, active_session: x.active_session, minutesAgo: Math.round(age / 60000), run_state: x.run_state, resume_from: x.resume_from || null }; throw e;
+        }
+        const sessions = [session, ...String(x.sessions || "").split("\n").filter((s) => s && s !== session)].join("\n");
+        await updateRecord(OBJ.poc, id, { active_session: session, last_heartbeat_at: Date.now(), updated_at: Date.now(), sessions,
+          ...(x.run_state === "stalled" || x.run_state === "failed" || !x.run_state ? { run_state: "running" } : {}) });
+        return { poc_id: id, claimed: true, tookOverFrom: other ? x.active_session : null, previous: pocSummary(r) };
+      }
+      case "heartbeat": {
+        const id = F("poc"); if (!id) throw new Error("heartbeat needs --poc");
+        const patch = { last_heartbeat_at: Date.now(), updated_at: Date.now() };
+        if (F("session")) patch.active_session = F("session");
+        if (F("run-state")) patch.run_state = F("run-state");
+        if (F("resume-from")) patch.resume_from = F("resume-from");
+        if (F("stall-reason") !== undefined) patch.stall_reason = F("stall-reason") === "none" ? "" : F("stall-reason");
+        if (F("stage")) patch.stage = F("stage");
+        if (F("current-gate")) patch.current_gate = F("current-gate");
+        const r = await updateRecord(OBJ.poc, id, patch);
+        return { poc_id: id, version: r?.version, ...patch };
+      }
+      case "fetch-doc": {
+        const id = F("poc"), slug = F("slug"), outPath = F("out");
+        if (!id || !slug || !outPath) throw new Error("fetch-doc needs --poc, --slug and --out");
+        const docs = await findRecords(OBJ.doc, [{ op: "EQUAL", field: "properties.poc_id", values: [id] }, { op: "EQUAL", field: "properties.file_slug", values: [slug] }], 200);
+        const latest = docs.filter((d) => d.properties?.status !== "superseded").sort((a, b) => (b.properties?.version || 0) - (a.properties?.version || 0))[0]
+          || docs.sort((a, b) => (b.properties?.version || 0) - (a.properties?.version || 0))[0];
+        if (!latest) throw new Error(`No document ${slug} for ${id}`);
+        const x = latest.properties;
+        fs.mkdirSync(path.dirname(path.resolve(outPath)), { recursive: true });
+        const whole = x.content && (!x.size_bytes || Buffer.byteLength(x.content) >= x.size_bytes);
+        const bytes = whole ? Buffer.from(x.content) : await downloadFile(x.file);
+        fs.writeFileSync(outPath, bytes);
+        return { doc_id: x.doc_id, version: x.version, status: x.status, out: path.resolve(outPath), bytes: bytes.length, from: whole ? "content" : "file" };
+      }
       case "get": { const r = await getRecord(p[0], p[1]); if (!r) throw new Error(`${p[0]}/${p[1]} not found`); return r; }
       case "find": {
         const filters = [];
@@ -261,7 +384,7 @@ async function run(c, p, f, canQueue = true) {
         const rows = await findRecords(p[0], filters, Number(F("limit", 50)), F("sort"));
         return { count: rows.length, rows };
       }
-      case "create": { const r = await createRecord(p[0], typeof p[1] === "object" ? p[1] : readJsonArg(p[1])); return { id: r?.id, version: r?.version }; }
+      case "create": { const r = await createRecord(p[0], typeof p[1] === "object" ? p[1] : readJsonArg(p[1])); return { id: r?.id, version: r?.version, properties: r?.properties }; }
       case "update": { const r = await updateRecord(p[0], p[1], typeof p[2] === "object" ? p[2] : readJsonArg(p[2])); return { id: r?.id, version: r?.version }; }
       case "upload": return await upload(p[0], F("name"), F("mime"));
       case "save-doc": return await saveDoc({ poc: F("poc"), stage: F("stage"), slug: F("slug"), title: F("title"), type: F("type"), file: F("file"), status: F("status"), gate: F("gate"), by: F("by"), name: F("name") });
@@ -274,13 +397,14 @@ async function run(c, p, f, canQueue = true) {
         return { poc: id, document_count: docs.length, open_feedback_count: open.length };
       }
       case "flush": return await flush();
-      default: throw new Error(`unknown command "${c}". Commands: check, schema, ensure-objects, get, find, create, update, upload, save-doc, readback, sync-counts, flush`);
+      default: throw new Error(`unknown command "${c}". Commands: check, schema, refresh-schemas, ensure-objects, new-poc, find-poc, claim, heartbeat, get, find, create, update, upload, save-doc, fetch-doc, readback, sync-counts, flush`);
     }
   } catch (e) {
     if (canQueue && WRITES.has(c) && (e instanceof NetError || e instanceof AuthError)) {
       // A write that could not reach Orbit is kept, in order, for `flush`. A local file must still exist then.
-      const pinned = c === "create" || c === "update" ? p.map((x) => (typeof x === "string" && x.startsWith("@") ? readJsonArg(x) : x)) : p;
-      enqueue({ cmd: c, args: pinned, flags: f });
+      const pinned = ["create", "update", "new-poc"].includes(c) ? p.map((x) => (typeof x === "string" && x.startsWith("@") ? readJsonArg(x) : x)) : p;
+      const fl = { ...f }; if (fl.file) fl.file = fl.file.map((x) => path.resolve(x));
+      enqueue({ cmd: c, args: pinned, flags: fl });
       const err = new Error(e.message); err.queued = true; err.reconnect = e instanceof AuthError; throw err;
     }
     throw e;
@@ -291,4 +415,4 @@ run(cmd, pos, flags)
   .then((r) => out({ ok: true, ...((r && typeof r === "object" && !Array.isArray(r)) ? r : { result: r }) }))
   .catch((e) => (e.queued
     ? out({ ok: false, queued: true, reconnect: e.reconnect, error: e.message, next: "Reconnect Orbit, then run: node scripts/orbit-api.mjs flush" }, 3)
-    : fail(e.message)));
+    : e.code === 4 ? out({ ok: false, error: e.message, ...e.extra }, 4) : fail(e.message)));

@@ -43,8 +43,8 @@ Mirror Nebula's `start` skill from the CLI, taking answers from the profile inst
    `NEB state next --tenant <host> --after-login --json`.
 3. `pick_solution`: the solution is the profile's `solution` line.
    - `NEB solution resolve "<name>" --tenant <host> --json`. Exactly one `exact: true` match:
-     `NEB solution open --tenant <host> --id <id> --mode sonic --request "<request>" --json`.
-     No match: `NEB solution create --tenant <host> --name "<name>" --mode sonic --request "<request>" --json`.
+     `NEB solution open --tenant <host> --id <id> --mode <build_mode> --request "<request>" --json`.
+     No match: `NEB solution create --tenant <host> --name "<name>" --mode <build_mode> --request "<request>" --json`.
      Several inexact matches and no exact one: create, and log the row.
    - `WORKSPACE_SOLUTION_MISMATCH`: the folder holds another solution; rerun step 1's
      `continue_solution` branch with it. Never pass `--override-folder` on your own.
@@ -53,8 +53,8 @@ Mirror Nebula's `start` skill from the CLI, taking answers from the profile inst
    - `PLATFORM_UNREACHABLE` with `localFallback: true`: rerun the create once with
      `--storage local`, and log the row.
    - `PRODUCTION_BLOCKED` or `ENVIRONMENT_UNCONFIRMED`: show the message as it is and stop.
-4. `NEB solution mode sonic --json` (harmless when `--mode sonic` already recorded it), then
-   `NEB solution context --json`. Check `mode` is `sonic`. Keep `memory`, `features`,
+4. `NEB solution mode <build_mode> --json` (`sonic` or `zen`, the POC's build mode; harmless
+   when `--mode` already recorded it), then `NEB solution context --json`. Check `mode` matches. Keep `memory`, `features`,
    `plans` and `linkedEntities` for the Scout's message.
 5. `NEB solution refresh --json` before the Scout starts, so the cache is current.
 
@@ -155,6 +155,25 @@ This is Nebula's `sonic-routing` §5 path, which asks nothing.
    only for a fact the spec and plan will not carry forward: an unexplained failure, a tenant
    fact, a correction. Not for the Stand-in's ordinary decisions, which the runbook lists.
 4. `NEB solution context --json` so later requests see the persisted `execution` and plans.
+
+## Zen mode
+
+A POC whose `build_mode` is `zen` uses Nebula's Zen path in place of the Sonic commands above.
+Read the Zen skills from `$NEBULA/skills/` at run time and follow them, since their commands are
+Nebula's to define: `zen-brainstorming` (scoping by questionnaire, two rounds, in the shape of
+its `questionnaire-template.md`) and `zen-routing` (the plan and its `run-loop.md`, which the
+Sonic path also uses). What Studio changes:
+
+- Each questionnaire round goes to the person as questions between gates (gate-delivery.md),
+  with the Stand-in's draft as the suggested answer; their answers are the questionnaire's.
+- The brief carries the person's answers as `OWNER` assumptions.
+- A builder's `needs_confirmation` that is a client decision goes to the person, with the
+  Stand-in's draft; a platform question is still answered through ask-nebula.md.
+- Deploys and publishes wait where Nebula's Zen run loop says they wait, as a question.
+- Gates, the write-back check, run state and feedback tickets are the same as in Sonic.
+
+If a Zen skill or command named here is missing from the installed Nebula, say so in one line
+and run that step the Sonic way, asking the person each open question as a Zen question.
 
 ## Links and addresses
 

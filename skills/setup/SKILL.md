@@ -7,9 +7,10 @@ description: >
   person, and again whenever a connection breaks. It checks the Slack, Google Calendar and
   Google Drive connectors, connects Orbit by direct API or a signed-in browser tab, creates any
   missing Orbit object, records who approves gates and where gate messages go, runs one test
-  gate end to end, and writes poc-studio.yml with no secrets in it.
+  gate end to end, and saves the settings (no secrets) in Orbit with a local copy in
+  poc-studio.yml, so a new chat does not need setup again.
 metadata:
-  version: "0.4.0"
+  version: "0.4.1"
 ---
 
 # POC Studio: setup
@@ -50,8 +51,8 @@ Orbit holds every document, decision and feedback ticket
    browser (else Claude in Chrome), let the user sign in, and run `ps('GET',
    '/api/user-context')` from the helpers in orbit-records.md. Record `auth: tab`.
 
-Read who is signed in. When `poc-studio.yml` already names an Orbit user and this is someone
-else, or the user says they are someone else, warn in one line: everything will be written as
+Read who is signed in. When the saved settings (Orbit, else `poc-studio.yml`) already name an
+Orbit user and this is someone else, or the user says they are someone else, warn in one line: everything will be written as
 `<signed-in user>`. Ask whether to carry on or sign in as themselves.
 
 Then `orbit-api.mjs ensure-objects` (or the same calls from the tab). It creates any of
@@ -61,12 +62,15 @@ existed and which were created.
 
 ## 3. Approvers and where gate messages go
 
-Ask once, with one AskUserQuestion (two questions):
+Ask once, with one AskUserQuestion (three questions):
 
 1. `Who approves gates?` Options: `Just me`, `Me and my manager`, `Me and others` (free text:
    names). Their replies are the only ones that count at a gate.
 2. `Where should gate messages go?` Options: `DM to me` (the default), `Group DM with the
    approvers`, `A channel` (free text: the channel name).
+3. `If nobody answers a gate, put the POC on hold after?` Options: `3 days` (the default),
+   `1 day`, `7 days`, `Never` (free text for another number of hours). This is
+   `gate_expiry_hours`.
 
 Resolve every person to a Slack user ID with the Slack user search, and a channel name to its
 ID. A name that matches more than one person is asked back with the matches; never guess one.
@@ -82,8 +86,13 @@ not need it, the build does.
 
 ## 5. One test gate, end to end
 
-1. Create a POC row `POC-setup-test-<yyyymmdd>` (client `Setup test`, use case `Connection
-   test`, owner the user, approvers as answered, stage `0_kickoff`, status `running`).
+1. **Reuse this person's setup row.** `find-poc setup-test` and keep the row whose
+   `client_slug` is `setup-test` and whose `started_by` is the signed-in Orbit user (for
+   Harshal, the existing `POC-setup-test-20261015`). Only when there is none, create one with
+   `new-poc` (client `Setup test`, `client_slug: setup-test`, `poc_name: Setup test · <user>`,
+   use case `Connection test`, `started_by` the Orbit user, owner the user, stage
+   `0_kickoff`, status `running`, `build_mode: sonic`); Orbit generates its ID. Never create a
+   second setup row for the same person.
 2. Save a one-line test document with `save-doc` (stage `0_kickoff`, slug `setup-test`, type
    `gate_pack`).
 3. Run the write-back check from orbit-records.md.
@@ -91,18 +100,26 @@ not need it, the build does.
    header `Test gate`, to the destination chosen, and ask in the chat at the same time. The
    reply words are `approve` or `stop`.
 5. Take the first answer from either place, tell the other place, save the decision as a
-   `gate_decision` document, set the row's status to `stopped` with use case `Connection test
-   passed`, and run the write-back check again.
+   `gate_decision` document (a new version on each run), set the row's status to `stopped`,
+   `run_state: done`, use case `Connection test passed <date>`, and run the write-back check
+   again.
 
-The test row stays in Orbit as the record that setup passed; nothing is deleted.
+The setup row stays in Orbit as the record that setup passed, and as the home of the person's
+settings; nothing is deleted.
 
-## 6. poc-studio.yml
+## 6. Settings, in Orbit
 
-Write `poc-studio.yml` in the working folder, with **no secret in it**:
+The settings below are saved **in Orbit** as the `settings` document on the person's setup row
+(`save-doc --slug settings --type other --stage 0_kickoff`, YAML, a new version each time), so
+a new chat on any machine finds them without running setup again: the build reads them with
+`fetch-doc --poc <setup row> --slug settings`. A copy is also written to `poc-studio.yml` in the
+working folder as a local cache; Orbit's version wins when they differ. **No secret goes in
+either.**
 
 ```yaml
-version: 0.4.0
+version: 0.4.1
 checked: <ISO date and time>
+setup_row: <poc_id of the person's setup row>
 orbit:
   base: https://orbit.uat.unifyapps.com
   auth: env-cookie | env-local-account | tab
@@ -113,9 +130,10 @@ slack:
   approvers: [{ name: <name>, id: <U…> }]
   gate_destination: { type: dm | group_dm | channel, id: <D… | C… | G…> }
   reminder_hours: 24
+  gate_expiry_hours: 72 | <n> | never
 connectors: { slack: ok, calendar: ok | missing, drive: ok | missing }
 nebula: { version: <v>, code_builder: true | false }
-test_gate: { poc: POC-setup-test-<yyyymmdd>, answered_in: chat | slack, at: <ISO> }
+test_gate: { poc: <setup row>, answered_in: chat | slack, at: <ISO> }
 ```
 
 Finish with five lines at most: what is connected, what is missing and what that costs, who
@@ -124,5 +142,6 @@ approves, where gates go, and that `/poc-studio:build <request>` is ready.
 ## When to run it again
 
 Whenever the build's write-back check cannot reach Orbit, a Slack post fails, or the user
-changes approvers or the gate destination. Re-running keeps everything that still passes and
-redoes only what fails; it never creates a second copy of an object.
+changes approvers, the gate destination or the expiry. Re-running keeps everything that still
+passes and redoes only what fails; it never creates a second copy of an object or a second
+setup row.

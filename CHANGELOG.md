@@ -6,6 +6,42 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.1 (2026-10-15)
+
+- **Build mode, chosen once per POC:** a new build asks Sonic (no questions between gates;
+  Nebula in Sonic mode) or Zen (clarifying questions at any step; Nebula's Zen skills and
+  questionnaires; the Stand-in only drafts suggested answers). Stored as `build_mode`; a resume
+  uses it. Zen questions go out like gates.
+- **Orbit generates the POC ID** (`POC-_1001`, …). Rows are created without it (`new-poc`) and
+  the returned ID is used everywhere; nothing builds an ID from client, use case or date.
+  `poc_name`, `client_slug` and `use_case_slug` are kept for search.
+- **New build or resume, never guessed:** a build request always creates a new row; a resume
+  is asked for by ID or name, matches are shown with stage, run state, mode and last activity,
+  the person confirms, the working documents are read back from Orbit, and the open gate's
+  Slack thread is checked for an answer given meanwhile.
+- **Run state on the row:** `run_state`, `resume_from`, `stall_reason`, `active_session` and
+  `last_heartbeat_at`, kept current at every write-back check. A session that stops, or a
+  Nebula plan that fails, leaves `stalled` or `failed` with the exact resume point. Taking
+  over from a session with a heartbeat under 2 hours asks first. New reference
+  `run-control.md`.
+- **Working documents in Orbit:** ledger, rulings, storylines, scout map, `design.md`,
+  `code-design.md`, profile, brief, entity table with builder links, and a run log, saved as
+  they change, so a new chat can carry on.
+- **Failed build:** a failure document with the partial entity table, and the owner's choice
+  of retry, back to G2, or stop, in Slack and the chat. Nothing on the tenant is deleted.
+- **Settings live in Orbit** (a `settings` document on the person's setup row), so a new chat
+  needs no setup; `poc-studio.yml` is a local copy. Setup reuses the person's setup row and
+  asks how long a gate may wait before it expires to `held`.
+- **Every question between gates** (risky fix, failed build, design-system stops, narration,
+  delete, budget, Nebula restart, Zen questions) goes to Slack and the chat like a gate, with
+  reply words; sign-ins and credentials stay in the chat.
+- **Queued writes that can never be replayed** are skipped by `flush`, kept in a `.dead.jsonl`
+  file and raised as feedback tickets, so one lost file no longer blocks every gate.
+- A merged G1 that comes back `block` marks all phase 2 work `superseded`.
+- `orbit-api.mjs`: new `new-poc`, `find-poc`, `claim` (exit 4 when another session holds the
+  POC), `heartbeat`, `fetch-doc` and `refresh-schemas`. `orbit-objects.json` has the new POC
+  fields; run `refresh-schemas` against the tenant to match it to the live schemas exactly.
+
 ## 0.4.0 (2026-10-15)
 
 - **Orbit holds everything.** Three Orbit objects on orbit.uat (`poc_studio_poc`,

@@ -1,5 +1,8 @@
 # Gate delivery: Slack and the chat, at the same time
 
+This file covers every human step of a build: the four gates, and the questions between gates
+(§ Questions between gates). All of them go out the same way.
+
 Every gate in [gates.md](gates.md) is delivered the same way. It goes to Slack with links to
 the Orbit records and appears in the chat at once. The owner or an approver answers in
 whichever place they see first.
@@ -67,7 +70,44 @@ Case and punctuation do not matter. A reply that carries the words with a senten
   answered in Slack, and before every reminder. When the run is unattended, schedule a
   check of the thread back into this session every 30 minutes (send_later) until there is an
   answer, and post one reminder in the thread after `reminder_hours` (default 24). One
-  reminder only; after it, keep checking and wait.
+  reminder only; after it, keep checking and wait. A resume in a new session checks the
+  thread first (run-control.md § Resume).
+- **Expiry.** A gate or question still unanswered after `gate_expiry_hours` (the owner's
+  choice at setup, default 72) expires: post `<Gate> expired after <n> hours with no answer.
+  The POC is on hold; reply here or resume the build to pick it up.` in the thread and the
+  chat, set the gate's status `held`, the POC's `status: held`, `run_state: stalled`,
+  `stall_reason: <gate> expired`, `resume_from: <gate> · round <n>`, and stop checking. An
+  answer that arrives later is taken by the next resume.
+- **While waiting,** the POC row says `run_state: waiting_gate`, `resume_from: <gate> ·
+  round <n>` (or `Zen question · <step> · <key>`), so a new session knows exactly what is
+  open.
+
+## Questions between gates
+
+Zen clarifying questions, and the stops the build skill lists (a risky fix, a failed build,
+the design system's two stops, the narration approval, a delete, a budget that cannot be met,
+a Nebula update that needs a fresh session) go out exactly like a gate: write-back check
+first, Slack thread and chat at once, the first approver's answer counts, unclear replies
+asked back, the same reminder and expiry. The message has the step it comes from, the
+question, the Stand-in's suggested answer when there is one, and the reply words:
+
+| Question | Reply words |
+|---|---|
+| Zen question | `yes` / `no`, a letter (`a`, `b`, `c`) for a choice, or `answer: <words>`; `use suggestion` takes the Stand-in's draft |
+| Risky fix | `apply all` · `safe only` · `changes: …` |
+| Build failed | `retry` · `back to G2` · `stop` |
+| Brand hue | `a` or `b` (the two measured options) |
+| Client logo | `attached` (after attaching the file in the chat) · `placeholder` |
+| Narration | `approve` · `edited` · `skip video` |
+| Delete | `delete` · `keep` |
+| Budget | `cut: <what>` · `raise budget` · `stop` |
+| Nebula restart | `restarted` (after reloading plugins in a fresh session) · `stop` |
+
+Up to four questions that arrive together go in one message, numbered; the reply names the
+number (`2: use suggestion`). Each answer is saved with the run's other records: a Zen answer
+as an `OWNER` ledger row in the working ledger, any other as a `gate_decision`-type record
+with the question's header. Two stops never go to Slack: a sign-in, and a credential; they are
+asked in the chat alone, and the values are never written anywhere.
 
 ## After the answer
 
