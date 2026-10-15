@@ -63,11 +63,11 @@ It checks and connects, in this order:
 3. **The three Orbit objects** POC Studio writes to: `poc_studio_poc`, `poc_studio_document`
    and `poc_studio_feedback`. Any that is missing is created; none is ever changed or deleted.
 4. **Your personal Slack chat** for the four gate approvals (your own DM, posted as you
-   through your Slack connection), and how long a gate may wait before the POC goes on hold.
+   through your Slack connection), where gate notifications are sent.
 5. **Nebula**: its version, and whether it can build code apps. The first build updates it
    to the code-builder version if needed.
-6. **One test gate**, end to end: a test POC row and document in Orbit, a test gate in Slack
-   and the chat, your answer recorded and read back.
+6. **One test gate**, end to end: a test POC row and document in Orbit, a test notification in
+   your Slack, the approval in the chat, recorded and read back.
 
 It saves your settings in Orbit (with a copy in `poc-studio.yml`), with no secret in either,
 so a new chat finds them without running setup again. It also asks how long a gate may wait
@@ -92,8 +92,8 @@ To carry on with an existing POC, in this chat or a new one, name it:
 ```
 
 It finds the matches, shows each one's stage, run state, mode and last activity, asks which,
-reads its working files back from Orbit, takes any gate answer given in Slack meanwhile, and
-carries on from where it stopped. If another session worked on it in the last two hours, it
+reads its working files back from Orbit, shows any gate that was waiting, and carries on from
+where it stopped. If another session worked on it in the last two hours, it
 asks before taking over.
 
 Optional, once per client, so later runs need fewer decisions:
@@ -120,11 +120,11 @@ Orbit as working documents so any chat can resume the POC; they are never sent a
 
 ## The four gates
 
-The four gate approvals are the only messages that go to Slack. Each is posted in **your
-personal Slack chat** (your own DM, posted as you through your Slack connection), in the POC's
-thread there, with links to the Orbit records and the feedback raised since the last gate, and
-shown in the Claude chat at the same time. Answer in either place with the gate's reply words;
-the first answer counts and the other place is told.
+**You approve gates in the Claude chat.** When a gate is ready, a notification goes to **your
+personal Slack chat** (your own DM, posted as you through your Slack connection) with the Orbit
+links and the feedback raised since the last gate, asking you to approve in the Claude chat.
+That notification is the only thing POC Studio sends to Slack, and replies there are not read.
+In the chat, answer with the gate's reply words.
 
 | Gate | You decide | Reply with |
 |---|---|---|
@@ -134,9 +134,8 @@ the first answer counts and the other place is told.
 | **G4 · Release** | the demo and its collaterals go to the field | `approve` · `changes: …` · `hold` |
 
 - Silence or an emoji is never a yes. An unclear reply is asked back.
-- One reminder goes after 24 hours (or what setup recorded). An unattended run waits at the
-  gate; it never passes it. After the expiry you chose at setup (3 days by default), the POC
-  goes on hold until you answer or resume it.
+- A gate waits in the chat until you answer; it is never passed. If you close the session,
+  the next resume shows the gate again.
 - With three days or fewer to the demo date, the gates come in pairs (G1 with G2, G3 with G4).
 - Before any gate is sent, every document made so far is read back from Orbit. If something
   did not save, you are asked to reconnect, and the gate waits.

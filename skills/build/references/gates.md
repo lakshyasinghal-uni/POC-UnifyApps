@@ -16,15 +16,14 @@ the way (the decision ledger, storylines, the data plan, design notes, the Nebul
 entity table, rehearsal and check results, the Text2Code prompt) is a working document: saved to
 Orbit so a resume can carry on, never sent as a gate document.
 
-Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: to the owner's personal
-Slack chat with links to the Orbit records and in the Claude chat at the same time, answered with the gate's reply words,
-first answer counts. Every pack document is saved to Orbit and read back before the gate is
+Every gate is delivered as [gate-delivery.md](gate-delivery.md) says: a notification with the
+Orbit links in the owner's personal Slack chat, and the approval itself in the Claude chat,
+with the gate's reply words. Every pack document is saved to Orbit and read back before the gate is
 sent ([orbit-records.md](orbit-records.md) § The write-back check).
 
 ## Rules for every gate
 
-- **Only the owner answers a gate:** the person running POC Studio, in their personal Slack
-  chat or the Claude chat. The Stand-in, the Judge and the moderator never answer one, never
+- **Only the owner answers a gate:** the person running POC Studio, in the Claude chat. The Stand-in, the Judge and the moderator never answer one, never
   treat silence or an emoji as a yes, and never pre-fill an answer.
 - **One question per gate,** in both places at once, with the gate's reply words.
 - **Changes loop back, twice at most.** A `changes: …` answer becomes feedback tickets tagged
@@ -33,11 +32,9 @@ sent ([orbit-records.md](orbit-records.md) § The write-back check).
   listed as `Not done`, or stop.
 - **Stop means stop.** `block`, `stop` and `hold` end the build at that gate with what exists
   saved to Orbit, the POC row set to `blocked`, `stopped` or `held`, and one line saying so.
-- **Unattended runs wait, then expire.** The gate is sent, the thread is checked on a
-  schedule, one reminder goes after `reminder_hours`, and the build carries on from the gate
-  when an answer comes. After `gate_expiry_hours` (the owner's choice at setup) with no
-  answer, the gate expires to `held` and the POC is put on hold (gate-delivery.md § Reading the
-  answer). A gate is never skipped because nobody answered.
+- **Gates wait.** A gate waits in the Claude chat until the owner answers. If the session ends
+  first, the POC row keeps `run_state: waiting_gate` and the next resume shows the gate again.
+  A gate is never skipped because nobody answered.
 - **Every answer is a record:** a `gate_decision` document and the gate's status on the POC
   row, written before the next phase starts. The runbook carries the table of gate answers.
 - **Edits win.** When the owner edits a document in Orbit (`edited` at G1, or a newer version

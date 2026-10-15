@@ -10,7 +10,7 @@ description: >
   gate end to end, and saves the settings (no secrets) in Orbit with a local copy in
   poc-studio.yml, so a new chat does not need setup again.
 metadata:
-  version: "0.4.4"
+  version: "0.4.5"
 ---
 
 # POC Studio: setup
@@ -71,18 +71,16 @@ existed and which were created.
 
 ## 3. Your personal Slack chat for gates
 
-Only the four gate approvals go to Slack, and they go to **your personal Slack chat**: your own
-direct-message conversation, posted as you through the Slack connection you set up. Every other
-question stays in the Claude chat. Nothing is asked about approvers or channels: the person
+Slack is used for one thing: when a gate is ready, a notification goes to **your personal
+Slack chat** (your own direct-message conversation, posted as you through the Slack connection
+you set up) asking you to approve it in the Claude chat. You approve in the Claude chat; Slack
+replies are not read. Every other question stays in the Claude chat. Nothing is asked about approvers or channels: the person
 running POC Studio is the gate owner.
 
 1. Find your own Slack user with the Slack user search (by your email or name) and keep its
    user ID. If more than one user matches, ask which one is you; never guess.
 2. The test gate in step 5 posts to that user ID, which opens your personal chat; keep the
    conversation ID the post returns as the gate chat.
-3. Ask one question, `If you don't answer a gate, put the POC on hold after?` Options: `3 days`
-   (the default), `1 day`, `7 days`, `Never` (free text for another number of hours). This is
-   `gate_expiry_hours`. The reminder goes after 24 hours unless you ask for another time.
 
 ## 4. Nebula
 
@@ -104,10 +102,10 @@ not need it, the build does.
    `gate_pack`).
 3. Run the write-back check from orbit-records.md.
 4. Send a test gate exactly as [gate-delivery.md](../build/references/gate-delivery.md) says,
-   header `Test gate`, to your personal Slack chat, and ask in the Claude chat at the same
-   time. The reply words are `approve` or `stop`. Save the conversation ID the Slack post
-   returns as your gate chat.
-5. Take the first answer from either place, tell the other place, save the decision as a
+   header `Test gate`: the notification to your personal Slack chat, and the question in the
+   Claude chat (`approve` or `stop`). Save the conversation ID the Slack post returns as your
+   gate chat, and ask you to confirm the notification arrived.
+5. Take the answer from the Claude chat, save the decision as a
    `gate_decision` document (a new version on each run), set the row's status to `stopped`,
    `run_state: done`, use case `Connection test passed <date>`, and run the write-back check
    again.
@@ -136,21 +134,19 @@ orbit:
 slack:
   owner: { name: <name>, id: <U…> }
   gate_chat: { type: personal, id: <D…> }    # your own direct-message conversation
-  reminder_hours: 24
-  gate_expiry_hours: 72 | <n> | never
 connectors: { slack: ok, calendar: ok | missing, drive: ok | missing }
 nebula: { version: <v>, code_builder: true | false }
 poc_studio: { version: <v>, auto_update: on | off | not applicable }
-test_gate: { poc: <setup row>, answered_in: chat | slack, at: <ISO> }
+test_gate: { poc: <setup row>, notified: true, at: <ISO> }
 ```
 
 Finish with five lines at most: what is connected, what is missing and what that costs, that
-gates will come to your personal Slack chat and here, and that `/poc-studio:build <request>`
+gate notifications will come to your personal Slack chat and approvals happen here, and that `/poc-studio:build <request>`
 is ready.
 
 ## When to run it again
 
 Whenever the build's write-back check cannot reach Orbit, a Slack post fails, or the user
-changes Slack accounts or the expiry. Re-running keeps everything that still
+changes Slack accounts. Re-running keeps everything that still
 passes and redoes only what fails; it never creates a second copy of an object or a second
 setup row.
