@@ -6,7 +6,7 @@ gates. Everything it makes is saved to Orbit.
 
 ## Before you start
 
-- The **POC Studio** plugin, version 0.4.7 or later (auto-update keeps it current;
+- The **POC Studio** plugin, version 0.4.8 or later (auto-update keeps it current;
   `/poc-studio:update` checks by hand), and the **Nebula** plugin (the first build updates
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
@@ -32,7 +32,7 @@ Skip this and POC Studio drafts a profile for you.
 **3. Ask for the demo.**
 
 ```
-/poc-studio:build Build a demo for Acme Logistics: fleet maintenance with approvals and an AI assistant, for their COO.
+/poc-studio:start Build a demo for Acme Logistics: fleet maintenance with approvals and an AI assistant, for their COO.
 ```
 
 **4. Choose Sonic or Zen.**

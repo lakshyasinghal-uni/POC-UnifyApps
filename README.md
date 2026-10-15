@@ -88,6 +88,22 @@ before the POC is put on hold.
 
 ## What you type
 
+The simplest way in is one command:
+
+```
+/poc-studio:start Build a POC for Acme Logistics (acmelogistics.com): fleet maintenance with
+approvals and an AI assistant, demo to their COO on Friday.
+```
+
+It checks GitHub for a newer POC Studio (5 seconds at most; when GitHub is slow it carries on),
+runs setup if you have never run it, then starts the build, which checks your connectors,
+Orbit and the schema first. When it installs an update it asks you to type `/reload-plugins`
+and run the same command again, because Claude Code loads a new version only then. Without a
+request it asks what the POC is. `/poc-studio:start resume POC-_1007` carries on an existing
+POC.
+
+The steps also work on their own:
+
 ```
 /poc-studio:build Build a POC for Acme Logistics (acmelogistics.com): fleet maintenance with
 approvals and an AI assistant, demo to their COO on Friday.
@@ -212,6 +228,7 @@ that reaches you.
 ```
 poc-studio/
   .claude-plugin/plugin.json
+  skills/start/SKILL.md            the front door: update check, setup if needed, then the build
   skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, Orbit, your Slack chat, a test gate
   skills/update/SKILL.md           check for and install the latest version; auto-update on
   skills/build/SKILL.md            the four phases and their gates

@@ -5,6 +5,7 @@
  *   node version-check.mjs            report only
  *   node version-check.mjs --apply    in Claude Code on your machine, when behind: update the
  *                                     marketplace and the plugin with the claude CLI
+ *   --timeout <seconds>               how long to wait for GitHub (default 8); /poc-studio:start uses 5
  *
  * Prints one JSON line:
  *   { installed, latest, behind, surface: "claude-code" | "claude-app" | "unknown",
@@ -19,6 +20,7 @@ import { execFileSync } from "node:child_process";
 
 const MARKETPLACE = "poc-unifyapps";
 const PLUGIN = "poc-studio";
+const TIMEOUT_MS = (() => { const i = process.argv.indexOf("--timeout"); const n = i > -1 ? Number(process.argv[i + 1]) : 8; return (Number.isFinite(n) && n > 0 ? n : 8) * 1000; })();
 const LATEST_URL = process.env.POC_STUDIO_LATEST_URL ||
   "https://raw.githubusercontent.com/shubhankargarg-lang/POC-UnifyApps/main/.claude-plugin/plugin.json";
 
@@ -40,15 +42,15 @@ function surface() {
   const listed = Boolean(reg?.plugins?.[key]);
   if (process.env.CLAUDE_CODE_REMOTE === "true" || pluginRoot.includes(`${path.sep}plugins${path.sep}synced${path.sep}`)) return "claude-app";
   if (listed) return "claude-code";
-  try { execFileSync("claude", ["--version"], { stdio: "ignore", timeout: 10000 }); return "claude-code"; } catch { return "unknown"; }
+  try { execFileSync("claude", ["--version"], { stdio: "ignore", timeout: 3000 }); return "claude-code"; } catch { return "unknown"; }
 }
 
 async function latest() {
   try {
-    const r = await fetch(LATEST_URL, { signal: AbortSignal.timeout(8000) });
+    const r = await fetch(LATEST_URL, { signal: AbortSignal.timeout(TIMEOUT_MS) });
     if (!r.ok) return { error: `GitHub answered ${r.status}` };
     return { version: (await r.json()).version };
-  } catch (e) { return { error: `GitHub not reachable: ${e.cause?.code || e.message}` }; }
+  } catch (e) { return { error: e.name === "TimeoutError" ? `GitHub did not answer within ${TIMEOUT_MS / 1000}s` : `GitHub not reachable: ${e.cause?.code || e.message}` }; }
 }
 
 const where = surface();
