@@ -6,6 +6,31 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.4.9 (2026-10-15)
+
+- **One Orbit contract.** `skills/build/references/orbit-contract.json` holds the live field
+  names, required fields, every dropdown's options as read on orbit.uat, and one map from each
+  internal value to its Orbit value. Every create and update goes through it. Mappings: stages
+  (`1_signal_capture` → `1_signal`, `2_research_assess` → `2_research`, `4_design_system` →
+  `4_design`), document stage `gates` for gate packs and decisions, POC status `running` →
+  `active`, gate statuses (`not_started` → `pending`, `asked` → `waiting`, approvals →
+  `approved`, `changes_requested` → `changes`, `merged` → `skipped_merged`), doc_type as the
+  file format with the document kind moved to `summary`, feedback category, severity
+  (`blocker` → `high`), status (`done` → `resolved`, `wont_do` → `wont_fix`) and channel
+  (`chat` → `session`).
+- **Every write is checked whole before it is sent**: field names, no auto fields, options,
+  required fields on the resulting record, and every reference pointing at an existing record.
+  Any failure stops the write with the full list; a document is checked before its file is
+  uploaded.
+- **References** (`document.poc`, `feedback.poc`, `feedback.related_document`) hold the id
+  read from an existing row: the record id or the primary key.
+- **`contract-test`**: on the real tenant, every internal value of every mapped field written
+  to `[TEST]` rows and read back, one document per file format, the three references, and seven
+  bad writes that must be stopped. Nothing is deleted; the rows are reused and marked as test.
+  Setup runs it once per version.
+- `schema-check` compares the tenant with the contract; `find` maps internal values in
+  filters; `orbit-objects.json` carries the live options.
+
 ## 0.4.8 (2026-10-15)
 
 - **`/poc-studio:start`**, one command for the whole journey: it checks GitHub for a newer

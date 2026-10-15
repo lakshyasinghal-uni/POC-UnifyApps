@@ -54,7 +54,8 @@ Researcher found, else `standard`):
 
 The profile's `gates` line overrides the tier (`full` or `merged`). A merged gate shows both
 packs and takes both gates' reply words (`approve` approves both; anything else names the
-gate it is about). It is still two `gate_decision` records.
+gate it is about). It is still two `gate_decision` records. On the POC row the first gate's
+status carries the answer and the second gate's status is `merged` (Orbit: `skipped_merged`).
 
 In a merged G1 and G2, phase 2 runs before G1 is answered. When the answer is `block` for G1,
 the BRD, the design system and every working document phase 2 made are set to `superseded`, the POC goes to `status: blocked`, `run_state:

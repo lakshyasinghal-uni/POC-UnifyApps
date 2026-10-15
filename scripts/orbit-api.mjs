@@ -13,9 +13,10 @@
  *                   replayed move to the same path with .dead.jsonl, each with a feedback ticket
  *   ORBIT_TAKEOVER_HOURS   a heartbeat younger than this belongs to a live session (default 2)
  *
- * Field names are the live tenant's (FIELDS below). Every write is checked against the live schema
- * first: a field the tenant does not have, or a single-select value that is not one of its options,
- * stops the write with a clear message. Nothing is renamed or changed on the fly.
+ * The Orbit contract (skills/build/references/orbit-contract.json) holds the field names, the options and
+ * one table from each internal value to its Orbit value. Every create and update maps through it, then the
+ * whole record is checked against the live schema (required fields, names, options, reference ids); on any
+ * failure nothing is sent and the problems are listed.
  *
  * Commands (every result is one JSON line on stdout; exit 0 ok, 1 error, 3 queued for later,
  * 4 another session holds the POC, 5 the live schema does not match what the plugin writes):
@@ -48,6 +49,9 @@
  *   flush                                      replay queued writes in order; one that can never succeed
  *                                              (its local file is gone, or Orbit rejects it) is skipped
  *                                              and becomes a feedback ticket
+ *   contract-test                              on the real tenant: every value the plugin can produce, for every
+ *                                              mapped field, written to [TEST] rows and read back; references,
+ *                                              file formats and bad-write stops too; a pass list in studio/contract-test/
  *   selftest [--poc <pocId>]                   on the real tenant: schema-check, then a write and a read-back
  *                                              on all three objects and one file upload; prints a results table
  *
@@ -66,46 +70,28 @@ const OBJ = { poc: "poc_studio_poc", doc: "poc_studio_document", fb: "poc_studio
 const SCHEMA_CACHE = path.resolve(path.dirname(QUEUE), ".orbit-schema-cache.json");
 const SCHEMA_TTL = 10 * 60_000;
 
-// ---------- what the plugin writes (the live tenant's names; checked by schema-check) ----------
-const STAGES = ["0_kickoff", "1_signal_capture", "2_research_assess", "3_scope", "4_design_system", "5_build", "6_finalize", "7_collaterals", "demo_ready"];
-const GATES = ["none", "G1", "G2", "G3", "G4"];
-const GATE_STATUS = ["not_started", "asked", "approved", "approved_partial", "approved_with_changes", "changes_requested", "blocked", "stopped", "held", "released"];
-const FIELDS = {
-  [OBJ.poc]: {
-    auto: ["poc_id"],
-    required: ["client_name", "owner_name"],
-    fields: ["client_name", "client_slug", "use_case", "use_case_slug", "poc_name", "request", "owner_name", "owner_email", "owner_slack_id",
-      "tier", "demo_date", "build_mode", "stage", "status", "run_state", "current_gate", "g1_status", "g2_status", "g3_status", "g4_status",
-      "resume_from", "stall_reason", "active_session", "session_ids", "last_heartbeat_at", "started_at", "last_activity", "last_activity_at",
-      "slack_destination", "last_gate_thread", "tenant_host", "solution_name", "documents_count", "open_feedback_count"],
-    selects: { tier: ["sprint", "standard", "full"], build_mode: ["sonic", "zen"], stage: STAGES,
-      status: ["running", "waiting_on_gate", "waiting_on_reconnect", "blocked", "stopped", "held", "released"],
-      run_state: ["running", "waiting_gate", "stalled", "failed", "done", "abandoned"], current_gate: GATES,
-      g1_status: GATE_STATUS, g2_status: GATE_STATUS, g3_status: GATE_STATUS, g4_status: GATE_STATUS },
-    refs: {},
-  },
-  [OBJ.doc]: {
-    auto: [],
-    required: ["doc_id", "poc", "name", "stage"],
-    fields: ["doc_id", "poc", "name", "stage", "version", "doc_type", "gate", "status", "file", "content", "summary", "source_path", "file_url",
-      "size_bytes", "created_by", "created_at"],
-    selects: { stage: STAGES, gate: GATES, status: ["draft", "in_review", "approved", "superseded"],
-      doc_type: ["research", "assessment", "context_notes", "data_plan", "scope", "brd", "design_system", "evidence", "rehearsal", "checks",
-        "runbook", "explainer", "video", "pdf", "field_note", "gate_pack", "gate_decision", "text2code_prompt", "other"] },
-    refs: { poc: OBJ.poc },
-  },
-  [OBJ.fb]: {
-    auto: ["ticket_no"],
-    required: ["poc", "feedback", "given_by_name"],
-    fields: ["title", "poc", "related_document", "client_name", "feedback", "given_by_name", "given_by_email", "given_by_slack_id", "channel",
-      "source_link", "poc_stage", "gate", "category", "severity", "status", "action_taken", "created_at", "resolved_at"],
-    selects: { channel: ["chat"], poc_stage: STAGES, gate: GATES,
-      category: ["scope", "requirement", "design", "data", "build_defect", "content", "collateral", "process", "skill"],
-      severity: ["low", "medium", "high", "blocker"], status: ["open", "acknowledged", "in_progress", "done", "wont_do"] },
-    refs: { poc: OBJ.poc, related_document: OBJ.doc },
-  },
-};
-const OPEN_TICKET = ["open", "acknowledged", "in_progress"];
+// ---------- the Orbit contract: field names, options and the internal → Orbit map ----------
+// One table for every write: skills/build/references/orbit-contract.json. Change values there only.
+const CONTRACT_FILE = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "skills", "build", "references", "orbit-contract.json");
+const CONTRACT = JSON.parse(fs.readFileSync(CONTRACT_FILE, "utf8"));
+const FIELDS = CONTRACT.objects;
+const OPEN_TICKET = ["open", "in_progress"]; // Orbit values, used in reads
+const GATE_DOC_TYPES = new Set(["gate_pack", "gate_decision"]);
+
+// Map one internal value to its Orbit value. An Orbit value passes as is. Anything else is an error.
+function mapValue(obj, field, v) {
+  const sel = FIELDS[obj]?.selects?.[field];
+  if (!sel || v === undefined || v === null || v === "") return { value: v };
+  if (Object.prototype.hasOwnProperty.call(sel.map, v)) return { value: sel.map[v] };
+  if (sel.options.includes(v)) return { value: v };
+  return { error: `${field}: ${JSON.stringify(v)} is not a value POC Studio knows (internal: ${Object.keys(sel.map).join(", ")})` };
+}
+function toOrbit(obj, props) {
+  const out = {}; const errors = [];
+  for (const [k, v] of Object.entries(props)) { const m = mapValue(obj, k, v); if (m.error) errors.push(m.error); else out[k] = m.value; }
+  return { props: out, errors };
+}
+const docTypeFor = (file) => FIELDS[OBJ.doc].selects.doc_type.fromExtension[path.extname(String(file)).toLowerCase()] || "other";
 const TEXT_MAX = 1_000_000;
 const PART = 8 * 1024 * 1024;
 
@@ -181,20 +167,14 @@ async function api(p, init = {}, retried = false) {
 const schemaMem = {};
 async function getObject(id) { return api(`/api/entity-type?entityType=${encodeURIComponent(id)}`); }
 const liveSchemaOf = (o) => o?.schema?.schema || o?.input?.schema || null;
+function readCache() { try { const c = JSON.parse(fs.readFileSync(SCHEMA_CACHE, "utf8")); if (c.base === BASE && Date.now() - c.at < SCHEMA_TTL) return c; } catch {} return { base: BASE, at: Date.now(), objects: {}, refs: {} }; }
+function writeCache(mut) { try { const c = readCache(); mut(c); c.refs ||= {}; fs.mkdirSync(path.dirname(SCHEMA_CACHE), { recursive: true }); fs.writeFileSync(SCHEMA_CACHE, JSON.stringify(c)); } catch {} }
 async function liveSchema(obj) {
   if (schemaMem[obj]) return schemaMem[obj];
-  try {
-    const c = JSON.parse(fs.readFileSync(SCHEMA_CACHE, "utf8"));
-    if (c.base === BASE && c.objects?.[obj] && Date.now() - c.at < SCHEMA_TTL) return (schemaMem[obj] = c.objects[obj]);
-  } catch {}
+  const c = readCache(); if (c.objects?.[obj]) return (schemaMem[obj] = c.objects[obj]);
   const s = liveSchemaOf(await getObject(obj));
   if (!s) throw new Error(`Object ${obj} is not on ${BASE}. Run setup (ensure-objects) first.`);
-  schemaMem[obj] = s;
-  try {
-    let c = {}; try { c = JSON.parse(fs.readFileSync(SCHEMA_CACHE, "utf8")); } catch {}
-    if (c.base !== BASE || Date.now() - (c.at || 0) >= SCHEMA_TTL) c = { base: BASE, at: Date.now(), objects: {} };
-    c.objects[obj] = s; fs.mkdirSync(path.dirname(SCHEMA_CACHE), { recursive: true }); fs.writeFileSync(SCHEMA_CACHE, JSON.stringify(c));
-  } catch {}
+  schemaMem[obj] = s; writeCache((x) => { x.objects[obj] = s; });
   return s;
 }
 // The allowed values of a single-select, wherever the schema keeps them; null when it lists none (a reference).
@@ -203,54 +183,110 @@ function optionsOf(def = {}) {
   return pick(def.oneOf) || pick(def.anyOf) || pick(def.enum) || pick(def.items?.oneOf) || pick(def.items?.enum) || pick(def.options) || null;
 }
 const isAuto = (def = {}) => def.format === "auto-generate" || Boolean(def.autoGeneratedFieldDefinition);
+const pkOf = (schema) => Object.entries(schema?.properties || {}).find(([, d]) => d.primaryKey)?.[0] || null;
 
-// Compare the live schemas with FIELDS. Returns { ok, objects: { id: { problems: [...] } } }.
+// ---------- references: which id does each reference field hold? ----------
+// Read from one existing row that has the field set: the target's record id, or its primary key
+// (poc_id, doc_id). Cached with the schemas. With no row to read yet it is "unconfirmed" and the
+// record id is used.
+const refMem = {};
+async function refMode(obj, field) {
+  const key = `${obj}.${field}`;
+  if (refMem[key]) return refMem[key];
+  const c = readCache(); if (c.refs?.[key]) return (refMem[key] = c.refs[key]);
+  const target = FIELDS[obj].refs[field];
+  const pk = pkOf(await liveSchema(target));
+  let mode = { holds: "record id", confirmed: false, from: "no existing row with this field yet" };
+  const rows = await findRecords(obj, [], 50, null);
+  const row = rows.find((r) => r.properties?.[field] !== undefined && r.properties?.[field] !== null && r.properties?.[field] !== "");
+  if (row) {
+    const v = row.properties[field];
+    const byId = typeof v === "string" ? await getRecord(target, v) : null;
+    if (byId && byId.id === v && pk && byId.properties?.[pk] === v) mode = { holds: "record id", sameAsPrimaryKey: true, confirmed: true, from: row.id };
+    else if (byId && byId.id === v) mode = { holds: "record id", confirmed: true, from: row.id };
+    else if (pk) {
+      const [hit] = await findRecords(target, [{ op: "EQUAL", field: `properties.${pk}`, values: [v] }], 1);
+      mode = hit ? { holds: "primary key", pk, confirmed: true, from: row.id } : { holds: "record id", confirmed: false, from: `${row.id} holds ${JSON.stringify(v)}, which matches no ${target} record` };
+    }
+  }
+  if (mode.confirmed) writeCache((x) => { x.refs[key] = mode; });
+  return (refMem[key] = mode);
+}
+async function refValue(obj, field, rec) {
+  if (!rec) return null;
+  const m = await refMode(obj, field);
+  return m.holds === "primary key" ? rec.properties?.[m.pk] ?? null : rec.id ?? null;
+}
+async function resolveRef(obj, field, v) {
+  const target = FIELDS[obj].refs[field];
+  const m = await refMode(obj, field);
+  if (m.holds === "primary key") { const [hit] = await findRecords(target, [{ op: "EQUAL", field: `properties.${m.pk}`, values: [v] }], 1); return hit || null; }
+  return typeof v === "string" ? getRecord(target, v) : null;
+}
+
+// Compare the live schemas with the contract. Returns { ok, objects: { id: { problems: [...] } } }.
 async function schemaCheck() {
   const report = {}; let ok = true;
   for (const [obj, want] of Object.entries(FIELDS)) {
     const problems = []; let s = null;
     try { s = liveSchemaOf(await getObject(obj)); } catch (e) { if (e instanceof NetError || e instanceof AuthError) throw e; }
     if (!s) { report[obj] = { problems: [{ problem: "object not on the tenant" }] }; ok = false; continue; }
-    schemaMem[obj] = s;
+    schemaMem[obj] = s; writeCache((x) => { x.objects[obj] = s; });
     const props = s.properties || {}; const required = s.required || [];
     for (const f of want.auto) {
       if (!props[f]) problems.push({ field: f, problem: "auto-generated field the plugin reads is not on the tenant" });
-      else if (!isAuto(props[f])) problems.push({ field: f, problem: "expected Orbit to generate this field, but it is not auto-generate on the tenant", live: props[f] });
+      else if (!isAuto(props[f])) problems.push({ field: f, problem: "the contract says Orbit generates this field; on the tenant it is not auto-generate" });
     }
-    for (const f of want.fields) if (!props[f]) problems.push({ field: f, problem: "the plugin writes this field; the tenant has no such field" });
+    for (const f of want.fields) if (!props[f]) problems.push({ field: f, problem: "in the contract; the tenant has no such field" });
     for (const f of required) if (!want.fields.includes(f) && !want.auto.includes(f) && !isAuto(props[f])) problems.push({ field: f, problem: "required on the tenant; the plugin never writes it" });
-    for (const f of want.required) if (props[f] && !required.includes(f)) {/* the plugin always writes it; optional on the tenant is fine */}
-    for (const [f, values] of Object.entries(want.selects)) {
+    for (const f of want.required) if (props[f] && !required.includes(f)) problems.push({ field: f, problem: "the contract says required; the tenant does not", severity: "info" });
+    const extraOptions = {};
+    for (const [f, sel] of Object.entries(want.selects)) {
       if (!props[f]) continue;
       const opts = optionsOf(props[f]);
-      if (!opts) { problems.push({ field: f, problem: "the plugin writes fixed values here, but the tenant field lists no options", plugin: values, live: props[f] }); continue; }
-      const missing = values.filter((v) => !opts.includes(v));
-      if (missing.length) problems.push({ field: f, problem: "values the plugin writes that are not options on the tenant", notOptions: missing, liveOptions: opts });
+      if (!opts) { problems.push({ field: f, problem: "the contract has options for this field; the tenant field lists none", contract: sel.options }); continue; }
+      const targets = [...new Set(Object.values(sel.map))];
+      const missing = targets.filter((v) => !opts.includes(v));
+      if (missing.length) problems.push({ field: f, problem: "the plugin maps values to these, but they are not options on the tenant", notOptions: missing, liveOptions: opts });
+      const notInContract = opts.filter((v) => !sel.options.includes(v));
+      if (notInContract.length) extraOptions[f] = notInContract;
     }
     const refs = {};
-    for (const [f, target] of Object.entries(want.refs)) if (props[f]) refs[f] = { refersTo: target, live: props[f] };
-    report[obj] = { fields: Object.keys(props).length, required, problems, refs };
-    if (problems.length) ok = false;
+    for (const f of Object.keys(want.refs)) if (props[f]) { try { refs[f] = await refMode(obj, f); } catch (e) { refs[f] = { error: e.message }; } }
+    const real = problems.filter((p) => p.severity !== "info");
+    report[obj] = { fields: Object.keys(props).length, required, problems, refs, ...(Object.keys(extraOptions).length ? { liveOptionsNotUsed: extraOptions } : {}) };
+    if (real.length) ok = false;
   }
-  return { ok, base: BASE, objects: report };
+  return { ok, base: BASE, contract: path.relative(process.cwd(), CONTRACT_FILE), objects: report };
 }
 
-// Every write goes through here: fields and single-select values must exist on the live tenant.
-async function checkWrite(obj, patch) {
-  const s = await liveSchema(obj); const props = s.properties || {};
-  const errs = [];
-  for (const [k, v] of Object.entries(patch)) {
-    const def = props[k];
-    if (!def) { errs.push(`${k}: no such field on ${obj}`); continue; }
+// Every write goes through here. `props` are internal values; the result is the Orbit record to send.
+// Checks: field names (contract and tenant), never an auto field, options, required fields on the
+// whole record, and every reference pointing at a record that exists. On any failure nothing is sent.
+async function prepareWrite(obj, props, current = null) {
+  const s = await liveSchema(obj); const live = s.properties || {};
+  const want = FIELDS[obj]; const errs = [];
+  const mapped = toOrbit(obj, props); errs.push(...mapped.errors);
+  for (const [k, v] of Object.entries(mapped.props)) {
+    const def = live[k];
+    if (!want.fields.includes(k)) { errs.push(`${k}: not a field POC Studio writes on ${obj}`); continue; }
+    if (!def) { errs.push(`${k}: no such field on ${obj} on the tenant`); continue; }
     if (isAuto(def)) { errs.push(`${k}: Orbit generates this field; never write it`); continue; }
-    const opts = optionsOf(def);
-    if (opts && v !== undefined && v !== null && v !== "") {
-      const vals = Array.isArray(v) ? v : [v];
-      const bad = vals.filter((x) => typeof x !== "object" && !opts.includes(x));
-      if (bad.length) errs.push(`${k}: ${bad.map((b) => JSON.stringify(b)).join(", ")} is not an option (allowed: ${opts.join(", ")})`);
-    }
+    const opts = optionsOf(def) || want.selects[k]?.options || null;
+    if (opts && !want.refs[k] && v !== undefined && v !== null && v !== "" && typeof v !== "object" && !opts.includes(v)) errs.push(`${k}: ${JSON.stringify(v)} is not an option (allowed: ${opts.join(", ")})`);
   }
-  if (errs.length) { const e = new Error(`Orbit write to ${obj} stopped; the live schema does not match:\n- ${errs.join("\n- ")}\nRun: node scripts/orbit-api.mjs schema-check`); e.schema = true; throw e; }
+  const whole = { ...(current || {}), ...mapped.props };
+  for (const f of s.required || []) if (!isAuto(live[f]) && (whole[f] === undefined || whole[f] === null || whole[f] === "")) errs.push(`${f}: required on the tenant and missing`);
+  for (const f of Object.keys(want.refs)) {
+    if (!(f in mapped.props)) continue;
+    const v = mapped.props[f];
+    if (v === undefined || v === null || v === "") continue;
+    if (typeof v !== "string") { errs.push(`${f}: a reference must be one id, got ${JSON.stringify(v)}`); continue; }
+    const hit = await resolveRef(obj, f, v);
+    if (!hit) errs.push(`${f}: ${JSON.stringify(v)} is not a ${want.refs[f]} record`);
+  }
+  if (errs.length) { const e = new Error(`Orbit write to ${obj} stopped before sending; it does not match the contract:\n- ${errs.join("\n- ")}`); e.schema = true; e.problems = errs; throw e; }
+  return mapped.props;
 }
 
 // ---------- records ----------
@@ -266,12 +302,12 @@ async function findRecords(obj, filters = [], limit = 50, sort) {
   const res = await api(`/api/entity/${obj}`, { method: "POST", body: JSON.stringify(body) });
   return res?.objects || [];
 }
+// Every create and update: internal values are mapped and the whole record is checked before sending.
 async function createRecord(obj, properties) {
-  await checkWrite(obj, properties);
-  return api("/api/entity", { method: "POST", body: JSON.stringify({ entityType: obj, properties }) });
+  const props = await prepareWrite(obj, properties);
+  return api("/api/entity", { method: "POST", body: JSON.stringify({ entityType: obj, properties: props }) });
 }
 async function updateRecord(obj, id, patch) {
-  await checkWrite(obj, patch);
   const cur = await getRecord(obj, id);
   if (!cur) throw new Error(`${obj}/${id} not found`);
   // A row written before a field was renamed on the tenant can still carry the old key; the tenant would
@@ -279,12 +315,11 @@ async function updateRecord(obj, id, patch) {
   const live = (await liveSchema(obj)).properties || {};
   const kept = {}; const stale = [];
   for (const [k, v] of Object.entries(cur.properties || {})) (live[k] ? (kept[k] = v) : stale.push(k));
-  const r = await api("/api/entity/update", { method: "POST", body: JSON.stringify({ id: cur.id, entityType: obj, properties: { ...kept, ...patch }, version: cur.version }) });
+  const props = await prepareWrite(obj, patch, kept);
+  const r = await api("/api/entity/update", { method: "POST", body: JSON.stringify({ id: cur.id, entityType: obj, properties: { ...kept, ...props }, version: cur.version }) });
   if (stale.length && r && typeof r === "object") r.droppedStaleFields = stale;
   return r;
 }
-// The value a reference field (poc, related_document) holds: the referenced record's id.
-const refValue = (rec) => rec?.id ?? null;
 async function pocRecord(id) {
   const r = await getRecord(OBJ.poc, id);
   if (r) return r;
@@ -370,33 +405,41 @@ async function saveDoc(o) {
   const poc = await pocRecord(o.poc);
   if (!poc) throw new Error(`POC ${o.poc} not found in Orbit; create the POC row first.`);
   const pocId = poc.properties?.poc_id || poc.id;
-  const prev = (await docsOf(refValue(poc))).filter((d) => slugOf(d.properties?.doc_id) === o.slug);
+  const pocRef = await refValue(OBJ.doc, "poc", poc);
+  const prev = (await docsOf(pocRef)).filter((d) => slugOf(d.properties?.doc_id) === o.slug);
   const latest = prev.sort((a, b) => (b.properties?.version || 0) - (a.properties?.version || 0))[0];
   const version = (latest?.properties?.version || 0) + 1;
-  // Check the fixed values before uploading, so a mismatch leaves no stray file behind.
-  await checkWrite(OBJ.doc, { stage: o.stage, doc_type: o.type, gate: o.gate || "none", status: o.status || "draft" });
-  const file = await upload(o.file, o.fileName);
-  const raw = isText(file.mimeType) ? fs.readFileSync(o.file, "utf8") : "";
-  const docId = `${pocId}__${o.stage}__${o.slug}__v${version}`;
+  // What the document is (research, brd, gate_pack …) goes in the summary; doc_type is the file's format.
+  const contentTypes = FIELDS[OBJ.doc].selects.doc_type.contentTypes;
+  if (!contentTypes.includes(o.type)) throw new Error(`save-doc --type ${o.type} is not a document kind POC Studio knows (${contentTypes.join(", ")})`);
+  const stage = GATE_DOC_TYPES.has(o.type) ? "gates" : o.stage;
+  const docStage = mapValue(OBJ.doc, "stage", stage);
+  if (docStage.error) throw new Error(`save-doc --stage: ${docStage.error}`);
+  const docId = `${pocId}__${docStage.value}__${o.slug}__v${version}`;
   const replaces = latest?.properties?.doc_id ? ` · replaces ${latest.properties.doc_id}` : "";
   const properties = {
-    doc_id: docId, poc: refValue(poc), name: o.name, stage: o.stage, version, doc_type: o.type,
-    gate: o.gate || "none", status: o.status || "draft", file, content: raw.length > TEXT_MAX ? raw.slice(0, TEXT_MAX) : raw,
-    summary: `${(o.summary || firstLine(raw) || o.name).slice(0, 300)}${replaces}`, source_path: path.resolve(o.file), file_url: file.url || "",
-    size_bytes: file.size, created_by: o.by || "POC Studio", created_at: Date.now(),
+    doc_id: docId, poc: pocRef, name: o.name, stage, version, doc_type: docTypeFor(o.fileName || o.file),
+    gate: o.gate || "none", status: o.status || "draft", source_path: path.resolve(o.file),
+    size_bytes: fs.statSync(o.file).size, created_by: o.by || "POC Studio", created_at: Date.now(),
   };
+  // Check the whole record before uploading, so a mismatch leaves no stray file behind.
+  await prepareWrite(OBJ.doc, properties);
+  const file = await upload(o.file, o.fileName);
+  const raw = isText(file.mimeType) ? fs.readFileSync(o.file, "utf8") : "";
+  Object.assign(properties, { file, file_url: file.url || "", size_bytes: file.size, content: raw.length > TEXT_MAX ? raw.slice(0, TEXT_MAX) : raw,
+    summary: `${o.type} · ${(o.summary || firstLine(raw) || o.name).slice(0, 300)}${replaces}` });
   await createRecord(OBJ.doc, properties);
   if (latest && latest.properties?.status !== "superseded") await updateRecord(OBJ.doc, latest.id, { status: "superseded" });
-  const all = await docsOf(refValue(poc));
+  const all = await docsOf(pocRef);
   await updateRecord(OBJ.poc, poc.id, { documents_count: all.length, last_activity: `Saved ${o.name} v${version}`, last_activity_at: Date.now() });
-  return { doc_id: docId, version, replaces: latest?.properties?.doc_id || null, poc: properties.poc, file: { name: file.name, source: file.source, size: file.size, bucket: file.bucket, directory: file.directory },
+  return { doc_id: docId, version, doc_type: properties.doc_type, stage: docStage.value, replaces: latest?.properties?.doc_id || null, poc: properties.poc, file: { name: file.name, source: file.source, size: file.size, bucket: file.bucket, directory: file.directory },
     contentChars: properties.content.length, truncated: raw.length > TEXT_MAX };
 }
 
 async function readback(pocId) {
   const poc = await pocRecord(pocId);
   if (!poc) throw new Error(`POC ${pocId} not found`);
-  const docs = await docsOf(refValue(poc));
+  const docs = await docsOf(await refValue(OBJ.doc, "poc", poc));
   const latestBySlug = {};
   for (const d of docs) { const p = d.properties || {}; const sl = slugOf(p.doc_id) || p.doc_id; if (!latestBySlug[sl] || p.version > latestBySlug[sl].version) latestBySlug[sl] = p; }
   const rows = Object.values(latestBySlug).map((p) => ({
@@ -418,8 +461,8 @@ async function newTicket(o) {
   let byName = o.byName, byEmail = o.byEmail;
   if (!byName) { const u = await userContext().catch(() => null); byName = u?.name || u?.displayName || "POC Studio"; byEmail ||= u?.email; }
   let related;
-  if (o.doc) { const [d] = await findRecords(OBJ.doc, [{ op: "EQUAL", field: "properties.doc_id", values: [o.doc] }], 1); if (!d) throw new Error(`Document ${o.doc} not found`); related = refValue(d); }
-  const props = { poc: refValue(poc), client_name: poc.properties?.client_name, title: (o.title || firstLine(words)).slice(0, 200), feedback: words,
+  if (o.doc) { const [d] = await findRecords(OBJ.doc, [{ op: "EQUAL", field: "properties.doc_id", values: [o.doc] }], 1); if (!d) throw new Error(`Document ${o.doc} not found`); related = await refValue(OBJ.fb, "related_document", d); }
+  const props = { poc: await refValue(OBJ.fb, "poc", poc), client_name: poc.properties?.client_name, title: (o.title || firstLine(words)).slice(0, 200), feedback: words,
     given_by_name: byName, given_by_email: byEmail, given_by_slack_id: o.bySlackId, channel: o.channel || "chat", source_link: o.sourceLink,
     poc_stage: o.stage || poc.properties?.stage, gate: o.gate || "none", category: o.category || "process", severity: o.severity || "medium",
     status: "open", related_document: related, created_at: Date.now() };
@@ -473,7 +516,7 @@ async function selftest(f) {
     catch (e) { rows.push({ step: name, ok: false, detail: e.message }); return null; }
   };
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-  const compare = (wrote, rec) => { const p = rec?.properties || {}; const diff = Object.keys(wrote).filter((k) => !same(wrote[k], p[k])); return diff; };
+  const compare = (wrote, rec, obj = OBJ.poc) => { const p = rec?.properties || {}; const w = toOrbit(obj, wrote).props; return Object.keys(w).filter((k) => !same(w[k], p[k])); };
 
   const me = await step("Signed in", async () => { const u = await userContext(); return { ok: Boolean(u), text: `${u?.name || u?.username || "?"} <${u?.email || "?"}> on ${BASE}`, u }; });
   const u = me?.u || {};
@@ -529,7 +572,7 @@ async function selftest(f) {
     const [rec] = await findRecords(OBJ.doc, [{ op: "EQUAL", field: "properties.doc_id", values: [doc.doc_id] }], 1);
     if (!rec) throw new Error(`${doc.doc_id} not found by doc_id`);
     const p = rec.properties || {};
-    const byRef = (await docsOf(refValue(poc))).some((d) => d.properties?.doc_id === doc.doc_id);
+    const byRef = (await docsOf(await refValue(OBJ.doc, "poc", poc))).some((d) => d.properties?.doc_id === doc.doc_id);
     const local = fs.readFileSync(doc.local);
     const okFields = p.name === "Orbit self-test" && p.stage === "0_kickoff" && p.version === doc.version && p.content === local.toString("utf8");
     return { ok: okFields && byRef, text: `name, stage, version, content ${okFields ? "match" : "DIFFER"}; poc holds ${JSON.stringify(p.poc)}; filter by poc ${byRef ? "finds it" : "does NOT find it"}` };
@@ -555,16 +598,16 @@ async function selftest(f) {
     const rec = await ticketRecord(ticket);
     if (!rec) throw new Error(`${ticket} not found`);
     const p = rec.properties || {};
-    const okFields = p.feedback?.startsWith("Self-test ticket") && p.title === "Orbit self-test" && same(p.poc, refValue(poc)) && Boolean(p.given_by_name);
+    const okFields = p.feedback?.startsWith("Self-test ticket") && p.title === "Orbit self-test" && same(p.poc, await refValue(OBJ.fb, "poc", poc)) && Boolean(p.given_by_name);
     await updateRecord(OBJ.fb, rec.id, { status: "done", action_taken: "Self-test closed", resolved_at: Date.now() });
     const after = (await getRecord(OBJ.fb, rec.id))?.properties || {};
-    return { ok: okFields && after.status === "done" && Boolean(after.resolved_at),
+    return { ok: okFields && after.status === "resolved" && Boolean(after.resolved_at),
       text: `feedback, title, poc, given_by_name ${okFields ? "match" : "DIFFER"}; related_document holds ${JSON.stringify(p.related_document ?? null)}; closed: ${after.status}` };
   });
   await step("POC · counts", async () => {
     if (!poc) throw new Error("no POC row");
-    const docs = await docsOf(refValue(poc));
-    const open = await findRecords(OBJ.fb, [{ op: "EQUAL", field: "properties.poc", values: [refValue(poc)] }, { op: "IN", field: "properties.status", values: OPEN_TICKET }], 1000);
+    const docs = await docsOf(await refValue(OBJ.doc, "poc", poc));
+    const open = await findRecords(OBJ.fb, [{ op: "EQUAL", field: "properties.poc", values: [await refValue(OBJ.fb, "poc", poc)] }, { op: "IN", field: "properties.status", values: OPEN_TICKET }], 1000);
     await updateRecord(OBJ.poc, poc.id, { documents_count: docs.length, open_feedback_count: open.length });
     const p = (await getRecord(OBJ.poc, poc.id))?.properties || {};
     return { ok: p.documents_count === docs.length, text: `documents_count ${p.documents_count}, open_feedback_count ${p.open_feedback_count}` };
@@ -574,6 +617,132 @@ async function selftest(f) {
   const table = ["| Step | Result | Detail |", "|---|---|---|", ...rows.map((r) => `| ${r.step} | ${r.ok ? "pass" : "FAIL"} | ${String(typeof r.detail === "object" ? JSON.stringify(r.detail) : r.detail).replace(/\|/g, "/")} |`)].join("\n");
   process.stderr.write(table + "\n");
   return { ok, base: BASE, seconds: Math.round((Date.now() - t0) / 1000), poc: poc?.properties?.poc_id || poc?.id || null, rows };
+}
+
+// ---------- contract test on the real tenant ----------
+// Writes every value the plugin can produce for every mapped field onto test rows, reads each back,
+// checks references and that bad writes are stopped before sending. Deletes nothing: the rows are
+// reused on every run and marked [TEST].
+async function contractTest() {
+  const rows = []; const t0 = Date.now(); const stamp = new Date().toISOString();
+  const add = (object, field, internal, expected, got, ok, note = "") => rows.push({ object, field, internal, expected, got, ok, note });
+  const tryStep = async (object, field, fn) => { try { await fn(); } catch (e) { add(object, field, "", "", "", false, e.message.split("\n").slice(0, 3).join(" / ")); } };
+  const TEST = "[TEST] POC Studio contract test";
+  const u = await userContext();
+  const sc = await schemaCheck();
+  for (const [obj, r] of Object.entries(sc.objects)) {
+    const real = (r.problems || []).filter((p) => p.severity !== "info");
+    add(obj, "(schema)", "", "matches the contract", real.length ? real.map((p) => `${p.field || ""} ${p.problem}${p.notOptions ? ": " + p.notOptions.join(", ") : ""}`).join("; ") : "matches", !real.length);
+  }
+  // Which id each reference holds, read from existing rows before anything is written.
+  for (const [obj, f] of [[OBJ.doc, "poc"], [OBJ.fb, "poc"], [OBJ.fb, "related_document"]]) {
+    const m = await refMode(obj, f);
+    add(obj, `${f} (reference)`, "", "read from an existing row", `${m.holds}${m.sameAsPrimaryKey ? " (same as the primary key)" : ""}${m.confirmed ? `, from row ${m.from}` : ` — not confirmed: ${m.from}`}`, true, m.confirmed ? "" : "confirmed after this run's rows exist; run again to read it from them");
+  }
+
+  // POC test row.
+  let poc = (await findRecords(OBJ.poc, [{ op: "EQUAL", field: "properties.poc_name", values: [TEST] }], 1))[0] || null;
+  await tryStep(OBJ.poc, "(create)", async () => {
+    if (poc) { add(OBJ.poc, "(create)", "", "test row", `reusing ${poc.properties?.poc_id || poc.id}`, true); return; }
+    const r = await createRecord(OBJ.poc, { client_name: TEST, owner_name: u?.name || u?.username || "POC Studio", owner_email: u?.email, poc_name: TEST,
+      request: "Contract test of POC Studio's Orbit writes. Test row; safe to ignore.", stage: "0_kickoff", status: "running", run_state: "running", started_at: Date.now() });
+    poc = await pocRecord(r?.properties?.poc_id || r?.id);
+    add(OBJ.poc, "(create)", "", "poc_id generated", poc?.properties?.poc_id || "none", Boolean(poc?.properties?.poc_id));
+  });
+  const sweep = async (obj, rec, field, sel) => {
+    for (const internal of Object.keys(sel.map)) {
+      const expected = sel.map[internal];
+      try {
+        await updateRecord(obj, rec.id, { [field]: internal });
+        const got = (await getRecord(obj, rec.id))?.properties?.[field];
+        add(obj, field, internal, expected, got, got === expected);
+      } catch (e) { add(obj, field, internal, expected, "", false, e.message.split("\n").slice(0, 3).join(" / ")); }
+    }
+  };
+  if (poc) for (const [field, sel] of Object.entries(FIELDS[OBJ.poc].selects)) await sweep(OBJ.poc, poc, field, sel);
+
+  // Documents: one per file format (doc_type from the extension), one gate pack (stage "gates").
+  let doc = null;
+  if (poc) {
+    const dir = path.resolve("studio", "contract-test"); fs.mkdirSync(dir, { recursive: true });
+    const samples = { ".md": "# Contract test\n", ".html": "<p>Contract test</p>\n", ".json": "{\"test\":true}\n", ".csv": "a,b\n1,2\n", ".pdf": "%PDF-1.4\n% test\n",
+      ".png": "PNG test bytes", ".mp4": "MP4 test bytes", ".txt": "plain text\n" };
+    for (const [ext, body] of Object.entries(samples)) {
+      const expected = docTypeFor(`x${ext}`);
+      await tryStep(OBJ.doc, `doc_type from ${ext}`, async () => {
+        const file = path.join(dir, `contract-test${ext}`); fs.writeFileSync(file, body);
+        const r = await saveDoc({ poc: poc.properties?.poc_id || poc.id, stage: "0_kickoff", slug: `contract-test-${ext.slice(1)}`, name: TEST, type: "other", file, status: "draft", summary: "Test row" });
+        const [rec] = await findRecords(OBJ.doc, [{ op: "EQUAL", field: "properties.doc_id", values: [r.doc_id] }], 1);
+        const p = rec?.properties || {};
+        const fileOk = Buffer.compare(await downloadFile(p.file), fs.readFileSync(file)) === 0;
+        add(OBJ.doc, "doc_type", ext, expected, p.doc_type, p.doc_type === expected && fileOk, fileOk ? "file uploaded and downloaded identical" : "file differs");
+        if (ext === ".md") doc = rec;
+      });
+    }
+    await tryStep(OBJ.doc, "stage for gate packs", async () => {
+      const file = path.join(dir, "contract-test-gate.md"); fs.writeFileSync(file, "# Gate pack test\n");
+      const r = await saveDoc({ poc: poc.properties?.poc_id || poc.id, stage: "3_scope", slug: "contract-test-gate", name: TEST, type: "gate_pack", gate: "G2", file, status: "in_review" });
+      const [rec] = await findRecords(OBJ.doc, [{ op: "EQUAL", field: "properties.doc_id", values: [r.doc_id] }], 1);
+      add(OBJ.doc, "stage", "gate_pack (any stage)", "gates", rec?.properties?.stage, rec?.properties?.stage === "gates");
+    });
+    if (doc) {
+      const pocRef = await refValue(OBJ.doc, "poc", poc);
+      const target = await resolveRef(OBJ.doc, "poc", doc.properties.poc);
+      add(OBJ.doc, "poc (reference)", "", pocRef, doc.properties.poc, doc.properties.poc === pocRef && target?.id === poc.id, target ? "resolves to the test POC row" : "does not resolve");
+      for (const [field, sel] of Object.entries(FIELDS[OBJ.doc].selects)) if (field !== "doc_type") await sweep(OBJ.doc, doc, field, sel);
+      await updateRecord(OBJ.doc, doc.id, { stage: "0_kickoff", status: "draft" });
+    }
+  }
+
+  // Feedback ticket on the test POC, about the test document.
+  let fb = null;
+  if (poc) await tryStep(OBJ.fb, "(create)", async () => {
+    const r = await newTicket({ poc: poc.properties?.poc_id || poc.id, feedback: `${TEST}. Test row; safe to ignore. ${stamp}`, title: TEST, category: "process", severity: "low", stage: "0_kickoff", doc: doc?.properties?.doc_id });
+    fb = await ticketRecord(r.ticket_no);
+    add(OBJ.fb, "(create)", "", "ticket_no generated", r.ticket_no, Boolean(fb?.properties?.ticket_no || r.ticket_no));
+    const p = fb?.properties || {};
+    const pocRef = await refValue(OBJ.fb, "poc", poc);
+    add(OBJ.fb, "poc (reference)", "", pocRef, p.poc, p.poc === pocRef && (await resolveRef(OBJ.fb, "poc", p.poc))?.id === poc.id);
+    if (doc) { const docRef = await refValue(OBJ.fb, "related_document", doc); add(OBJ.fb, "related_document (reference)", "", docRef, p.related_document, p.related_document === docRef && (await resolveRef(OBJ.fb, "related_document", p.related_document))?.id === doc.id); }
+  });
+  if (fb) for (const [field, sel] of Object.entries(FIELDS[OBJ.fb].selects)) await sweep(OBJ.fb, fb, field, sel);
+
+  // Bad writes must stop before sending and leave the row unchanged.
+  const mustStop = async (label, obj, rec, fn) => {
+    const before = rec ? (await getRecord(obj, rec.id))?.version : null;
+    try { await fn(); add(obj, "(validation)", label, "stopped before sending", "it was sent", false); }
+    catch (e) {
+      const after = rec ? (await getRecord(obj, rec.id))?.version : null;
+      add(obj, "(validation)", label, "stopped before sending", e.schema ? "stopped" : `other error: ${e.message.slice(0, 80)}`, Boolean(e.schema) && before === after);
+    }
+  };
+  if (poc) {
+    await mustStop("stage = not_a_stage", OBJ.poc, poc, () => updateRecord(OBJ.poc, poc.id, { stage: "not_a_stage" }));
+    await mustStop("unknown field", OBJ.poc, poc, () => updateRecord(OBJ.poc, poc.id, { client: "old name" }));
+    await mustStop("required client_name emptied", OBJ.poc, poc, () => updateRecord(OBJ.poc, poc.id, { client_name: "" }));
+    await mustStop("writing poc_id", OBJ.poc, poc, () => updateRecord(OBJ.poc, poc.id, { poc_id: "POC-_1" }));
+  }
+  await mustStop("document without name", OBJ.doc, null, () => createRecord(OBJ.doc, { doc_id: `contract-test-missing-name-${Date.now()}`, poc: "x", stage: "0_kickoff" }));
+  if (fb) await mustStop("poc pointing at no POC", OBJ.fb, fb, () => updateRecord(OBJ.fb, fb.id, { poc: "POC-_does-not-exist" }));
+  if (fb) await mustStop("severity = critical", OBJ.fb, fb, () => updateRecord(OBJ.fb, fb.id, { severity: "critical" }));
+
+  // Leave the rows marked as test.
+  try {
+    if (poc) await updateRecord(OBJ.poc, poc.id, { stage: "0_kickoff", status: "stopped", run_state: "abandoned", current_gate: "none",
+      stall_reason: "TEST ROW: POC Studio contract test; safe to ignore", last_activity: `Contract test ${stamp}`, last_activity_at: Date.now() });
+    if (fb) await updateRecord(OBJ.fb, fb.id, { status: "wont_do", action_taken: "TEST ROW: contract test; nothing to do", resolved_at: Date.now() });
+  } catch (e) { add("(all)", "(mark as test)", "", "rows marked as test", e.message.slice(0, 120), false); }
+
+  const ok = rows.every((r) => r.ok);
+  const passed = rows.filter((r) => r.ok).length;
+  const md = [`# POC Studio contract test`, ``, `${BASE} · ${stamp} · ${passed} of ${rows.length} passed · test POC ${poc?.properties?.poc_id || "none"}`, ``,
+    "| Object | Field | Internal value | Orbit value expected | Read back | Result | Note |", "|---|---|---|---|---|---|---|",
+    ...rows.map((r) => `| ${r.object} | ${r.field} | ${r.internal ?? ""} | ${r.expected ?? ""} | ${r.got ?? ""} | ${r.ok ? "pass" : "FAIL"} | ${String(r.note || "").replace(/\|/g, "/")} |`)].join("\n");
+  const outDir = path.resolve("studio", "contract-test"); fs.mkdirSync(outDir, { recursive: true });
+  const base = path.join(outDir, `contract-test-${stamp.replace(/[:.]/g, "-")}`);
+  fs.writeFileSync(`${base}.md`, md + "\n"); fs.writeFileSync(`${base}.json`, JSON.stringify({ base: BASE, at: stamp, ok, passed, total: rows.length, rows }, null, 2));
+  process.stderr.write(md + "\n");
+  return { ok, passed, total: rows.length, failed: rows.filter((r) => !r.ok).map((r) => `${r.object} ${r.field} ${r.internal}: ${r.got || r.note}`), seconds: Math.round((Date.now() - t0) / 1000), report: `${base}.md`, poc: poc?.properties?.poc_id || null };
 }
 
 // ---------- commands ----------
@@ -685,7 +854,7 @@ async function run(c, p, f, canQueue = true) {
         const id = F("poc"), slug = F("slug"), outPath = F("out");
         if (!id || !slug || !outPath) throw new Error("fetch-doc needs --poc, --slug and --out");
         const poc = await pocRecord(id); if (!poc) throw new Error(`POC ${id} not found`);
-        const docs = (await docsOf(refValue(poc), 1000)).filter((d) => slugOf(d.properties?.doc_id) === slug);
+        const docs = (await docsOf(await refValue(OBJ.doc, "poc", poc), 1000)).filter((d) => slugOf(d.properties?.doc_id) === slug);
         const byVer = (a, b) => (b.properties?.version || 0) - (a.properties?.version || 0);
         const latest = docs.filter((d) => d.properties?.status !== "superseded").sort(byVer)[0] || docs.sort(byVer)[0];
         if (!latest) throw new Error(`No document ${slug} for ${id}`);
@@ -699,8 +868,9 @@ async function run(c, p, f, canQueue = true) {
       case "get": { const r = await getRecord(p[0], p[1]); if (!r) throw new Error(`${p[0]}/${p[1]} not found`); return r; }
       case "find": {
         const filters = [];
-        (f.field || []).forEach((fl, i) => filters.push({ op: "EQUAL", field: `properties.${fl}`, values: [(f.value || [])[i]] }));
-        for (const s of f.in || []) { const [k, v] = s.split("="); filters.push({ op: "IN", field: `properties.${k}`, values: v.split(",") }); }
+        const asOrbit = (k, v) => mapValue(p[0], k, v).value ?? v; // internal values are mapped for reads too
+        (f.field || []).forEach((fl, i) => filters.push({ op: "EQUAL", field: `properties.${fl}`, values: [asOrbit(fl, (f.value || [])[i])] }));
+        for (const s of f.in || []) { const [k, v] = s.split("="); filters.push({ op: "IN", field: `properties.${k}`, values: v.split(",").map((x) => asOrbit(k, x)) }); }
         const rows = await findRecords(p[0], filters, Number(F("limit", 50)), F("sort"));
         return { count: rows.length, rows };
       }
@@ -716,20 +886,22 @@ async function run(c, p, f, canQueue = true) {
         const t = F("ticket"); if (!t || !F("action")) throw new Error("close-ticket needs --ticket and --action");
         const r = await ticketRecord(t); if (!r) throw new Error(`Ticket ${t} not found`);
         const status = F("status", "done");
-        await updateRecord(OBJ.fb, r.id, { status, action_taken: F("action"), ...(status === "done" || status === "wont_do" ? { resolved_at: Date.now() } : {}) });
-        return { ticket_no: r.properties?.ticket_no || t, status };
+        const closed = ["resolved", "wont_fix"].includes(mapValue(OBJ.fb, "status", status).value);
+        await updateRecord(OBJ.fb, r.id, { status, action_taken: F("action"), ...(closed ? { resolved_at: Date.now() } : {}) });
+        return { ticket_no: r.properties?.ticket_no || t, status: mapValue(OBJ.fb, "status", status).value };
       }
       case "sync-counts": {
         const id = F("poc");
         const poc = await pocRecord(id); if (!poc) throw new Error(`POC ${id} not found`);
-        const docs = await docsOf(refValue(poc));
-        const open = await findRecords(OBJ.fb, [{ op: "EQUAL", field: "properties.poc", values: [refValue(poc)] }, { op: "IN", field: "properties.status", values: OPEN_TICKET }], 1000);
+        const docs = await docsOf(await refValue(OBJ.doc, "poc", poc));
+        const open = await findRecords(OBJ.fb, [{ op: "EQUAL", field: "properties.poc", values: [await refValue(OBJ.fb, "poc", poc)] }, { op: "IN", field: "properties.status", values: OPEN_TICKET }], 1000);
         await updateRecord(OBJ.poc, poc.id, { documents_count: docs.length, open_feedback_count: open.length, last_activity_at: Date.now() });
         return { poc: id, documents_count: docs.length, open_feedback_count: open.length };
       }
       case "flush": return await flush();
+      case "contract-test": { const r = await contractTest(); if (!r.ok) { const e = new Error(`Contract test: ${r.total - r.passed} of ${r.total} failed; see ${r.report}.`); e.extra = r; throw e; } return r; }
       case "selftest": { const r = await selftest({ poc: F("poc") }); if (!r.ok) { const e = new Error("Self-test found problems; see the table."); e.extra = r; throw e; } return r; }
-      default: throw new Error(`unknown command "${c}". Commands: check, schema-check, schema, refresh-schemas, ensure-objects, new-poc, find-poc, claim, heartbeat, get, find, create, update, upload, save-doc, fetch-doc, readback, new-ticket, close-ticket, sync-counts, flush, selftest`);
+      default: throw new Error(`unknown command "${c}". Commands: check, schema-check, schema, refresh-schemas, ensure-objects, new-poc, find-poc, claim, heartbeat, get, find, create, update, upload, save-doc, fetch-doc, readback, new-ticket, close-ticket, sync-counts, flush, selftest, contract-test`);
     }
   } catch (e) {
     if (canQueue && WRITES.has(c) && (e instanceof NetError || e instanceof AuthError)) {

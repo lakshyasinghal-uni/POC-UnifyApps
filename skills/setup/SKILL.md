@@ -10,7 +10,7 @@ description: >
   gate end to end, and saves the settings (no secrets) in Orbit with a local copy in
   poc-studio.yml, so a new chat does not need setup again.
 metadata:
-  version: "0.4.8"
+  version: "0.4.9"
 ---
 
 # POC Studio: setup
@@ -72,6 +72,14 @@ differ: show the list it returns, one line per difference, say that the plugin a
 objects need to be brought back in line, and stop setup there. Never change an object and
 never rename a field to make it pass.
 
+When the schema check passes, run `orbit-api.mjs contract-test` (a few minutes). It writes every
+value the plugin can produce to `[TEST]` rows, reads each back, checks references, file formats
+and that bad writes are stopped, and prints a pass list. Show the counts in one line
+(`Contract test: <passed> of <total> passed.`) and save them in the settings
+(`contract_test`). Any failure stops setup with the failing lines. It is skipped when the saved
+settings already record a passing contract test for this POC Studio version and the schema
+check found nothing new.
+
 ## 3. Your personal Slack chat for gates
 
 Slack is used for one thing: when a gate is ready, a notification goes to **your personal
@@ -127,7 +135,7 @@ working folder as a local cache; Orbit's version wins when they differ. **No sec
 either.**
 
 ```yaml
-version: 0.4.7
+version: 0.4.9
 checked: <ISO date and time>
 setup_row: <poc_id of the person's setup row>
 orbit:
@@ -142,6 +150,7 @@ connectors: { slack: ok, calendar: ok | missing, drive: ok | missing }
 nebula: { version: <v>, code_builder: true | false }
 poc_studio: { version: <v>, auto_update: on | off | not applicable }
 test_gate: { poc: <setup row>, notified: true, at: <ISO> }
+contract_test: { version: <v>, passed: <n>, total: <n>, at: <ISO>, report: <path> }
 ```
 
 Finish with five lines at most: what is connected, what is missing and what that costs, that

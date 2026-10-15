@@ -8,7 +8,7 @@ description: >
   the build, which checks the connectors, Orbit and the schema and starts the POC. It also takes
   "resume <POC ID or name>" to carry on an existing POC.
 metadata:
-  version: "0.4.8"
+  version: "0.4.9"
 ---
 
 # POC Studio: start

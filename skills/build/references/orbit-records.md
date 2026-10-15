@@ -27,20 +27,53 @@ never changed by the plugin.
 | `poc_studio_document` | **`doc_id`**, **`poc`**, **`name`**, **`stage`** (required), `version`, `doc_type`, `gate`, `status`, `file`, `content`, `summary` (one line; it says which version this one replaces), `source_path` (the local file it came from), `file_url`, `size_bytes`, `created_by`, `created_at` |
 | `poc_studio_feedback` | **`poc`**, **`feedback`** (the exact words), **`given_by_name`** (required; `ticket_no` is generated), `title`, `client_name`, `given_by_email`, `given_by_slack_id`, `channel`, `source_link`, `poc_stage`, `gate`, `category`, `severity`, `status`, `related_document`, `action_taken`, `created_at`, `resolved_at` |
 
-`poc` and `related_document` are single-select references to another record: they hold that
-record's id (for a POC row, the same value as its `poc_id`; for a document, its `doc_id`).
-`save-doc` and `new-ticket` fill them; never type them by hand.
+`poc` (on documents and feedback) and `related_document` (on feedback) are foreign keys to
+`poc_studio_poc` and `poc_studio_document`. Which id they hold (the record id, or the primary
+key `poc_id` / `doc_id`) is read from an existing row and cached; `save-doc` and `new-ticket`
+fill them. Never type them by hand.
 
 The app's link has no field of its own: it goes in the G3 gate pack and in `last_activity`.
 
-**The schema check.** `schema-check` reads the three live schemas and compares them with these
-names and with every single-select value the plugin writes (stage, status, gate, tier,
-run_state, build_mode, doc_type, category, severity, channel and the gate statuses). Setup and
-the start of every build run it. When anything differs it exits 5 with the exact list (a field
-the tenant does not have, a field the tenant requires that the plugin never writes, values that
-are not options) and the run stops there: show the list to the person, and do not rename fields
-or change values to make a write pass. Every write is checked the same way before it is sent, so
-a write that does not match stops with exit 5 and writes nothing.
+## The contract: one mapping table
+
+[orbit-contract.json](orbit-contract.json) is the only place Orbit values live. For every
+dropdown it lists the tenant's options and a map from each value the skills use (the internal
+value) to the Orbit value. Skills keep writing internal values; every create and update maps them
+through the table. An Orbit value passes as is; any other value stops the write. The main
+differences:
+
+| Field | Internal → Orbit |
+|---|---|
+| stage, poc_stage | `1_signal_capture` → `1_signal`, `2_research_assess` → `2_research`, `4_design_system` → `4_design`; the rest unchanged |
+| document stage | as above, plus gate packs and gate decisions are always filed under `gates`; `demo_ready` → `7_collaterals` (documents have no demo_ready) |
+| POC status | `running` → `active`, `waiting_on_gate` → `waiting_gate`, `waiting_on_reconnect` → `blocked` |
+| g1_status … g4_status | `not_started` → `pending`, `asked` and `held` → `waiting`, `approved`, `approved_partial`, `approved_with_changes` and `released` → `approved`, `changes_requested` → `changes`, `blocked` → `stopped`, `merged` → `skipped_merged`. The exact answer (partial, with changes, hold) stays in the gate's `gate_decision` document |
+| doc_type | the file's format from its extension: markdown, html, json, csv, pdf, image, video, other. What the document is (research, brd, gate_pack …) starts its `summary`: `brd · <one line>` |
+| feedback category | `requirement` → `scope`, `build_defect` → `bug`, `collateral` → `content`, `skill` → `other` |
+| feedback severity | `blocker` → `high` |
+| feedback status | `acknowledged` → `open`, `done` → `resolved`, `wont_do` → `wont_fix` |
+| feedback channel | `chat` → `session`, `slack_thread` → `slack` |
+
+**Before every create or update**, the whole record is checked against the live schema: every
+field name is in the contract and on the tenant, no auto-generated field is written, every
+dropdown value is an option, every required field is present on the resulting record, and every
+reference points at a record that exists. Anything that fails stops the write before it is sent,
+with every problem listed (exit 5). A document is checked before its file is uploaded.
+
+**The schema check.** `schema-check` compares the three live schemas with the contract: field
+names, required fields, and every Orbit value the map can produce. Setup and the start of every
+build run it. When anything differs it exits 5 with the exact list, and the run stops there:
+show the list to the person, and never rename fields or change values to make a write pass.
+
+**The contract test.** `contract-test` proves the contract on the real tenant: it writes every
+internal value of every mapped field to a `[TEST] POC Studio contract test` POC row, document
+and ticket, reads each back and compares it with the expected Orbit value; saves one document of
+each file format (and checks the file downloads identical); checks the three references resolve;
+and checks that seven kinds of bad write are stopped before sending. Nothing is deleted: the test
+rows are reused on every run and left marked as test (`status: stopped`, `run_state:
+abandoned`, a `TEST ROW` stall reason; the ticket closed as `wont_fix`). The pass list is
+printed and saved to `studio/contract-test/`. Run it after any change to the Orbit objects or to
+orbit-contract.json.
 
 ## Two ways to reach Orbit
 
@@ -54,7 +87,8 @@ the POC", and 5 is "the live schema does not match" (stop and show the list).
 | Command | Use |
 |---|---|
 | `check` | Who is signed in; whether the three objects exist; `userMismatch` when it is not the user setup recorded |
-| `schema-check` | Compare the live schemas with the fields and options the plugin writes; exit 5 with the list when they differ |
+| `schema-check` | Compare the live schemas with orbit-contract.json; exit 5 with the list when they differ |
+| `contract-test` | On the real tenant: every mapped value written to test rows and read back, references, file formats, and bad writes stopped; a pass list in `studio/contract-test/` |
 | `selftest [--poc <id>]` | On the real tenant: the schema check, then a write and a read-back on all three objects and one file upload and download; prints a results table |
 | `ensure-objects` | Create any missing object from orbit-objects.json; an existing one is never altered |
 | `refresh-schemas` | Replace the schemas in orbit-objects.json with the tenant's live ones, and list every field and its options |
@@ -68,7 +102,7 @@ the POC", and 5 is "the live schema does not match" (stop and show the list).
 | `create <object> <json or @file>` | New row, with the field names above. Pass anything holding a person's words as `@file`, so the words never sit in a shell command |
 | `update <object> <id> <json or @file>` | Read the row, merge the given properties, write the full record with its version |
 | `upload <path>` | Upload a file; returns the File-field value. The bucket and directory come from `GET /api/file/upload-bucket` (`ORBIT_BUCKET` overrides the bucket only) |
-| `save-doc --poc --stage --slug --name --type --file [--status] [--gate] [--summary] [--by]` | Upload the full file, create the next version (text also in `content` up to ~1 MB), mark the previous one `superseded`, update the POC's `documents_count` and `last_activity`. `--name` is the document's title |
+| `save-doc --poc --stage --slug --name --type --file [--status] [--gate] [--summary] [--by]` | `--type` is what the document is (research, brd, design_system, gate_pack, gate_decision, runbook …); `doc_type` is set from the file's format. Upload the full file, create the next version (text also in `content` up to ~1 MB), mark the previous one `superseded`, update the POC's `documents_count` and `last_activity`. `--name` is the document's title |
 | `new-ticket --poc --feedback @file --title [--by-name] [--by-email] [--by-slack-id] [--stage] [--gate] [--category] [--severity] [--doc <doc_id>] [--source-link]` | A feedback ticket; returns the `ticket_no` Orbit generates. Without `--by-name` it is the signed-in person |
 | `close-ticket --ticket <ticket_no> --action <what was done> [--status done\|wont_do]` | Close a ticket: `status`, `action_taken`, `resolved_at` |
 | `readback --poc <id>` | Every latest document: file uploaded, version, status; `ok` only when all are there and nothing is queued |
