@@ -27,7 +27,8 @@ Run `node "${CLAUDE_PLUGIN_ROOT}/scripts/version-check.mjs"`. It prints one JSON
 | Result | What to do |
 |---|---|
 | `behind: false` | Say nothing beyond `POC Studio <version>, latest.` and carry on. |
-| `latest: null` (GitHub not reachable) | Say `Could not check for a newer POC Studio (<error>); carrying on with <installed>.` and carry on. |
+| `latest: null` (GitHub slow or not reachable), `surface: claude-code` | Update anyway: § Update in Claude Code. The `claude` command fetches with git, which often works where the check did not. |
+| `latest: null`, any other surface | Say `Could not check for a newer POC Studio (<error>); carrying on with <installed>.` and carry on. |
 | `behind: true`, `surface: claude-code` (or `unknown` with the `claude` command available) | § Update in Claude Code. |
 | `behind: true`, `surface: claude-app` | § Update in the Claude app. |
 
@@ -39,14 +40,16 @@ Run `node "${CLAUDE_PLUGIN_ROOT}/scripts/version-check.mjs"`. It prints one JSON
 2. Run `node "${CLAUDE_PLUGIN_ROOT}/scripts/enable-autoupdate.mjs`, so later releases arrive by
    themselves (§ Auto-update).
 3. **Exit 11 (updated):** say, in three lines at most:
-   `POC Studio updated from <installed> to <latest>. Start a fresh Claude Code session (or run
+   `POC Studio updated from <installed> to <now, or latest>. Start a fresh Claude Code session (or run
    /reload-plugins) and run your command again.` Name what is new in one line from the
    CHANGELOG's top entry when it is at hand. **Then stop.** Do not run the build or setup on
    the old version.
-4. **Exit 1 (the update failed):** show the failing command and its last lines, give the two
+4. **Exit 0 after `--apply`** (the check could not reach GitHub and the marketplace had nothing
+   newer): say `POC Studio <installed> is the newest the marketplace has.`
+5. **Exit 1 (the update failed):** show the failing command and its last lines, give the two
    commands to run by hand in a terminal, and ask one question, `Carry on with <installed>, or
    stop?` (`Stop`, `Carry on with <installed>`).
-5. A sign-in, network or permission prompt from the `claude` command is the person's to answer;
+6. A sign-in, network or permission prompt from the `claude` command is the person's to answer;
    never work around one.
 
 ## Update in the Claude app
