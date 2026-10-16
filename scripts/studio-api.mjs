@@ -13,7 +13,8 @@
  *                                        without writing anything
  *   call <path> <json|@file> [--debug]   POST to <url>/<path>, e.g. log-activity
  *
- * Exit codes: 0 ok, 1 error from the endpoint, 2 the API refused the call (401/403),
+ * Exit codes: 0 ok, 1 error from the endpoint (including a refused request: {ok:false, error}),
+ * 2 the API refused the call (401/403),
  * 3 API not reachable.
  */
 import fs from "node:fs";
@@ -63,8 +64,10 @@ async function main() {
       const r = await post(endpoint, body);
       if (!r.reachable) out({ ok: false, reason: `Orbit could not be reached (${r.error}).` }, 3);
       if (r.status === 401 || r.status === 403) out({ ok: false, status: r.status, reason: "The API refused the call. Run /poc-studio:connect to see why." }, 2);
-      const ok = r.status >= 200 && r.status < 300;
-      return out({ ok, status: r.status, response: r.body }, ok ? 0 : 1);
+      // The endpoints answer a refused request with HTTP 200 and {ok: false, error}.
+      const refused = r.body && typeof r.body === "object" && r.body.ok === false;
+      const ok = r.status >= 200 && r.status < 300 && !refused;
+      return out({ ok, status: r.status, ...(refused ? { error: r.body.error } : {}), response: r.body }, ok ? 0 : 1);
     }
     default: {
       const usage = fs.readFileSync(new URL(import.meta.url), "utf8").split("*/")[0].replace(/^#!.*\n\/\*\*?/, "").replace(/^ \* ?/gm, "");

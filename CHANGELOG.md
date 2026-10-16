@@ -6,6 +6,18 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.5.1 (2026-10-16)
+
+- **The Orbit Studio API is complete on orbit.uat**: `poc-create`, `poc-update`, `poc-get`,
+  `document-save`, `document-get`, `iteration-log`, `gate-open`, `gate-owner-approve`,
+  `gate-request-changes`, `feedback-create`, `feedback-review` and `log-activity`, each an
+  automation on Orbit published in the `orbit-studio` API group. They write the five
+  `orbit_studio_*` objects, build every key, version documents, keep the counts right, log an
+  activity for each change and pass a gate when both the owner and the manager have approved.
+  A bad request writes nothing and answers `{ok: false, error}` with every problem.
+- `skills/connect/references/endpoints.md` lists every endpoint with its fields and answers.
+- `studio-api.mjs call` exits 1 and prints the error when an endpoint refuses a request.
+
 ## 0.5.0 (2026-10-16)
 
 - **The Orbit write-back starts afresh.** The old path is removed: `scripts/orbit-api.mjs`, the
