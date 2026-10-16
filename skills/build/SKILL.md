@@ -23,7 +23,7 @@ description: >
   settles what it can between gates and asks Nebula and the verified UnifyApps skills rather
   than guessing. Needs /poc-studio:setup once first.
 metadata:
-  version: "0.5.0"
+  version: "0.6.0"
   requires: "nebula plugin with the code builder (3.55.4-beta.31.feat-code-builder-mcp or later); Slack; the POC Studio API on Orbit for write-back"
 ---
 
@@ -33,8 +33,9 @@ Take one request and carry the POC from first signal to a released demo. The wor
 phases. Each ends with an owner gate, sent to Slack with links to the records and shown in
 the chat at the same time. Between gates, a Sonic build decides, logs and moves on; a Zen build
 asks the person whenever a step needs a decision. Every document, decision and piece of feedback
-lives in four UnifyApps objects ([references/objects.md](references/objects.md)), and one POC
-is one row there, with every event in its activity log, however many sessions work on it
+lives in five UnifyApps objects ([references/objects.md](references/objects.md)), and one POC
+is one row there, with every event in its activity log and every change between gates in its
+iterations, however many sessions work on it
 ([references/run-control.md](references/run-control.md)).
 
 ## Phases and gates
@@ -63,13 +64,15 @@ earliest gate whose pack it changes is asked again.
 
 ## Rules that never bend
 
-- **The owner decides at the four gates,** as gates.md says: never answered by an
-  agent, never skipped, never assumed from silence or an emoji. On a short timeline the tier
+- **The owner and the manager decide at the four gates,** as gates.md says: the owner in the
+  Claude chat, the manager in the Orbit Studio app, and a gate passes when both have approved;
+  never answered by an agent, never skipped, never assumed from silence or an emoji. On a short timeline the tier
   merges them in pairs; it never removes one.
-- **The objects are the record.** Every document is saved with its full file through the POC
-  Studio API ([references/objects.md](references/objects.md)), every gate answer
-  is a `gate_decided` activity, every piece of feedback is a ticket. Local files are working
-  copies.
+- **The objects are the record.** Every write is a call to the Orbit Studio API at the step
+  objects.md § Which call at which step names: every stage start and end is a `poc-update`,
+  every document a `document-save`, every gate posted and answered a gate call, every change
+  made after a gate's changes, a Judge ruling or a fix in the build an `iteration-log`, every
+  piece of feedback a `feedback-create`. Local files are working copies.
 - **Save before every human step.** Before a gate is sent or any question reaches a person,
   run the save check of objects.md. If anything did not save, show the person what failed and
   the error, and do not send the gate or
@@ -202,8 +205,8 @@ POC's build mode: Sonic, or Zen as nebula-bridge.md § Zen mode says.
 The one stop is sign-in when the stored cookie has expired: follow the sign-in step of the
 bridge exactly as Nebula's `start` skill does, once per session.
 
-**11. The POC row.** For a new build, create it as run-control.md § Creating the row says: the
-tenant generates the `poc_id`; read it from the created record and use it everywhere.
+**11. The POC row.** For a new build, create it with `poc-create` as run-control.md § Creating
+the row says: the endpoint makes the `poc_id`; keep the one it returns and use it everywhere.
 The owner is the person running this session, and the Slack chat for gates is their personal
 chat from their settings; the tier from gates.md § Merged gates; the build mode from step 1b. Then save the profile
 as the `working-profile` document.
@@ -535,7 +538,8 @@ Say one line per beat that needed a fix, and the final `Rehearsal: <n> of <n> be
 Write `unverified.md` (every beat or check still failing, every `Check this` assumption). Save
 as working documents: `rehearsal.md` with its shots, `checks.md`, the entity table with
 builder links, `external-verify.md` when it exists, `unverified.md`, the demo script and the
-Text2Code prompt. Put the app's link on the POC row.
+Text2Code prompt. Save the app itself as a document: type `app`, `format: link`, `file_link`
+the app's URL, stage `6_finalize`, gate pack `g3`.
 
 **G3 · Final review.** Run the save check, then send G3 as gate-delivery.md says: the app's
 link, and in the message how many beats and checks passed and what is unverified (merged into
@@ -591,10 +595,12 @@ the profile asks for them, and the field note.
    (type `demo_script`), the explainer and the field note (type `deck`).
 7. **G4 · Release.** Run the save check, then send G4 as gate-delivery.md says (with
    G3's pack too when the tier merged them). Wait. `changes: …` becomes tickets, reworks the
-   named collaterals, saves new versions and asks again, twice at most. `approve` marks the
-   runbook `Demo-ready · released by <name> on <date>` (a new version, status `final`), the POC
-   row `status: demo_ready` with stage `8_demo_ready` and run state `done`; `hold` sets `status:
-   blocked` with `blocked_on: held · <reason>`. Record the decision. Say `G4: <released | held>.`
+   named collaterals, saves new versions and asks again, twice at most. `approve` is written
+   with `gate-owner-approve`; when G4 passes (both approvals, gate-delivery.md § Waiting for the
+   manager), the POC is `status: demo_ready` at stage `8_demo_ready`, the runbook is marked
+   `Demo-ready · released by <name> on <date>` and saved as a new version with `status: final`,
+   and the run state is `done`. `hold` is a `poc-update` with `status: blocked` and
+   `blocked_on: held · <reason>`. Say `G4: <released | held>.`
 8. Say five to eight lines: what exists, the app's link, each gate's answer, the tickets
    raised and closed, what is unverified, and the POC's record link. Offer `Next task` and
    `Save session`. `Next task` goes to the bridge's § Later task with the person's words, as
@@ -605,8 +611,8 @@ the profile asks for them, and the field note.
 Anything said about the POC's content in the chat, at any point, is
 feedback, not just answers at gates.
 
-1. Raise a ticket (objects.md § Recipes): the next `FB-<n>` number, the exact words in
-   `feedback` (in a JSON file, never in the command), a short title, who gave it, the stage,
+1. Raise a ticket with `feedback-create` (objects.md § Recipes), which gives it the next
+   `FB-<n>` number: the exact words in `feedback` (in a JSON file, never in the command), a short title, who gave it, the stage,
    the gate if any, the document it is about, a category, a severity and the channel.
 2. Acknowledge it where it was given, with its ticket number: `Logged as FB-1012. <what will
    happen>.`
@@ -614,9 +620,9 @@ feedback, not just answers at gates.
    the Stand-in may not reopen it. What the owner passes on from someone else (a client, a
    colleague) is a `COMMENT` row unless the owner says to act on it: the Stand-in weighs it,
    and the owner sees it at the next gate.
-4. Close it when it is done or decided against (objects.md § Recipes): `status: resolved` or
-   `not_incorporated`, and one line in `action_taken` saying what was done, and lower the POC row's
-   `open_feedback_count`.
+4. Close it with `feedback-review` when it is done or decided against: `status: resolved` or
+   `not_incorporated`, and one line in `action_taken` saying what was done (the endpoint keeps
+   the POC's `open_feedback_count` right). A change made for it is also an `iteration-log`.
 
 Every gate message lists the tickets raised since the last gate, with their status.
 
