@@ -29,8 +29,15 @@ reachable. Every write follows the guardrails in skills/connect/SKILL.md § Guar
 
 | Endpoint | What it writes | Status |
 |---|---|---|
-| `log-activity` | one `orbit_studio_activity` row; returns `{ok, activity_id, poc}` | live |
-| the POC, document and feedback endpoints | everything else in the recipes below | being built |
+| `poc-create`, `poc-update`, `poc-get` | the POC row, with an activity for every change | live |
+| `document-save`, `document-get` | document versions (the previous one superseded) | live |
+| `iteration-log` | `orbit_studio_iteration` rows | live |
+| `gate-open`, `gate-owner-approve`, `gate-request-changes` | gate fields on the POC, with their activities | live |
+| `feedback-create`, `feedback-review` | `FB-<n>` tickets and the open count | live |
+| `log-activity` | any other `orbit_studio_activity` row | live |
+
+Fields, defaults and answers for each are in
+[../../connect/references/endpoints.md](../../connect/references/endpoints.md).
 
 Until an endpoint is live, or when the API refuses or cannot be reached:
 

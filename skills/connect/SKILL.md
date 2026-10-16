@@ -86,9 +86,19 @@ writes to Orbit follows them:
 
 ## The API today
 
-| Endpoint | What it does | Required fields |
-|---|---|---|
-| `log-activity` | writes one `orbit_studio_activity` row; returns `{ok, activity_id, poc}` | `poc`, `type`, `actor_type`, `actor_name`, `message` |
+Every endpoint is listed, with its fields and what it writes, in
+[references/endpoints.md](references/endpoints.md):
 
-The POC, document and feedback endpoints are being built; objects.md lists each one as it goes
-live.
+| Endpoint | Use it when |
+|---|---|
+| `poc-create` | a new POC starts (kickoff) |
+| `poc-update` | the POC's stage, status or other fields change |
+| `poc-get` | a POC is resumed in a new chat, and before each gate |
+| `document-save` · `document-get` | a document or a new version is saved; one is read back |
+| `iteration-log` | a change is made between gates |
+| `gate-open` · `gate-owner-approve` · `gate-request-changes` | a gate is posted; the owner approves it in Slack or sends it back |
+| `feedback-create` · `feedback-review` | feedback is raised; a ticket is reviewed or closed |
+| `log-activity` | any other event |
+
+A bad request writes nothing and answers `{"ok": false, "error": "…"}` with every problem; the
+script then exits 1 and prints it. Show the person the error, fix the body, and try once more.
