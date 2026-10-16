@@ -55,8 +55,9 @@ It checks and connects, in this order:
 1. **Slack** (required): gate messages, replies and feedback. **Google Calendar** and **Google
    Drive** are checked too; when either is missing you get a connector card, and the build
    goes on without it.
-2. **Orbit write-back**: every record goes to four Orbit objects (`orbit_studio_poc`,
-   `orbit_studio_document`, `orbit_studio_feedback`, `orbit_studio_activity`) through the Orbit
+2. **Orbit write-back**: every record goes to five Orbit objects (`orbit_studio_poc`,
+   `orbit_studio_document`, `orbit_studio_iteration`, `orbit_studio_activity`,
+   `orbit_studio_feedback`) through the Orbit
    Studio API, automations hosted on Orbit and published in API Manager (group
    `orbit-studio`, No Auth access profile). Setup runs `/poc-studio:connect`, which checks the
    API accepts calls. If it cannot be reached, the build still runs and keeps records in the
@@ -219,7 +220,7 @@ poc-studio/
   skills/setup/SKILL.md            connect once: Slack, Calendar, Drive, the objects, your Slack chat, a test gate
   skills/update/SKILL.md           check for and install the latest version; auto-update on
   skills/build/SKILL.md            the four phases and their gates
-  skills/build/references/         gates, gate-delivery, run-control, objects (the four objects and recipes),
+  skills/build/references/         gates, gate-delivery, run-control, objects (the five objects, which call at which step),
                                    brd-template, nebula-bridge, ask-nebula, context-research,
                                    data-plan, external-connections, innovation,
                                    explainer, text2code, code-design-brief, brand-to-look,

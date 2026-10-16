@@ -23,11 +23,15 @@ sent ([objects.md](objects.md) § The save check).
 
 ## Rules for every gate
 
-- **Only the owner answers a gate:** the person running POC Studio, in the Claude chat. The Stand-in, the Judge and the moderator never answer one, never
-  treat silence or an emoji as a yes, and never pre-fill an answer.
+- **Two people approve a gate:** the owner (the person running POC Studio), in the Claude chat,
+  and the POC's manager, in the Orbit Studio app. The gate passes when both have approved, in
+  either order (gate-delivery.md § Waiting for the manager). The Stand-in, the Judge and the
+  moderator never answer one, never treat silence or an emoji as a yes, and never pre-fill an
+  answer.
 - **One question per gate,** in both places at once, with the gate's reply words.
 - **Changes loop back, twice at most.** A `changes: …` answer becomes feedback tickets tagged
-  `OWNER`, goes back to the phase that owns them, and the same gate is asked again. After the
+  `OWNER`, goes back to the phase that owns them, and the same gate is asked again. Every
+  change made for them is logged as an iteration, so the approvers see what moved. After the
   second round of changes, the third answer can only approve, approve with the open tickets
   listed as `Not done`, or stop.
 - **Stop means stop.** `block`, `stop` and `hold` end the build at that gate with what exists
@@ -37,8 +41,9 @@ sent ([objects.md](objects.md) § The save check).
   first, the latest activity keeps `run_state: waiting_gate` and the next resume shows the gate
   again.
   A gate is never skipped because nobody answered.
-- **Every answer is a record:** a `gate_decided` activity and the gate's status on the POC
-  row, written before the next phase starts. The runbook carries the table of gate answers.
+- **Every answer is a record,** written through the gate endpoints before the next phase
+  starts (gate-delivery.md § After a gate answer): the approvals and the gate's status on the
+  POC, its summary, and an activity. The runbook carries the table of gate answers.
 - **Edits win.** When the owner edits a document in the tenant (`edited` at G1, or a newer version
   at any gate), read the latest version back; it is the source of truth for every later phase.
 - **Feedback since the last gate** is listed in every gate message by ticket number and status.
@@ -60,8 +65,9 @@ gate it is about). It is still two `gate_decided` activities, and both gates' st
 POC row carry the answer.
 
 In a merged G1 and G2, phase 2 runs before G1 is answered. When the answer is `block` for G1,
-the BRD, the design system and every working document phase 2 made are set to `superseded`, the POC goes to `status: stopped`, run state
-`abandoned`, and nothing is built.
+the BRD, the design system and every working document phase 2 made stay on the record as
+they are, the `gate_decided` activity names them as dropped, the POC goes to `status: stopped`,
+run state `abandoned`, and nothing is built.
 
 ## G1 · Path
 
@@ -97,7 +103,8 @@ Recommendation: <proceed | proceed partial | block> · tier <express | standard 
 
 **Reply words:** `approve` · `partial` · `edited` · `block`.
 
-**After:** the research document becomes `approved`. Its open questions and gaps become
+**After:** the gate's approval and `g1_summary` (the readiness verdict, and the cut list for
+`partial`) carry the decision. The research document's open questions and gaps become
 ledger rows. With `partial`, the cut list is a hard limit for the Stand-in and the Judge.
 `approve` or `partial` starts phase 2.
 
@@ -148,6 +155,7 @@ for the owner to send.
 
 **Reply words:** `approve` · `changes: …` · `hold`.
 
-**After:** `approve` marks the runbook `Demo-ready · released by <name> on <date>`, the POC row
-`status: demo_ready`, stage `8_demo_ready`. `hold` keeps everything as it is, with `status:
+**After:** when G4 passes, the runbook is marked `Demo-ready · released by <name> on <date>` and
+saved as a new version with `status: final`, and the POC is `status: demo_ready`, stage
+`8_demo_ready`. `hold` keeps everything as it is, with `status:
 blocked` and `blocked_on: held · <reason>`.

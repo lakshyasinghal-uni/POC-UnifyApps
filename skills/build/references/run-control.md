@@ -1,10 +1,10 @@
 # Run control: build mode, new or resume, run state, working documents, failures
 
 One POC is one row in `orbit_studio_poc`, however many sessions work on it, with its history in
-`orbit_studio_activity`. This file says how a
+`orbit_studio_activity` and its changes between gates in `orbit_studio_iteration`. This file says how a
 session starts or picks up that row, keeps it current, and leaves it in a state the next
-session can carry on from. Every read and write below follows the recipes in
-[objects.md](objects.md).
+session can carry on from. Every read and write below is a call to the Orbit Studio API, as
+[objects.md](objects.md) § Which call at which step says.
 
 ## New build or resume
 
@@ -49,46 +49,52 @@ AskUserQuestion call, up to four.
 
 ## Creating the row (new builds)
 
-Build the `poc_id` as `POC-<client-slug>-<YYYYMMDD>` (today), and add `-<HHMM>` (now) when a
-POC with that key exists. Then create the `orbit_studio_poc` record (objects.md § Recipes)
-with: `poc_id`,
-`client_name`, `client_slug`, `use_case`, `brief` (the person's request as typed), `tier`,
-`owner_name`, `owner_email` and `approvers` (the person running this session), `started_by` (the same person), `started_at`
-(now), `demo_date` when known, `slack_channel` (their personal Slack chat, from
-`poc-studio.yml`), `tenant_host` when the profile names it, `stage: 0_kickoff`,
-`current_gate: none`, all four gate statuses `pending`, `status: running`, `last_activity`
-and `last_activity_at`. Use the `poc_id` everywhere, including every document key
-`<poc_id>__<stage>__<slug>__v<n>`. If the create fails after the row may have been written,
-check whether it exists before trying again; never create a second row.
+Call `poc-create` (objects.md § Recipes) with: `client_name`, `client_slug`, `use_case`,
+`brief` (the person's request as typed), `tier`, `owner_name` and `owner_email` (the person
+running this session), `manager_name` and `manager_email` (from `poc-studio.yml` `manager`;
+left out when there is none), `approvers` (owner and manager), `started_by` (the same person),
+`demo_date` when known, `slack_channel` (their personal Slack chat, from `poc-studio.yml`),
+`tenant_host` when the profile names it, and `build_mode`.
 
-Then record a `poc_started` activity: actor the person, message `<name> started the POC for
-<client> (<tier>)`, and the run state block with `run_state: running`, `resume_from:
-0_kickoff`, the `build_mode` and this session's link.
+The endpoint makes the `poc_id` (`POC-<client-slug>-<yyyymmdd>`, with the time added when that
+key is taken), starts the POC at `0_kickoff` with every gate `pending` and `status: running`,
+and logs `poc_started` with the build mode in its run state. Keep the returned `poc_id` in
+`$STUDIO/objects/poc.ref` and use it in every later call. If the answer is lost after the row
+may have been written, `poc-get` the expected key before trying again; never create a second
+row.
+
+Then record this session's link with `poc-update` (`changes: {status: running}`; activity
+`stage_started`, `stage: 0_kickoff`, note `run_state: running`, `resume_from: 0_kickoff`, the
+`build_mode` and `session: <link>`).
 
 ## Resume
 
-1. Find the row from what the person gave: its `poc_id`, or its `client_slug` or
-   `client_name` (newest `last_activity_at` first, at most five).
-2. For each match, read its latest activity (objects.md § Run state). Show the matches in the
-   chat, at most five: POC ID, client and use case, stage, status, run state, build mode,
-   resume point and last activity. Ask one question to confirm which (even when only one
-   matches).
-3. When the latest run state is `running`, under 2 hours old and from a different session, say
-   whose session and how long ago, and ask `Take over from that session?` (`Take over`,
-   `Leave it`). Carry on only on a yes.
-4. Record a `poc_restarted` activity with this session's link in its run state block.
-5. **Read the working documents back** into `$STUDIO` (§ Working documents; objects.md § Fetch
-   a document back), and the approved research, BRD and design system into the working
-   folder. A working document the objects do not have is rebuilt from the approved documents,
-   and a ticket says so.
-6. **Show the open gate or question again** in the Claude chat, if one was waiting.
+1. Find the POC's ID: the one the person gave (`POC-acme-logistics-20261015`), else the one in
+   `$STUDIO/objects/poc.ref` of the working folder, else the one in the gate messages in their
+   Slack chat (search it for `POC Studio · <client>`). When none of these gives an ID, ask for
+   it in one line; never guess one.
+2. `poc-get` it. Show in the chat: POC ID, client and use case, stage, status, the open gate and
+   its two approvals, run state, build mode, resume point and last activity. Ask one question
+   to confirm.
+3. When the run state is `running`, the latest activity is under 2 hours old and its `session`
+   is a different one, say whose session and how long ago, and ask `Take over from that
+   session?` (`Take over`, `Leave it`). Carry on only on a yes.
+4. Record the restart with `poc-update`: `changes: {status: running}` (or `waiting` when a gate
+   is open), activity `poc_restarted` with this session's link in its run state block.
+5. **Read the working documents back** into `$STUDIO` with `document-get` (§ Working documents;
+   `poc-get` lists the latest version of each), and the approved research, BRD and design
+   system into the working folder. A working document Orbit does not have is rebuilt from the
+   approved documents, and a ticket says so.
+6. **Show the open gate or question again** in the Claude chat, if one was waiting. A gate
+   waiting on the manager (`resume_from: G<n> · manager approval`) goes straight to
+   gate-delivery.md § Waiting for the manager.
 7. Use the stored `build_mode`. Carry on from `resume_from`. Say one line: `Resuming
    <poc_id> (<client> · <use case>) in <Sonic | Zen> from <resume_from>.`
 
 ## Run state
 
 Written in the note of an activity (objects.md § Run state) at every save check, and whenever
-it changes:
+it changes. The POC row's fields in the last column change in the same `poc-update`:
 
 | `run_state` | Set when | `resume_from` | The POC row |
 |---|---|---|---|
@@ -100,7 +106,8 @@ it changes:
 | `abandoned` | the owner chooses stop at a gate or a failure | where it stopped | `status: stopped`, `blocked_on`: the owner's reason |
 
 Before a turn ends without a gate open (an error, the person leaving, a stop), record
-`stalled` with the exact `resume_from`. A POC whose latest activity says `running` and is
+`stalled` with the exact `resume_from` (`poc-update`: `status: blocked`, `blocked_on`, activity
+`poc_stopped`). A POC whose latest activity says `running` and is
 older than 2 hours is treated as stalled by the next resume.
 
 ## Working documents
@@ -108,8 +115,8 @@ older than 2 hours is treated as stalled by the next resume.
 The only documents sent for review are the research document, the BRD, the design system and
 the collaterals (and the app itself). Everything the team writes along the way lives in
 `$STUDIO` while a session works and is saved as a working document (objects.md § Recipes,
-status `draft`, the type of their stage as objects.md § Document types says) at every save
-check when they changed, so a resume in a
+`document-save` with `gate_pack: none`, so `status: draft`, the type of their stage as
+objects.md § Document types says) at every save check when they changed, so a resume in a
 new chat can carry on:
 
 | Slug | File | From |
@@ -139,9 +146,9 @@ it (when-something-fails.md):
    being built, the exact task and error, what was tried, the partial entity table, and what
    each option below would do. Nothing on the tenant is deleted; partial entities are kept for
    reuse or listed for the owner to remove by hand.
-3. Record the run state `failed` with `resume_from: <step>`, set the POC row's `status:
-   blocked` and `blocked_on: <one line>`, run the save check, then ask in the Claude chat (gate-delivery.md § Questions in the Claude
+3. Record the run state `failed` with `resume_from: <step>` in one `poc-update` (`status:
+   blocked`, `blocked_on: <one line>`, activity `poc_stopped`), run the save check, then ask in the Claude chat (gate-delivery.md § Questions in the Claude
    chat), header
    `Build failed`: `retry` (run the failed task again, once), `back to G2` (reopen G2 with
-   a smaller scope; the BRD gets a new version), `stop` (run state `abandoned`, `status:
+   a smaller scope; the BRD gets a new version), `stop` (`poc-update`: run state `abandoned`, `status:
    stopped`, and a `poc_stopped` activity). Wait for the owner.

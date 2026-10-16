@@ -10,8 +10,8 @@ gates. Everything it makes is saved to the Orbit Studio objects on your tenant.
   `/poc-studio:update` checks by hand), and the **Nebula** plugin (the first build updates
   Nebula to its code-builder version if needed).
 - Run **`/poc-studio:setup`** once. It connects Slack (required), Google Calendar and Drive,
-  and the four Orbit Studio objects; finds your Slack chat for gate messages; and runs one
-  test gate.
+  and the five Orbit Studio objects; finds your Slack chat for gate messages; asks who your
+  manager is (they approve each gate in the Orbit Studio app); and runs one test gate.
 - Orbit write-back goes through the Orbit Studio API hosted on Orbit, which needs no token or
   sign-in. `/poc-studio:connect` checks it works; if Orbit cannot be reached, records are kept
   in your working folder.
@@ -86,15 +86,16 @@ When it finishes, it gives you a link to `<Client> Demo Runbook.md`. That is you
 
 ## Picking up a POC later
 
-In any chat, type `/poc-studio:build resume <POC ID or name>`. It shows the matching POCs with
-their stage and last activity, asks which one, reads everything back from Orbit, and carries on
+In any chat, type `/poc-studio:build resume <POC ID>` (the ID is in every gate message, and in
+the working folder). It shows the POC with its stage and last activity, asks you to confirm, reads everything back from Orbit, and carries on
 from where it stopped. It never picks one up on its own: a new build request always starts a
 new POC.
 
 ## When it will stop and ask you
 
 At four gates. Each sends a notification to your personal Slack chat with the Orbit links, and
-you approve it here in the Claude chat:
+you approve it here in the Claude chat; your manager approves it in the Orbit Studio app, and
+the gate passes when you both have:
 
 1. **G1 · Path** (`approve`, `partial`, `edited`, `block`): the research document, with what
    the client said and the readiness verdict.

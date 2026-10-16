@@ -7,7 +7,7 @@ description: >
   write to the Orbit Studio objects through the Orbit Studio API, which needs no token, explains
   what to fix when it cannot, and sets out the guardrails every write-back follows.
 metadata:
-  version: "0.5.0"
+  version: "0.6.0"
 ---
 
 # POC Studio: connect to Orbit

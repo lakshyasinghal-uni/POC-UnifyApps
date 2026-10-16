@@ -6,6 +6,28 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.6.0 (2026-10-16)
+
+- **The build writes to Orbit through the endpoints at every step.** objects.md now has a
+  table of which call goes at which step, and the build, gates, gate delivery, run control and
+  setup use it: `poc-create` at kickoff, `poc-update` at every stage start and end,
+  `document-save` for every document and working document, `gate-open`,
+  `gate-owner-approve` and `gate-request-changes` at each gate, `iteration-log` for every change
+  made after a gate, a Judge ruling or a fix, and `feedback-create` and `feedback-review` for
+  tickets. POC Studio no longer builds keys itself.
+- **objects.md follows the five objects as they are on Orbit:** `orbit_studio_iteration` is
+  new; the POC has the manager, both approvals per gate, `gate_summary` and `g1_summary` to
+  `g4_summary`; documents have `format` and the new types; activities have `owner_approved`,
+  `manager_approved` and `iteration_logged`. Read from the live schemas on 2026-10-16.
+- **A gate passes when the owner and the manager have both approved.** Setup asks once who
+  your manager is. When you approve first, the build waits for the manager's approval in the
+  Orbit Studio app (`Check again` or `Stop for now`), and closes the gate itself when both
+  approvals are in but the app has not moved it on. With no manager, your approval passes it.
+- Resume works from the POC ID: the one you give, the one in the working folder, or the one in
+  the gate messages in your Slack chat.
+- When write-back is off, every call is kept in order under `$STUDIO/objects/pending/` and sent
+  when it comes back on.
+
 ## 0.5.1 (2026-10-16)
 
 - **The Orbit Studio API is complete on orbit.uat**: `poc-create`, `poc-update`, `poc-get`,
