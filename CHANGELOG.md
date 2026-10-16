@@ -6,6 +6,14 @@ with it.
 - Patch (0.1.x): a fix or a new scenario added to an existing skill or agent.
 - Minor (0.x.0): a new skill, a new agent, or a change to how a stage works.
 
+## 0.6.1 (2026-10-16)
+
+- **Updating works when the GitHub check is slow or blocked.** The version check now waits up
+  to 15 seconds and tries three sources in turn (raw.githubusercontent.com, api.github.com, and
+  the marketplace copy on your machine through git). When none answers, `/poc-studio:start` and
+  `/poc-studio:update` in Claude Code run the update anyway through the `claude` command, and
+  report the version it installed.
+
 ## 0.6.0 (2026-10-16)
 
 - **The build writes to Orbit through the endpoints at every step.** objects.md now has a
